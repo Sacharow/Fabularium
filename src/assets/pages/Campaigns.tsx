@@ -1,3 +1,5 @@
+import CampaignCard from "../components/CampaignCard"
+
 type Campaign = {
   id: number
   name: string
@@ -12,24 +14,6 @@ const CAMPAIGNS: Campaign[] = [
   { id: 5, name: "Crown of the Forgotten", color: "bg-yellow-400" },
   { id: 6, name: "Nightfall over Greymoor", color: "bg-slate-400" },
 ]
-
-function CampaignCard({ name, color }: { name: string; color: string }) {
-  return (
-    <div className="w-full">
-      <div className="aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
-        <div className="h-full grid grid-rows-[80%_20%]">
-          {/* top 80% - graphic */}
-          <div className={`${color} flex items-center justify-center`}></div>
-
-          {/* bottom 20% - name */}
-          <div className="bg-gray-800 flex items-center justify-center px-2">
-            <span className="text-sm font-medium text-gray-100 text-center">{name}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 function Campaigns() {
   return (
