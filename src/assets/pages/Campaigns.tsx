@@ -1,4 +1,5 @@
 import CampaignCard from "../components/CampaignCard"
+import AddCampaignTile from "../components/AddCampaignTile"
 
 type Campaign = {
   id: number
@@ -25,6 +26,7 @@ function Campaigns() {
           {CAMPAIGNS.map((c) => (
             <CampaignCard key={c.id} name={c.name} color={c.color} />
           ))}
+          <AddCampaignTile />
         </div>
       </div>
     </div>
