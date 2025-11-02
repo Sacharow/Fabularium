@@ -1,7 +1,7 @@
 function Login() {
     return (
         <div className="flex flex-col items-center justify-center h-screen">
-            <div className="border-gray-200 border-2 rounded py-6 px-24 bg-orange-950 shadow-lg shadow-orange-400">
+            <div className="border-2 rounded-xl py-6 px-12 bg-orange-950 border-orange-900 shadow-lg shadow-orange-400">
                 <div className="text-4xl font-bold mb-4 text-center">
                     <h1>Welcome Back,</h1>
                     <h1>Adventurer</h1>
@@ -10,8 +10,8 @@ function Login() {
                     <p>Your next great quest awaits.</p>
                 </div>
                 <div className="flex flex-col mt-6">
-                    <input type="text" placeholder="Enter your username" className="border border-gray-300 rounded py-2 px-4 mb-4" />
-                    <input type="password" placeholder="Enter your password" className="border border-gray-300 rounded py-2 px-4 mb-4" />
+                    <input type="text" placeholder="Enter your username" className="border border-orange-900 rounded py-2 px-4 mb-4" />
+                    <input type="password" placeholder="Enter your password" className="border border-orange-900 rounded py-2 px-4 mb-4" />
                 </div>
                 <div className="flex justify-between">
                     <div>
@@ -23,7 +23,7 @@ function Login() {
                     </div>
                 </div>
                 <div>
-                    <button className="w-full bg-yellow-300 text-black font-bold py-2 px-4 rounded mt-6 shadow-lg shadow-yellow-300">Log In</button>
+                    <button className="cursor-pointer w-full bg-yellow-300 text-black font-bold py-2 px-4 rounded mt-6 shadow-lg shadow-yellow-300 hover:scale-105">Log In</button>
                 </div>
             </div>
         </div>

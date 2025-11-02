@@ -7,10 +7,7 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Custom browns/fantasy colors
-                'background': '#221D10',
-                'light-background': '#2A2314',
-                'gold': '#F4C753',
+                gold: '#F4C753',
             }
         },
     },
