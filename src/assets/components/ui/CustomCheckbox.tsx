@@ -85,7 +85,11 @@ const CustomCheckbox = forwardRef<HTMLInputElement, CustomCheckboxProps>(({
 
       {label && <span className="text-sm text-gray-500">{label}</span>}
 
-      <style>{`\n        /* show checkmark when input is checked - use opacity/transform to avoid layout shifts */\n        input:checked + span > svg { opacity: 1 !important; transform: none !important; }\n        input:indeterminate + span { background-color: var(--tw-bg-opacity, 1); }\n      `}</style>
+      <style>{`
+        /* show checkmark when input is checked - use opacity/transform to avoid layout shifts */
+        input:checked + span > svg { opacity: 1 !important; transform: none !important; }
+        input:indeterminate + span { background-color: var(--tw-bg-opacity, 1); }
+      `}</style>
     </label>
   );
 });
