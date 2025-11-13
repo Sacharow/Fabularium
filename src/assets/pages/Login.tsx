@@ -45,8 +45,8 @@ function Login() {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button className={loginButton}>Register</button>
-                        <button className={loginButton} onClick={() => setIsRegistering(!isRegistering)}>Go Back</button>
+                        <button className={loginButton}>Log In</button>
+                        <button className={loginButton} onClick={() => setIsRegistering(true)}>Register</button>
                     </div>
                 </div>
                 )}
@@ -58,8 +58,8 @@ function Login() {
                         <input type="password" placeholder="Repeat your password" className={inputButton} />
                     </div>  
                     <div className="flex gap-2">
-                        <button className={loginButton}>Log In</button>
-                        <button className={loginButton} onClick={() => setIsRegistering(!isRegistering)}>Register</button>
+                        <button className={loginButton}>Register</button>
+                        <button className={loginButton} onClick={() => setIsRegistering(false)}>Back to Log In</button>
                     </div>
                 </div>
                 )}
