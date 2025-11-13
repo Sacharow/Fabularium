@@ -3,7 +3,7 @@ import CampaignSidebar from "../components/CampaignSidebar";
 import CampaignContent from "../components/CampaignContent";
 
 export default function InCampaign() {
-    const [activeSection, setActiveSection] = useState<string | "Maps">("Maps");
+    const [activeSection, setActiveSection] = useState<string>("Maps");
 
     return (
         // Use a relative container; sidebar is fixed to the left and content gets a left margin
