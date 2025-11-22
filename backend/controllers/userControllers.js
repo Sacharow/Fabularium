@@ -1,11 +1,13 @@
 'use strict';
+import dotenv from 'dotenv';
+dotenv.config();
+import {PrismaClient} from "../generated/prisma/client.js";
 
-const {PrismaClient} = require("../generated/prisma/client");
+const prisma = new PrismaClient();
 
 
 const ameno = async () => {
     try {
-        const prisma = new PrismaClient();
         const data = await prisma.$connect().then(() => {
             console.log("baza");    
         });
@@ -14,4 +16,19 @@ const ameno = async () => {
     }
 }
 
-ameno();
+
+const getAllUsers = async (req, res) => {
+    try {
+        const data = await prisma.users.findMany();
+        return res.status(200).json(data);
+    } catch (err) {
+        return res.status(500).json({message: "Błąd przy pobieraniu użytkowników", error: err});
+    }
+}
+
+const addUser = async (req, res) => {
+
+}
+
+
+export {getAllUsers};

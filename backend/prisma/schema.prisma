@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_URL")
+  url      = env("POSTGRES_URL_ONLINE")
 }
 
 enum Role {
@@ -22,7 +22,7 @@ enum Role {
 model Users {
   id Int @id @default(autoincrement())
   email String @unique
-  password String
+  passwordHashed String
   role Role
 
   Characters Characters[]
@@ -42,4 +42,5 @@ model Campaigns {
   join_code String
   owner Users @relation(fields: [ownerId], references: [id])
   ownerId Int
+  
 }
