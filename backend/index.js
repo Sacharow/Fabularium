@@ -1,10 +1,9 @@
 "use strict";
-import dotenv from 'dotenv';
-dotenv.config();
-import express from 'express';
-import morgan from 'morgan';
-import cors from 'cors';
-import {userRoutes} from "./routes/userRoutes.js";
+require('dotenv').config();
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+const userRoutes = require('./routes/userRoutes.js');
 
 const app = express();
 app.use(express.json());

@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_URL_ONLINE")
+  url = env("POSTGRES_URL_ONLINE")
 }
 
 enum Role {
@@ -20,27 +20,128 @@ enum Role {
 }
 
 model Users {
-  id Int @id @default(autoincrement())
-  email String @unique
-  passwordHashed String
-  role Role
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  passwordHashed String?   // null gdy OAuth
+  provider       String    @default("local")
+  providerId     String?   @unique
 
-  Characters Characters[]
-  Campaigns Campaigns[]
+  role           Role @default(user)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  characters     Characters[]
+  campaigns      Campaign[]
 }
 
 model Characters {
-  id Int @id @default(autoincrement())
-  name String
+  id           String  @id @default(uuid())
+  name         String
+  race         String
+  class        String
+  level        Int
+
+  stats Json 
+  saves Json 
+  skills Json 
+  proficiencies Json
+  background    String
+  alignment     String
+  xp            Int
+  armorPoints   Int
+  initiative    Int
+  speed         Int
+  hp            Int
+  hpMax         Int
+  size          String
+  inspiration   Boolean
+  deathSavesSuccess Int
+  deathSavesFail    Int
+  racialAbilities   Json
+  passivePerception Int
+  equipment         Json
+  money             Int
+  magicSkill        Int
+  magicBonus        Int
+  magicDC           Int
+  knownSpells       Json
+  preparedSpells    Json
+  spellSlots        Json
+
   owner   Users @relation(fields: [ownerId], references: [id])
-  ownerId Int
+  ownerId String
+
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  campaignId String?
+
 }
 
-model Campaigns {
-  id Int @id @default(autoincrement())
-  name String
-  join_code String
-  owner Users @relation(fields: [ownerId], references: [id])
-  ownerId Int
-  
+model Campaign {
+  id     String @id @default(uuid())
+  name   String
+  description String
+  joinCode String
+
+  owner   Users   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  characters Characters[]
+  missions Mission[]
+  notes Note[]
+  maps Map[]
+  locations Location[]
+  npcs NPC[]
+}
+
+
+model Mission {
+  id     String @id @default(uuid())
+  title  String
+  description String
+  status Boolean
+
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String
+}
+
+model Note {
+  id     String @id @default(uuid())
+  name   String
+  description String
+  author String
+  date   DateTime
+
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String
+}
+
+model Map {
+  id     String @id @default(uuid())
+  file   String
+  name   String
+  description String
+
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String
+}
+
+
+model Location {
+  id     String @id @default(uuid())
+  name   String
+  description String
+
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String
+}
+
+
+model NPC {
+  id     String @id @default(uuid())
+  name   String
+  description String
+
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String
 }

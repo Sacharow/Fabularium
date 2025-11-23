@@ -1,11 +1,13 @@
 'use strict';
 
-import express from 'express';
-import { getAllUsers } from "../controllers/userControllers.js";
+const express = require('express');
+const { getAllUsers, createUserClassic, login } = require('../controllers/userControllers.js');
 
-const userRoutes = express.Router();
+const router = express.Router();
 
-userRoutes.get("/", getAllUsers);
+router.get("/", getAllUsers);
+router.post("/register", createUserClassic);
+router.post("/login", login);
 
 
-export {userRoutes};
+module.exports = router;
