@@ -97,7 +97,7 @@ function Campaigns() {
   }
 
   return (
-    <div className="pt-24 px-6">
+    <div className="pt-6 px-6">
       <div className="max-w-[1200px] mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold mb-6">Campaigns</h1>
 

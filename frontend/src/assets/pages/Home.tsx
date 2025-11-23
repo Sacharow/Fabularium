@@ -1,12 +1,12 @@
+import Footer from "../components/Footer"
+
 function Home() {
     return (
-        <div className="flex flex-col items-center h-screen">
-            <div className="relative w-2/3 h-1/2 mt-32">
-                <img src="ratton.png" alt="Background" className="w-full h-full object-cover" />
-                <div className="absolute bottom-12 right-24 flex items-center justify-center">
-                    <h1 className="text-4xl text-white font-bold text-center drop-shadow-lg">Massive Rattón</h1>
-                </div>
-            </div>
+        <div className="pt-6 flex flex-col items-center h-screen justify-center">
+            <h1 className="text-4xl font-bold">Welcome to Fabularium</h1>
+            <p className="text-lg pt-3">Your gateway to epic adventures and legendary tales.</p>
+            <img src="/sky1.jpg" alt="Home Illustration" className="pt-6 w-1/2 h-auto" />
+            <Footer />
         </div>
     )
 }
