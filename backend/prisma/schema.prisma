@@ -145,3 +145,5 @@ model NPC {
   campaign   Campaign @relation(fields: [campaignId], references: [id])
   campaignId String
 }
+
+
