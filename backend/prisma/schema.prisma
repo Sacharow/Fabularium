@@ -19,6 +19,27 @@ enum Role {
   admin
 }
 
+enum Size {
+  Tiny
+  Small
+  Medium
+  Large
+  Huge
+  Gargantuan
+}
+
+enum Alignment {
+  chaotic_good
+  chaotic_evil
+  chaotic_neutral
+  neutral
+  lawful_neutral
+  lawful_evil
+  lawful_good
+  neutral_good
+  neutral_evil
+}
+
 model Users {
   id             String    @id @default(uuid())
   name           String
@@ -31,52 +52,335 @@ model Users {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  characters     Characters[]
+  characters     Character[]
   campaigns      Campaign[]
 }
 
-model Characters {
-  id           String  @id @default(uuid())
+
+model Character {
+  id           String    @id @default(uuid())
   name         String
-  race         String
-  class        String
-  level        Int
+  ownerId      String
+  owner        Users      @relation(fields: [ownerId], references: [id])
+  campaignId   String?
+  campaign     Campaign? @relation(fields: [campaignId], references: [id])
 
-  stats Json 
-  saves Json 
-  skills Json 
-  proficiencies Json
-  background    String
-  alignment     String
-  xp            Int
-  armorPoints   Int
-  initiative    Int
-  speed         Int
-  hp            Int
-  hpMax         Int
-  size          String
-  inspiration   Boolean
-  deathSavesSuccess Int
-  deathSavesFail    Int
-  racialAbilities   Json
-  passivePerception Int
-  equipment         Json
-  money             Int
-  magicSkill        Int
-  magicBonus        Int
-  magicDC           Int
-  knownSpells       Json
-  preparedSpells    Json
-  spellSlots        Json
+  raceId       String?
+  race         Race?     @relation(fields: [raceId], references: [id])
 
-  owner   Users @relation(fields: [ownerId], references: [id])
-  ownerId String
+  classId      String?
+  class        Class?    @relation(fields: [classId], references: [id])
 
-  campaign Campaign? @relation(fields: [campaignId], references: [id])
-  campaignId String?
+  subclassId   String?
+  subclass     Subclass? @relation(fields: [subclassId], references: [id])
 
+  level        Int       @default(1)
+  xp           Int       @default(0)
+  background   String?
+  alignment    String?
+  size         Size? 
+  inspiration  Boolean   @default(false)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // RELACJE DO MODUŁÓW
+  stats            CharacterStats?
+  saves            CharacterSaves?
+  skills           CharacterSkill[]
+  combat           CharacterCombatStats?
+  proficiencies    CharacterProficiency[]
+  features         CharacterFeature[]
+  inventoryItems   InventoryItem[]
+  knownSpells      CharacterKnownSpell[]
+  preparedSpells   CharacterPreparedSpell[]
+  spellSlots       CharacterSpellSlot[]
+  currency         CharacterCurrency?
+
+  characterEventLogs CharacterEventLog[]
 }
 
+/*
+  MODULE: Ability scores
+*/
+model CharacterStats {
+  characterId String  @id
+  character   Character @relation(fields: [characterId], references: [id])
+
+  str Int @default(10)
+  dex Int @default(10)
+  con Int @default(10)
+  int Int @default(10)
+  wis Int @default(10)
+  cha Int @default(10)
+}
+
+/*
+  MODULE: Saving throws (proficiency flags)
+*/
+model CharacterSaves {
+  characterId String  @id
+  character   Character @relation(fields: [characterId], references: [id])
+
+  strProficient Boolean @default(false)
+  dexProficient Boolean @default(false)
+  conProficient Boolean @default(false)
+  intProficient Boolean @default(false)
+  wisProficient Boolean @default(false)
+  chaProficient Boolean @default(false)
+}
+
+/*
+  MODULE: Skills (one row per skill per character)
+*/
+model CharacterSkill {
+  id          String   @id @default(uuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+
+  name        String
+  proficient  Boolean  @default(false)
+  expertise   Boolean  @default(false) // double proficiency
+  bonus       Int?     // manual bonus (buffs etc.)
+}
+
+/*
+  MODULE: Proficiencies (armor/weapon/tools/languages)
+*/
+model CharacterProficiency {
+  id          String   @id @default(uuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+
+  type        String   // "weapon" | "armor" | "tool" | "language"
+  name        String
+}
+
+/*
+  MODULE: Combat stats
+*/
+model CharacterCombatStats {
+  characterId     String @id
+  character       Character @relation(fields: [characterId], references: [id])
+
+  hp              Int    @default(0)
+  hpMax           Int    @default(0)
+  ac              Int? 
+  initiative      Int?
+  speed           Int? 
+  hitDiceType     Int?   // e.g. 8 for d8
+  hitDiceCurrent  Int?   // remaining hit dice
+  hitDiceTotal    Int?   // total hit dice
+  deathSavesSuccess Int @default(0)
+  deathSavesFail    Int @default(0)
+  passivePerception Int?
+}
+
+/*
+  MODULE: Inventory and Items
+*/
+model Item {
+  id          String   @id @default(uuid())
+  name        String
+  type        String    // weapon, armor, gear, consumable...
+  description String?
+  weight      Float?
+  value       Int?      // gp value
+  properties  String?   // serialized small flags, or create ItemProperty table later
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  inventoryItems InventoryItem[]
+}
+
+model InventoryItem {
+  id          String   @id @default(uuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id])
+
+  quantity    Int      @default(1)
+  equipped    Boolean  @default(false)
+  notes       String?
+}
+
+/*
+  MODULE: Spell system (catalog + character relations)
+*/
+model Spell {
+  id          String   @id @default(uuid())
+  name        String
+  level       Int
+  school      String?
+  castingTime String?
+  range       String?
+  components  String?
+  duration    String?
+  description String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  knownBy     CharacterKnownSpell[]
+  preparedBy  CharacterPreparedSpell[]
+}
+
+model CharacterKnownSpell {
+  id          String   @id @default(uuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+
+  spellId     String
+  spell       Spell     @relation(fields: [spellId], references: [id])
+
+  learnedAtLevel Int?
+}
+
+model CharacterPreparedSpell {
+  id          String   @id @default(uuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+
+  spellId     String
+  spell       Spell     @relation(fields: [spellId], references: [id])
+
+  preparedAt  DateTime @default(now())
+}
+
+/*
+  MODULE: Spell slots (one row per level per character)
+*/
+model CharacterSpellSlot {
+  id          String   @id @default(uuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+
+  spellLevel  Int    // 1..9
+  maxSlots    Int    @default(0)
+  usedSlots   Int    @default(0)
+}
+
+/*
+  MODULE: Features / Traits / Feats
+*/
+model Feature {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  sourceType  String?  // "race"|"class"|"feat"|"background"
+  sourceId    String?  // optional pointer to Race/Class/Feat
+
+  characterFeatures CharacterFeature[]
+}
+
+model CharacterFeature {
+  id          String   @id @default(uuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+
+  featureId   String
+  feature     Feature   @relation(fields: [featureId], references: [id])
+
+  acquiredAtLevel Int?
+  notes       String?
+}
+
+/*
+  MODULE: Races & Race abilities
+*/
+model Race {
+  id        String @id @default(uuid())
+  name      String @unique
+  description String?
+  size      Size?
+  speed     Int?
+  languages String? // simple csv, or create Language table
+  raceAbilities RaceAbility[]
+
+  characters Character[]
+}
+
+model RaceAbility {
+  id      String @id @default(uuid())
+  raceId  String
+  race    Race   @relation(fields: [raceId], references: [id])
+
+  name    String
+  description String?
+}
+
+/*
+  MODULE: Classes, Subclasses, Class progression (level table)
+*/
+model Class {
+  id        String @id @default(uuid())
+  name      String @unique
+  hitDie    Int    // e.g. 8 for d8
+  spellcasting Boolean @default(false)
+  description String?
+  subclasses Subclass[]
+  progressions ClassProgression[]
+
+  characters Character[]
+}
+
+model Subclass {
+  id        String @id @default(uuid())
+  classId   String
+  class     Class  @relation(fields: [classId], references: [id])
+  name      String
+  description String?
+
+  characters Character[]
+}
+
+model ClassProgression {
+  id        String @id @default(uuid())
+  classId   String
+  class     Class  @relation(fields: [classId], references: [id])
+
+  level     Int
+  features  String?   // csv of feature ids or JSON string — can be normalized later to ClassFeature table
+  hpPerLevel Int     // average HP gained per level (or die roll average)
+  spellSlots Json?   // optional: canonical slots for that level, keep as JSON for flexibility
+}
+
+/*
+  MODULE: Currency
+*/
+model CharacterCurrency {
+  characterId String @id
+  character   Character @relation(fields: [characterId], references: [id])
+
+  gp Int @default(0)
+  sp Int @default(0)
+  ep Int @default(0)
+  cp Int @default(0)
+  pp Int @default(0)
+}
+
+/*
+  OPTIONAL: Feats table (if chcesz)
+*/
+model Feat {
+  id          String @id @default(uuid())
+  name        String
+  description String?
+}
+
+/*
+  UTILITY / LOGS
+*/
+model CharacterEventLog {
+  id          String @id @default(uuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id])
+  type        String
+  payload     Json?
+  createdAt   DateTime @default(now())
+}
 model Campaign {
   id     String @id @default(uuid())
   name   String
@@ -86,7 +390,7 @@ model Campaign {
   owner   Users   @relation(fields: [ownerId], references: [id])
   ownerId String
 
-  characters Characters[]
+  characters Character[]
   missions Mission[]
   notes Note[]
   maps Map[]
