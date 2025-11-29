@@ -10,15 +10,19 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
+
+app.use('/users', userRoutes);
+
+app.use('/', (req, res) => {
+    res.send("żelo elo");
+});
+
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
     console.log("elo żelo");
 });
-app.use('/users', userRoutes);
-app.use('/', (req, res) => {
-    res.send("żelo elo");
-});
+
 
 
 
