@@ -10,6 +10,7 @@ import Characters from "./assets/pages/Characters";
 import Resources from "./assets/pages/Resources";
 import InCampaign from "./assets/pages/InCampaign";
 import InCampaignCharacter from "./assets/pages/InCampaign/Character";
+import CharacterNew from "./assets/pages/Incampaign/Forms/CharacterNew";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -21,8 +22,9 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/characters" element={<Characters />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/InCampaign" element={<InCampaign />} />
-        <Route path="/InCampaign/Character" element={<InCampaignCharacter />} />
+        <Route path="/InCampaign/:id" element={<InCampaign />} />
+        <Route path="/InCampaign/:id/Character/:characterId" element={<InCampaignCharacter />} />
+        <Route path="/InCampaign/:id/Character/New" element={<CharacterNew />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
