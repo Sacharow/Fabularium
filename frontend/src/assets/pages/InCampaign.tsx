@@ -1,9 +1,10 @@
 import { useState } from "react";
 import CampaignSidebar from "../components/CampaignSidebar";
-import CampaignContent from "../components/CampaignContent";
+//import CampaignContent from "../components/CampaignContent";
+import CharacterSection from "../components/CampaignContent/Sections/CharacterSection";
 
-export default function InCampaign() {
-    const [activeSection, setActiveSection] = useState<string>("Maps");
+export default function InCampaign(props: { activeSectionProp?: string }) {
+    const [activeSection, setActiveSection] = useState<string>(props.activeSectionProp || "Maps");
 
     return (
         // Use a relative container; sidebar is fixed to the left and content gets a left margin
@@ -20,9 +21,10 @@ export default function InCampaign() {
                 </div>
             </div>
 
-            {/* main content area (pushed right by sidebar width) */}
             <div className="ml-64">
-                <CampaignContent activeSection={activeSection} />
+                {activeSection === "Characters" && (
+                    <CharacterSection />
+                )}
             </div>
         </div>
     );

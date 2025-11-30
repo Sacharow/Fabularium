@@ -2,13 +2,14 @@ import { NavLink } from "react-router-dom"
 
 type CampaignCardProps = {
   name: string
+  id: number
   color: string
 }
 
-function CampaignCard({ name, color }: CampaignCardProps) {
+function CampaignCard({ name, id, color }: CampaignCardProps) {
   return (
       <button className="w-full aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer">
-        <NavLink to="/InCampaign">
+        <NavLink key={id} to={`/InCampaign/${id}`}>
           <div className="h-full grid grid-rows-[80%_20%]">
             {/* top 80% - graphic */}
             <div className={`${color} flex items-center justify-center`}></div>

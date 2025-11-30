@@ -4,6 +4,7 @@ import AddCampaignTile from "../components/AddCampaignTile"
 
 type Campaign = {
   id: number
+  user_ids: number[]
   name: string
   color: string
 }
@@ -88,6 +89,7 @@ function Campaigns() {
     setCampaigns((prev) => {
       const next: Campaign = {
         id: Date.now(),
+        user_ids: [],
         name: generateName(),
         color: generateColor(),
       }
@@ -103,7 +105,7 @@ function Campaigns() {
 
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {campaigns.map((c) => (
-            <CampaignCard key={c.id} name={c.name} color={c.color} />
+            <CampaignCard key={c.id} name={c.name} id={c.id} color={c.color} />
           ))}
 
           {/* 'Add' tile is always last */}

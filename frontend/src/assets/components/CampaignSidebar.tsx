@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Map, Users, Scroll, UsersRound, Mountain, MapPin } from "lucide-react";
+import { Map, Users, Scroll, UsersRound, Mountain, Notebook } from "lucide-react";
 
 type Props = {
     active?: string | null;
@@ -13,7 +13,7 @@ export default function CampaignSidebar({ active: controlledActive = null, onCha
             { name: 'Locations', icon: Mountain },
             { name: 'Characters', icon: Users },
             { name: 'NPC', icon: UsersRound },
-            { name: 'Point of Interest', icon: MapPin },
+            { name: 'Quests', icon: Notebook },
             { name: 'Players', icon: UsersRound },
             { name: 'Notes', icon: Scroll },
         ]

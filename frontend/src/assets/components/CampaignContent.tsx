@@ -8,7 +8,7 @@ export default function CampaignContent({ activeSection }: { activeSection: stri
             "Locations",
             "Characters",
             "NPC",
-            "Point of Interest",
+            "Quests",
             "Players",
             "Notes",
         ]
@@ -26,13 +26,13 @@ export default function CampaignContent({ activeSection }: { activeSection: stri
         },
         {
             section: "Characters",
-            content: ["Afold Dihler", "Bombardillo Crocodillo", "Magda", "Magda (znowu)", "Olivussy", ";-;", "Trebusz Pani Grzonki ", "Woldzimierz Futerkowicz Biały"],
-            srcs: ["/afold.jpg", "/Bomber.png", "/mag.jpg", "/mag2.jpg", "/oliv.jpg", "/pan_bomba.jpg", "/trebusz.png", "/waltuh.jpg"]
+            content: [],
+            srcs: []
         },
         {
             section: "NPC",
-            content: ["Ratton", "Ratton", "Ratton", "Ratton", "Ratton", "Ratton", "Ratton"],
-            srcs: ["/ratton.png", "/ratton.png", "/ratton.png", "/ratton.png", "/ratton.png", "/ratton.png", "/ratton.png"]
+            content: [],
+            srcs: []
         },
         {
             section: "Notes",
@@ -54,7 +54,10 @@ export default function CampaignContent({ activeSection }: { activeSection: stri
 
                 return (
                     <div key={index} className={outerContainerClass}>
-                        <h1 className="font-bold text-4xl">{item}</h1>
+                        <div className="flex justify-between items-center">
+                            <h1 className="font-bold text-4xl">{item}</h1>
+                            <button className="bg-orange-700 text-white rounded px-4 py-2 ml-4 cursor-pointer hover:scale-105">Create New</button>
+                        </div>
 
                         {item === "Notes" ? (
                             // Notes: render text-only cards (no <img>)
