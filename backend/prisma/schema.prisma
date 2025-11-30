@@ -84,7 +84,11 @@ model Character {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  // RELACJE DO MODUŁÓW
+  personalityTraits String?
+  ideals            String?
+  bonds             String?
+  flaws             String?
+
   stats            CharacterStats?
   saves            CharacterSaves?
   skills           CharacterSkill[]
@@ -100,9 +104,7 @@ model Character {
   characterEventLogs CharacterEventLog[]
 }
 
-/*
-  MODULE: Ability scores
-*/
+
 model CharacterStats {
   characterId String  @id
   character   Character @relation(fields: [characterId], references: [id])
@@ -115,9 +117,7 @@ model CharacterStats {
   cha Int @default(10)
 }
 
-/*
-  MODULE: Saving throws (proficiency flags)
-*/
+
 model CharacterSaves {
   characterId String  @id
   character   Character @relation(fields: [characterId], references: [id])
@@ -130,9 +130,7 @@ model CharacterSaves {
   chaProficient Boolean @default(false)
 }
 
-/*
-  MODULE: Skills (one row per skill per character)
-*/
+
 model CharacterSkill {
   id          String   @id @default(uuid())
   characterId String
@@ -144,9 +142,6 @@ model CharacterSkill {
   bonus       Int?     // manual bonus (buffs etc.)
 }
 
-/*
-  MODULE: Proficiencies (armor/weapon/tools/languages)
-*/
 model CharacterProficiency {
   id          String   @id @default(uuid())
   characterId String
@@ -156,9 +151,7 @@ model CharacterProficiency {
   name        String
 }
 
-/*
-  MODULE: Combat stats
-*/
+
 model CharacterCombatStats {
   characterId     String @id
   character       Character @relation(fields: [characterId], references: [id])
@@ -176,9 +169,6 @@ model CharacterCombatStats {
   passivePerception Int?
 }
 
-/*
-  MODULE: Inventory and Items
-*/
 model Item {
   id          String   @id @default(uuid())
   name        String
@@ -206,9 +196,7 @@ model InventoryItem {
   notes       String?
 }
 
-/*
-  MODULE: Spell system (catalog + character relations)
-*/
+
 model Spell {
   id          String   @id @default(uuid())
   name        String
@@ -249,9 +237,7 @@ model CharacterPreparedSpell {
   preparedAt  DateTime @default(now())
 }
 
-/*
-  MODULE: Spell slots (one row per level per character)
-*/
+
 model CharacterSpellSlot {
   id          String   @id @default(uuid())
   characterId String
@@ -262,9 +248,7 @@ model CharacterSpellSlot {
   usedSlots   Int    @default(0)
 }
 
-/*
-  MODULE: Features / Traits / Feats
-*/
+
 model Feature {
   id          String   @id @default(uuid())
   name        String
@@ -287,9 +271,7 @@ model CharacterFeature {
   notes       String?
 }
 
-/*
-  MODULE: Races & Race abilities
-*/
+
 model Race {
   id        String @id @default(uuid())
   name      String @unique
@@ -311,9 +293,7 @@ model RaceAbility {
   description String?
 }
 
-/*
-  MODULE: Classes, Subclasses, Class progression (level table)
-*/
+
 model Class {
   id        String @id @default(uuid())
   name      String @unique
@@ -347,9 +327,7 @@ model ClassProgression {
   spellSlots Json?   // optional: canonical slots for that level, keep as JSON for flexibility
 }
 
-/*
-  MODULE: Currency
-*/
+
 model CharacterCurrency {
   characterId String @id
   character   Character @relation(fields: [characterId], references: [id])
@@ -361,18 +339,13 @@ model CharacterCurrency {
   pp Int @default(0)
 }
 
-/*
-  OPTIONAL: Feats table (if chcesz)
-*/
 model Feat {
   id          String @id @default(uuid())
   name        String
   description String?
 }
 
-/*
-  UTILITY / LOGS
-*/
+
 model CharacterEventLog {
   id          String @id @default(uuid())
   characterId String

@@ -18,10 +18,14 @@ const createCharacterSchema = z.object({
     background: z.string().optional(),
     alignment: z.string().optional(),
     level: z.number().int().min(1).max(20).optional(),
-    raceId: z.string().uuid().optional(),
-    classId: z.string().uuid().optional(),
-    subclassId: z.string().uuid().optional(),
-    campaignId: z.string().uuid().optional(),
+    raceId: z.string().optional(),
+    classId: z.string().optional(),
+    subclassId: z.string().optional(),
+    campaignId: z.string().optional(),
+    personalityTraits: z.string().optional(),
+    ideals: z.string().optional(),
+    bonds: z.string().optional(),
+    flaws: z.string().optional(),
     stats: statsSchema.optional()
 });
 
@@ -34,6 +38,10 @@ const updateCharacterSchema = z.object({
     classId: z.string().nullable().optional(),
     subclassId: z.string().nullable().optional(),
     campaignId: z.string().nullable().optional(),
+    personalityTraits: z.string().nullable().optional(),
+    ideals: z.string().nullable().optional(),
+    bonds: z.string().nullable().optional(),
+    flaws: z.string().nullable().optional(),
     stats: statsSchema.optional()
 });
 
@@ -70,6 +78,10 @@ const createCharacter = async (req, res) => {
                 classId: data.classId ?? null,
                 subclassId: data.subclassId ?? null,
                 campaignId: data.campaignId ?? null,
+                personalityTraits: data.personalityTraits ?? null,
+                ideals: data.ideals ?? null,
+                bonds: data.bonds ?? null,
+                flaws: data.flaws ?? null,
                 stats: data.stats
                     ? { create: { ...data.stats } }
                     : undefined
@@ -142,7 +154,6 @@ const listMyCharacters = async (req, res) => {
     }
 };
 
-// PATCH /characters/:id
 const updateCharacter = async (req, res) => {
     try {
         const user = req.user;
@@ -170,6 +181,10 @@ const updateCharacter = async (req, res) => {
                 classId: data.classId ?? undefined,
                 subclassId: data.subclassId ?? undefined,
                 campaignId: data.campaignId ?? undefined,
+                personalityTraits: data.personalityTraits ?? undefined,
+                ideals: data.ideals ?? undefined,
+                bonds: data.bonds ?? undefined,
+                flaws: data.flaws ?? undefined,
                 stats: data.stats
                     ? {
                             upsert: {
