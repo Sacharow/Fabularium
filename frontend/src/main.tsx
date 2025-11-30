@@ -10,7 +10,7 @@ import Characters from "./assets/pages/Characters";
 import Resources from "./assets/pages/Resources";
 import InCampaign from "./assets/pages/InCampaign";
 import InCampaignCharacter from "./assets/pages/InCampaign/Character";
-import CharacterNew from "./assets/pages/Incampaign/Forms/CharacterNew";
+import CharacterNew from "./assets/pages/InCampaign/Forms/CharacterNew";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

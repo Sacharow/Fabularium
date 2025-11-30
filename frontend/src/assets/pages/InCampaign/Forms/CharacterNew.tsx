@@ -295,7 +295,7 @@ export default function CharacterNew() {
 
     return (
         <div className="pt-6">
-            <div className="max-w-7l w-full">
+            <div className="w-full">
                 <div className="grid grid-cols-8">
                     <div className="col-span-2"></div>
                     <div className="col-span-4">
@@ -520,7 +520,7 @@ export default function CharacterNew() {
                     <div className="col-span-2 w-full p-2">
                         <div className="bg-orange-700/30 rounded-md p-4 flex flex-col items-center">
                             <h1 className="text-2xl font-bold pb-6">Character Avatar</h1>
-                            <div className="border-2 border-orange-700 border-dashed w-3/5 h-48 flex flex-col  qjustify-center hover:border-orange-500">
+                            <div className="border-2 border-orange-700 border-dashed w-3/5 h-48 flex flex-col justify-center hover:border-orange-500">
                                 <p className="text-gray-400 uppercase text-center">SQUARE</p>
                                 <p className="text-gray-400 text-center">Click <span className="text-white font-bold">here</span> to upload image</p>
                             </div>
