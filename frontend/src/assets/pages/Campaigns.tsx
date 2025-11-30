@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import CampaignCard from "../components/CampaignCard"
-import AddCampaignTile from "../components/AddCampaignTile"
+import CampaignCard from "../components/helper/CampaignCard"
+import AddCampaignTile from "../components/helper/AddCampaignTile"
 
 type Campaign = {
   id: number

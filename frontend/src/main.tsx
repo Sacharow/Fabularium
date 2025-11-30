@@ -10,7 +10,10 @@ import Characters from "./assets/pages/Characters";
 import Resources from "./assets/pages/Resources";
 import InCampaign from "./assets/pages/InCampaign";
 import InCampaignCharacter from "./assets/pages/InCampaign/Character";
+import MapNew from "./assets/pages/InCampaign/Forms/MapNew";
+import LocationNew from "./assets/pages/InCampaign/Forms/LocationNew";
 import CharacterNew from "./assets/pages/InCampaign/Forms/CharacterNew";
+import NpcNew from "./assets/pages/InCampaign/Forms/NpcNew";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -22,9 +25,12 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/characters" element={<Characters />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/InCampaign/:id" element={<InCampaign />} />
-        <Route path="/InCampaign/:id/Character/:characterId" element={<InCampaignCharacter />} />
-        <Route path="/InCampaign/:id/Character/New" element={<CharacterNew />} />
+        <Route path="/InCampaign/:campaignId" element={<InCampaign />} />
+        <Route path="/InCampaign/:campaignId/Characters/:characterId" element={<InCampaignCharacter />} />
+        <Route path="/InCampaign/:campaignId/Maps/New" element={<MapNew />} />
+        <Route path="/InCampaign/:campaignId/Locations/New" element={<LocationNew />} />
+        <Route path="/InCampaign/:campaignId/Characters/New" element={<CharacterNew />} />
+        <Route path="/InCampaign/:campaignId/NPCs/New" element={<NpcNew />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

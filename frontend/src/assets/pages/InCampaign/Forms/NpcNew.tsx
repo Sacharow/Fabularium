@@ -42,7 +42,7 @@ const INITIAL_SKILL_PROF: Record<string, ProfLevel> = {
     "Persuasion": 0,
 };
 
-export default function CharacterNew() {
+export default function NpcNew() {
     // Navigation
     const navigate = useNavigate();
     const params = useParams<{ campaignId?: string }>()
@@ -58,20 +58,20 @@ export default function CharacterNew() {
     const [level, setLevel] = useState<number>(1);
     const [profBonus, setProfBonus] = useState<number>(0);
 
-    // Character choices
-    const [characterClass, setCharacterClass] = useState<string>("Fighter");
-    const [characterRace, setCharacterRace] = useState<string>("Human");
-    const [characterSubclass, setCharacterSubclass] = useState<string>("");
-    const [subclasses, setSubclasses] = useState<string[]>([]);
+    // NPC choices
+    const [npcType, setNpcType] = useState<string>("Humanoid");
+    const [npcRace, setNpcRace] = useState<string>("Human");
+    const [npcSubtype, setNpcSubtype] = useState<string>("");
+    const [subtypes, setSubtypes] = useState<string[]>([]);
 
     // Stats and skills
     const [stats, setStats] = useState<Stat[]>(INITIAL_STATS);
     const [skillProf, setSkillProf] = useState<Record<string, ProfLevel>>(INITIAL_SKILL_PROF);
 
-    // Equipment
+    // Equipment / loot
     const [equipment, setEquipment] = useState<string[]>([]);
 
-    // Handlers
+    // Handlers (mirrored from CharacterNew)
     const updateStatValue = (statName: string, newValue: number) => {
         setStats(prev => prev.map(s => {
             if (s.name !== statName) return s;
@@ -89,14 +89,12 @@ export default function CharacterNew() {
         }));
     }
 
-    const saveCharacter = () => {
-
+    const saveNpc = () => {
         if (name.trim() === "") {
-            alert("Character name cannot be empty.");
+            alert("NPC name cannot be empty.");
             return;
-        }
-        else {
-            const STORAGE_KEY = "fabularium.campaigns.character_section"
+        } else {
+            const STORAGE_KEY = "fabularium.campaigns.npc_section"
 
             function rand<T>(arr: T[]) {
                 return arr[Math.floor(Math.random() * arr.length)]
@@ -121,7 +119,7 @@ export default function CharacterNew() {
             const id = Date.now()
             const campaignId = params.campaignId ?? null
 
-            const characterData = {
+            const npcData = {
                 id,
                 campaignId,
                 name,
@@ -129,9 +127,9 @@ export default function CharacterNew() {
                 description,
                 level,
                 profBonus,
-                characterClass,
-                characterRace,
-                characterSubclass,
+                npcType,
+                npcRace,
+                npcSubtype,
                 stats,
                 skillProf,
                 equipment
@@ -141,18 +139,15 @@ export default function CharacterNew() {
                 const raw = sessionStorage.getItem(STORAGE_KEY)
                 const parsed = raw ? JSON.parse(raw) : []
                 const list = Array.isArray(parsed) ? parsed : []
-                list.push(characterData)
+                list.push(npcData)
                 sessionStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-                // Notify other components in-window that characters changed
-                try { window.dispatchEvent(new Event('fabularium.characters.updated')) } catch (e) { /* ignore */ }
-                // navigate to the created character's page
-                if (campaignId) navigate(`/InCampaign/${campaignId}/Characters/${id}`)
+                try { window.dispatchEvent(new Event('fabularium.npcs.updated')) } catch (e) { /* ignore */ }
+                if (campaignId) navigate(`/InCampaign/${campaignId}/NPC/${id}`)
                 else navigate(-1)
             } catch (e) {
-                console.error('Failed to save character to sessionStorage', e)
+                console.error('Failed to save NPC to sessionStorage', e)
             }
         }
-
     }
 
     const createEquipment = () => {
@@ -171,15 +166,12 @@ export default function CharacterNew() {
             const current = prev[skillName] ?? 0;
             let actualNewProf: ProfLevel;
             if (newProf === 1) {
-                // Clicking Prof: if already Prof (1) or Expert (2) -> turn off; otherwise set to 1
                 actualNewProf = current === 1 || current === 2 ? 0 : 1;
             } else {
-                // Clicking Exp: toggle expertise on/off
                 actualNewProf = current === 2 ? 0 : 2;
             }
 
             const next = { ...prev, [skillName]: actualNewProf };
-            // Recalculate displayed skill modifiers for the affected skill
             setStats(stPrev => stPrev.map(s => {
                 if (!s.skills) return s;
                 if (!(skillName in s.skills)) return s;
@@ -198,21 +190,19 @@ export default function CharacterNew() {
     }, [level]);
 
     useEffect(() => {
-        // calculate proficiency bonus based on level
         const bonus = Math.ceil(level / 4) + 1;
         setProfBonus(bonus);
     }, [level]);
 
     useEffect(() => {
-        const found = classes.find(c => c.class === characterClass);
+        const found = classes.find(c => c.class === npcType);
         const newSubclasses = found?.subclass || [];
-        setSubclasses(newSubclasses);
+        setSubtypes(newSubclasses);
         if (newSubclasses.length > 0) {
-            setCharacterSubclass(newSubclasses[0]);
+            setNpcSubtype(newSubclasses[0]);
         }
-    }, [characterClass]);
+    }, [npcType]);
 
-    // UI helper classes
     const inputGameplayInformation = `bg-black/80 w-full`;
     const subTitleGameplayInformation = `text-gray-400 py-2`;
 
@@ -232,9 +222,9 @@ export default function CharacterNew() {
                             </p>
                         </div>
                         <div className="flex justify-between items-center">
-                            <h1 className="text-4xl font-bold mb-6">Create New Character</h1>
-                            <button className="bg-orange-900 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded cursor-pointer" onClick={() => saveCharacter()}>
-                                Save Character
+                            <h1 className="text-4xl font-bold mb-6">Create New NPC</h1>
+                            <button className="bg-orange-900 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded cursor-pointer" onClick={() => saveNpc()}>
+                                Save NPC
                             </button>
                         </div>
                     </div>
@@ -250,7 +240,7 @@ export default function CharacterNew() {
                         <div className="flex flex-col gap-8 w-full">
                             <div className="bg-orange-700/30 p-4 rounded-md">
                                 <h1 className="text-2xl font-bold">Basic Informations</h1>
-                                <p className="text-gray-400 py-2">Character's Name</p>
+                                <p className="text-gray-400 py-2">NPC's Name</p>
                                 <div className="bg-black/80">
                                     <input
                                         className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
@@ -261,7 +251,7 @@ export default function CharacterNew() {
                                         required
                                         onChange={(e) => setName(e.target.value)} />
                                 </div>
-                                <p className="text-gray-400 py-2">Character's Description</p>
+                                <p className="text-gray-400 py-2">NPC's Description</p>
                                 <div className="bg-black/80">
                                     <textarea
                                         className="border-2 border-orange-700 rounded py-1 px-2 h-32 w-full align-top bg-black text-white"
@@ -293,7 +283,6 @@ export default function CharacterNew() {
                             <div className="bg-orange-700/30 p-4 rounded-md">
                                 <h1 className="text-2xl font-bold pb-4">Gameplay Informations</h1>
                                 <div className="grid grid-cols-2 gap-4">
-                                    { /* Character Class */}
                                     <div>
                                         <p className={subTitleGameplayInformation}>
                                             Level
@@ -308,7 +297,6 @@ export default function CharacterNew() {
                                                 onChange={(e) => setLevel(Math.max(1, Math.min(20, Number(e.target.value) || 1)))} />
                                         </div>
                                     </div>
-                                    { /* Proficiency Bonus */}
                                     <div>
                                         <p className={subTitleGameplayInformation}>
                                             Proficiency Bonus
@@ -321,24 +309,23 @@ export default function CharacterNew() {
                                                 readOnly />
                                         </div>
                                     </div>
-                                    { /* Character Class */}
                                     <div>
                                         <p className={subTitleGameplayInformation}>
-                                            Class
+                                            Type
                                         </p>
                                         <div className={inputGameplayInformation}>
                                             <select
                                                 className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                                value={characterClass}
-                                                onChange={(e) => setCharacterClass(e.target.value)}
+                                                value={npcType}
+                                                onChange={(e) => setNpcType(e.target.value)}
                                             >
-                                                {classes.map(c => (
-                                                    <option key={c.class} value={c.class}>{c.class}</option>
-                                                ))}
+                                                <option value="Humanoid">Humanoid</option>
+                                                <option value="Beast">Beast</option>
+                                                <option value="Undead">Undead</option>
+                                                <option value="Construct">Construct</option>
                                             </select>
                                         </div>
                                     </div>
-                                    { /* Character Race */}
                                     <div>
                                         <p className={subTitleGameplayInformation}>
                                             Race
@@ -346,8 +333,8 @@ export default function CharacterNew() {
                                         <div className={inputGameplayInformation}>
                                             <select
                                                 className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                                value={characterRace}
-                                                onChange={(e) => setCharacterRace(e.target.value)}
+                                                value={npcRace}
+                                                onChange={(e) => setNpcRace(e.target.value)}
                                             >
                                                 {races.map(c => (
                                                     <option key={c} value={c}>{c}</option>
@@ -355,24 +342,22 @@ export default function CharacterNew() {
                                             </select>
                                         </div>
                                     </div>
-                                    { /* Character Subclass */}
                                     <div>
                                         <p className={subTitleGameplayInformation}>
-                                            Subclass
+                                            Subtype
                                         </p>
                                         <div className={inputGameplayInformation}>
                                             <select
                                                 className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                                value={characterSubclass}
-                                                onChange={(e) => setCharacterSubclass(e.target.value)}
+                                                value={npcSubtype}
+                                                onChange={(e) => setNpcSubtype(e.target.value)}
                                             >
-                                                {subclasses.map(c => (
+                                                {subtypes.map(c => (
                                                     <option key={c} value={c}>{c}</option>
                                                 ))}
                                             </select>
                                         </div>
                                     </div>
-                                    { /* Character Background */}
                                     <div>
                                         <p className={subTitleGameplayInformation}>
                                             Background
@@ -401,7 +386,6 @@ export default function CharacterNew() {
                                             {s.skills && Object.keys(s.skills).length > 0 && (
                                                 Object.keys(s.skills).map((skillName) => {
                                                     const profLevel = skillProf[skillName] ?? 0;
-                                                    // If expertise (2) is set, show proficiency button as active as well
                                                     const profBtnClass = profLevel > 0 ? 'px-3 py-1 rounded bg-orange-500 text-white cursor-pointer' : 'px-3 py-1 rounded bg-orange-800/50 text-white cursor-pointer';
                                                     const expBtnClass = profLevel === 2 ? 'px-3 py-1 rounded bg-orange-500 text-white cursor-pointer' : 'px-3 py-1 rounded bg-orange-800/50 text-white cursor-pointer';
                                                     return (
@@ -443,7 +427,7 @@ export default function CharacterNew() {
                     </div>
                     <div className="col-span-2 w-full p-2">
                         <div className="bg-orange-700/30 rounded-md p-4 flex flex-col items-center">
-                            <h1 className="text-2xl font-bold pb-6">Character Avatar</h1>
+                            <h1 className="text-2xl font-bold pb-6">NPC Avatar</h1>
                             <div className="border-2 border-orange-700 border-dashed w-3/5 h-48 flex flex-col justify-center hover:border-orange-500">
                                 <p className="text-gray-400 uppercase text-center">SQUARE</p>
                                 <p className="text-gray-400 text-center">Click <span className="text-white font-bold">here</span> to upload image</p>
