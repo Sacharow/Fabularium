@@ -50,7 +50,7 @@ function loadFromSession(): CharacterSection[] {
 }
 
 export default function CharacterPage() {
-  const { campaignId, characterId } = useParams<{ campaignId?: string; characterId?: string }>()
+  const { characterId } = useParams<{ characterId?: string }>()
   const navigate = useNavigate()
   const characters = loadFromSession()
   const char = characters.find((c) => c.id === Number(characterId))

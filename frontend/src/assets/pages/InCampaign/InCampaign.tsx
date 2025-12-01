@@ -112,7 +112,7 @@ export default function InCampaign(props: { activeSectionProp?: string }) {
                                 <div className="max-w-[1200px] mx-auto">
                                     <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                                         {visible.map((c) => (
-                                            <NavLink key={c.id} to={`/InCampaign/${campaignId}/Locations${c.id}`}>
+                                            <NavLink key={c.id} to={`/InCampaign/${campaignId}/Locations/${c.id}`}>
                                                 <button className="w-full aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer">
                                                     <div className="h-full grid grid-rows-[80%_20%]">
                                                         {/* top 80% - graphic */}

@@ -239,7 +239,7 @@ export default function NpcNew() {
                     <div className="col-span-4 w-full flex justify-center p-2">
                         <div className="flex flex-col gap-8 w-full">
                             <div className="bg-orange-700/30 p-4 rounded-md">
-                                <h1 className="text-2xl font-bold">Basic Informations</h1>
+                                <h1 className="text-2xl font-bold">Basic Information</h1>
                                 <p className="text-gray-400 py-2">NPC's Name</p>
                                 <div className="bg-black/80">
                                     <input
@@ -281,7 +281,7 @@ export default function NpcNew() {
                             </div>
 
                             <div className="bg-orange-700/30 p-4 rounded-md">
-                                <h1 className="text-2xl font-bold pb-4">Gameplay Informations</h1>
+                                <h1 className="text-2xl font-bold pb-4">Gameplay Information</h1>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <p className={subTitleGameplayInformation}>

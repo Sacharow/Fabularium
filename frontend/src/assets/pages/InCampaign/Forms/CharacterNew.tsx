@@ -53,7 +53,7 @@ export default function CharacterNew() {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
 
-    // Loreplay info
+    // Roleplay info
     const [background, setBackground] = useState<string>(backgrounds[0]);
     const [alignment, setAlignment] = useState<string>("True Neutral");
     const [age, setAge] = useState<number | "">("");
@@ -237,7 +237,7 @@ export default function CharacterNew() {
         setSavingThrowProf(prev => {
             const current = prev[statName] ?? 0;
             const next: Record<string, ProfLevel> = { ...prev, [statName]: current === 1 ? 0 : 1 };
-            // Recalculate displayed profValue for the affected stat
+            // Recalculate displayed modifier for the affected stat
             setStats(stPrev => stPrev.map(s => {
                 if (s.name !== statName) return s;
                 const updated: Stat = { ...s };
@@ -267,7 +267,7 @@ export default function CharacterNew() {
         setStats(prev => prev.map(s => {
             const base = Math.floor((s.value - 10) / 2);
             const stProfLevel = (savingThrowProf[s.name] ?? 0) as number;
-            const updatedProfValue = base + profBonus * stProfLevel;
+            const updatedModifier = base + profBonus * stProfLevel;
             let updatedSkills = s.skills;
             if (s.skills) {
                 const newSkills: Record<string, number> = {};
@@ -277,7 +277,7 @@ export default function CharacterNew() {
                 });
                 updatedSkills = newSkills;
             }
-            return { ...s, profValue: updatedProfValue, skills: updatedSkills };
+            return { ...s, modifier: updatedModifier, skills: updatedSkills };
         }));
     }, [profBonus, skillProf, savingThrowProf]);
 
@@ -297,7 +297,7 @@ export default function CharacterNew() {
 
     useEffect(() => {
         setHitPointsCurrent(hitPointsMax);
-    });
+    }, [hitPointsMax]);
 
     useEffect(() => {
         const conMod = stats.find((s) => s.name === "Constitution")?.modifier ?? 0;
@@ -385,7 +385,7 @@ export default function CharacterNew() {
                         <div className="flex flex-col gap-8 w-full">
                             {(selectedView === 'all' || selectedView === 'basic') && (
                                 <div className="bg-orange-700/30 p-4 rounded-md">
-                                    <h1 className="text-2xl font-bold">Basic Informations</h1>
+                                    <h1 className="text-2xl font-bold">Basic Information</h1>
                                     <p className={subTitleGameplayInformation}>Character's Name</p>
                                     <div className={inputGameplayInformation}>
                                         <input
@@ -409,10 +409,10 @@ export default function CharacterNew() {
                                 </div>
                             )}
 
-                            { /* Loreplay Information */}
+                            { /* Roleplay Information */}
                             {(selectedView === 'all' || selectedView === 'lore') && (
                                 <div className="bg-orange-700/30 p-4 rounded-md">
-                                    <h1 className="text-2xl font-bold pb-4">Loreplay Informations</h1>
+                                    <h1 className="text-2xl font-bold pb-4">Roleplay Information</h1>
                                     <div className="grid grid-cols-2 gap-4">
                                         { /* Age */}
                                         <div>
@@ -570,7 +570,7 @@ export default function CharacterNew() {
                             { /* Gameplay Information */}
                             {(selectedView === 'all' || selectedView === 'gameplay') && (
                                 <div className="bg-orange-700/30 p-4 rounded-md">
-                                    <h1 className="text-2xl font-bold pb-4">Gameplay Informations</h1>
+                                    <h1 className="text-2xl font-bold pb-4">Gameplay Information</h1>
                                     <div className="grid grid-cols-2 gap-4">
                                         { /* Character Class */}
                                         <div>
@@ -815,7 +815,7 @@ export default function CharacterNew() {
                                         {equipment.map((item, index) => (
                                             <div key={index} className="flex justify-between items-center border-b border-gray-700 py-1 w-3/4">
                                                 <p>{item}</p>
-                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded curs" onClick={() => removeEquipment(index)}>Remove</button>
+                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeEquipment(index)}>Remove</button>
                                             </div>
                                         ))}
 
