@@ -7,12 +7,12 @@ type Props = {
 };
 
 export default function CampaignSidebar({ active: controlledActive = null, onChange }: Props) {
-    const buttons = 
+    const buttons =
         [
-            { name: 'Map', icon: Map },
+            { name: 'Maps', icon: Map },
             { name: 'Locations', icon: Mountain },
             { name: 'Characters', icon: Users },
-            { name: 'NPC', icon: UsersRound },
+            { name: 'NPCs', icon: UsersRound },
             { name: 'Quests', icon: Notebook },
             { name: 'Players', icon: UsersRound },
             { name: 'Notes', icon: Scroll },
