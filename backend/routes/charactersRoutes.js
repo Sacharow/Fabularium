@@ -1,7 +1,7 @@
 'use strict'
 
 const {createCharacter, deleteCharacter, updateCharacter, listMyCharacters} = require("../controllers/charactersControl");
-const checkOwnership = require("../middleware/safety");
+const {checkOwnership} = require("../middleware/safety");
 const router = require("express").Router();
 
 router.get("/mycharactrs", checkOwnership, listMyCharacters);
