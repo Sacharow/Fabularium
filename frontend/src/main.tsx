@@ -14,6 +14,8 @@ import MapNew from "./assets/pages/InCampaign/Forms/MapNew";
 import LocationNew from "./assets/pages/InCampaign/Forms/LocationNew";
 import CharacterNew from "./assets/pages/InCampaign/Forms/CharacterNew";
 import NpcNew from "./assets/pages/InCampaign/Forms/NpcNew";
+import NoteNew from "./assets/pages/InCampaign/Forms/NoteNew";
+import QuestNew from "./assets/pages/InCampaign/Forms/QuestNew";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -31,6 +33,8 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/InCampaign/:campaignId/Locations/New" element={<LocationNew />} />
         <Route path="/InCampaign/:campaignId/Characters/New" element={<CharacterNew />} />
         <Route path="/InCampaign/:campaignId/NPCs/New" element={<NpcNew />} />
+        <Route path="/InCampaign/:campaignId/Notes/New" element={<NoteNew />} />
+        <Route path="/InCampaign/:campaignId/Quests/New" element={<QuestNew />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
