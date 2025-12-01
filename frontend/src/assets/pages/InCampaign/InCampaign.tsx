@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, NavLink, useParams, useMatch } from "react-router-dom";
-import CampaignSidebar from "../components/helper/CampaignSidebar";
+import CampaignSidebar from "../../components/helper/CampaignSidebar";
 
 export default function InCampaign(props: { activeSectionProp?: string }) {
     const [activeSection, setActiveSection] = useState<string>(props.activeSectionProp || "Maps");
