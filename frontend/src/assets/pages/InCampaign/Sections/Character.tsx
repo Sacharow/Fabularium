@@ -22,7 +22,7 @@ type CharacterSection = {
   equipment?: string[]
   money?: Record<string, number>
   background?: string
-  traits?: string
+  personalityTraits?: string
   ideals?: string
   bonds?: string
   flaws?: string
@@ -183,12 +183,12 @@ export default function CharacterPage() {
             </div>
           </div>
 
-          {(char.background || char.traits || char.ideals || char.bonds || char.flaws) && (
+          {(char.background || char.personalityTraits || char.ideals || char.bonds || char.flaws) && (
             <div className="mt-4 bg-orange-900 p-4 rounded-lg">
               <h4 className="font-semibold">Background & Personality</h4>
               <div className="mt-2 text-sm space-y-2">
                 {char.background && <div><strong>Background:</strong> <span className="font-medium">{char.background}</span></div>}
-                {char.traits && <div><strong>Traits:</strong> <span className="font-medium">{char.traits}</span></div>}
+                {char.personalityTraits && <div><strong>Traits:</strong> <span className="font-medium">{char.personalityTraits}</span></div>}
                 {char.ideals && <div><strong>Ideals:</strong> <span className="font-medium">{char.ideals}</span></div>}
                 {char.bonds && <div><strong>Bonds:</strong> <span className="font-medium">{char.bonds}</span></div>}
                 {char.flaws && <div><strong>Flaws:</strong> <span className="font-medium">{char.flaws}</span></div>}

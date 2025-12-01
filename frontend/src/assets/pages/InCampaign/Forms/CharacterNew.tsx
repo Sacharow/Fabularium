@@ -15,12 +15,12 @@ type Stat = {
 type ProfLevel = 0 | 1 | 2;
 
 const INITIAL_STATS: Stat[] = [
-    { name: "Strength", value: 8, modifier: -1, skills: { "Athletics": -1 } },
-    { name: "Dexterity", value: 8, modifier: -1, skills: { "Acrobatics": -1, "Sleight of Hand": -1, "Stealth": -1 } },
-    { name: "Constitution", value: 8, modifier: -1 },
-    { name: "Intelligence", value: 8, modifier: -1, skills: { "Arcana": -1, "History": -1, "Investigation": -1, "Nature": -1, "Religion": -1 } },
-    { name: "Wisdom", value: 8, modifier: -1, skills: { "Animal Handling": -1, "Insight": -1, "Medicine": -1, "Perception": -1, "Survival": -1 } },
-    { name: "Charisma", value: 8, modifier: -1, skills: { "Deception": -1, "Intimidation": -1, "Performance": -1, "Persuasion": -1 } }
+    { name: "Strength", value: 10, modifier: 0, skills: { "Athletics": 0 } },
+    { name: "Dexterity", value: 10, modifier: 0, skills: { "Acrobatics": 0, "Sleight of Hand": 0, "Stealth": 0 } },
+    { name: "Constitution", value: 10, modifier: 0 },
+    { name: "Intelligence", value: 10, modifier: 0, skills: { "Arcana": 0, "History": 0, "Investigation": 0, "Nature": 0, "Religion": 0 } },
+    { name: "Wisdom", value: 10, modifier: 0, skills: { "Animal Handling": 0, "Insight": 0, "Medicine": 0, "Perception": 0, "Survival": 0 } },
+    { name: "Charisma", value: 10, modifier: 0, skills: { "Deception": 0, "Intimidation": 0, "Performance": 0, "Persuasion": 0 } }
 ];
 
 const INITIAL_SKILL_PROF: Record<string, ProfLevel> = {
@@ -75,7 +75,7 @@ export default function CharacterNew() {
     const [hitDice] = useState<number>(10);
     const [hitPointsMax, setHitPointsMax] = useState<number>(10);
     const [hitPointsCurrent, setHitPointsCurrent] = useState<number>(10);
-    const [armorClass] = useState<number>(10);
+    const [armorClass, setArmorClass] = useState<number>(10);
     const [passivePerception, setPassivePerception] = useState<number>(10);
 
     // Character choices
@@ -303,6 +303,11 @@ export default function CharacterNew() {
         const conMod = stats.find((s) => s.name === "Constitution")?.modifier ?? 0;
         setHitPointsMax(hitDice + level * conMod + (level - 1) * Math.ceil((1 + hitDice) / 2));
     }, [stats, hitDice, level]);
+
+    useEffect(() => {
+        const dexMod = stats.find(s => s.name === "Dexterity")?.modifier ?? 0;
+        setArmorClass(10 + dexMod);
+    }, [stats]);
 
     // UI helper classes
     const inputGameplayInformation = `bg-black/80 w-full rounded-md`;
@@ -677,7 +682,7 @@ export default function CharacterNew() {
                                                 <input
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="D10"
-                                                    value={hitDice}
+                                                    value={`D${hitDice}`}
                                                     readOnly />
                                             </div>
                                         </div>
@@ -690,7 +695,7 @@ export default function CharacterNew() {
                                                 <input
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
-                                                    value={initiativeBonus}
+                                                    value={initiativeBonus >= 0 ? `+${initiativeBonus}` : `${initiativeBonus}`}
                                                     onChange={(e) => setInitiativeBonus(Number(e.target.value))} />
                                             </div>
                                         </div>
