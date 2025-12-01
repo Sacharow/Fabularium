@@ -67,6 +67,8 @@ model Character {
 
   raceId       String?
   race         Race?     @relation(fields: [raceId], references: [id])
+  subraceId    String?
+  subRace     SubRace?  @relation(fields: [subraceId], references: [id])
 
   classId      String?
   class        Class?    @relation(fields: [classId], references: [id])
@@ -102,6 +104,8 @@ model Character {
   currency         CharacterCurrency?
 
   characterEventLogs CharacterEventLog[]
+
+
 }
 
 
@@ -271,16 +275,25 @@ model CharacterFeature {
   notes       String?
 }
 
-
 model Race {
   id        String @id @default(uuid())
   name      String @unique
   description String?
+  subRaces  SubRace[]
   size      Size?
   speed     Int?
-  languages String? // simple csv, or create Language table
+  languages String?
   raceAbilities RaceAbility[]
+  characters Character[]
+}
 
+model SubRace {
+  id        String @id @default(uuid())
+  parentRaceId String
+  parentRace Race @relation(fields: [parentRaceId], references: [id])
+  name      String @unique
+  description String?
+  subRaceAbilities SubRaceAbility[]
   characters Character[]
 }
 
@@ -288,8 +301,15 @@ model RaceAbility {
   id      String @id @default(uuid())
   raceId  String
   race    Race   @relation(fields: [raceId], references: [id])
-
   name    String
+  description String?
+}
+
+model SubRaceAbility {
+  id        String @id @default(uuid())
+  subRaceId String
+  subRace   SubRace @relation(fields: [subRaceId], references: [id])
+  name      String
   description String?
 }
 
@@ -297,7 +317,7 @@ model RaceAbility {
 model Class {
   id        String @id @default(uuid())
   name      String @unique
-  hitDie    Int    // e.g. 8 for d8
+  hitDie    Int
   spellcasting Boolean @default(false)
   description String?
   subclasses Subclass[]

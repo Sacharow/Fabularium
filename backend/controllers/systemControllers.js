@@ -16,7 +16,7 @@ const raceSchema = z.object({
 const getAllRaces = async (req, res) => {
     try {
         const races = await prisma.race.findMany({
-            include: { raceAbilities: true }
+            include: { raceAbilities: true, subRaces: true }
         });
         return res.status(200).json(races);
     } catch (err) {
@@ -28,7 +28,7 @@ const getRaceById = async (req, res) => {
     try {
         const race = await prisma.race.findUnique({
             where: { id: req.params.id },
-            include: { raceAbilities: true }
+            include: { raceAbilities: true, subRaces: { include: { subRaceAbilities: true } } }
         });
         if (!race) {
             return res.status(404).json({ message: "Race not found" });
@@ -148,7 +148,6 @@ const deleteClass = async (req, res) => {
     }
 };
 
-// ===== SUBCLASS CONTROLLERS =====
 const subclassSchema = z.object({
     name: z.string().min(1),
     classId: z.string(),
@@ -225,6 +224,7 @@ const raceAbilitySchema = z.object({
     description: z.string().optional()
 });
 
+
 const getAllRaceAbilities = async (req, res) => {
     try {
         const raceAbilities = await prisma.raceAbility.findMany({
@@ -286,6 +286,163 @@ const deleteRaceAbility = async (req, res) => {
         return res.status(200).json({ message: "Race ability deleted" });
     } catch (err) {
         return res.status(500).json({ message: "Error deleting race ability", error: err });
+    }
+};
+
+const subraceSchema = z.object({
+    parentRaceId: z.string().min(1),
+    name: z.string().min(1),
+    description: z.string().optional()
+});
+
+const getAllSubraces = async (req, res) => {
+    try {
+        const subraces = await prisma.subRace.findMany({
+            include: { parentRace: true, subRaceAbilities: true }
+        });
+        return res.status(200).json(subraces);
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching subraces", error: err });
+    }
+};
+
+const getSubraceById = async (req, res) => {
+    try {
+        const subrace = await prisma.subRace.findUnique({
+            where: { id: req.params.id },
+            include: { parentRace: true, subRaceAbilities: true }
+        });
+        if (!subrace) {
+            return res.status(404).json({ message: "Subrace not found" });
+        }
+        return res.status(200).json(subrace);
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching subrace", error: err });
+    }
+};
+
+const createSubrace = async (req, res) => {
+    try {
+        const data = subraceSchema.safeParse(req.body);
+        if (!data.success) {
+            return res.status(400).json({ message: "Validation failed", errors: data.error });
+        }
+
+        const parentRace = await prisma.race.findUnique({
+            where: { id: data.data.parentRaceId }
+        });
+        if (!parentRace) {
+            return res.status(404).json({ message: "Parent race not found" });
+        }
+        
+        const subrace = await prisma.subRace.create({ data: data.data });
+        return res.status(201).json(subrace);
+    } catch (err) {
+        return res.status(500).json({ message: "Error creating subrace", error: err });
+    }
+};
+
+const updateSubrace = async (req, res) => {
+    try {
+        const data = subraceSchema.partial().safeParse(req.body);
+        if (!data.success) {
+            return res.status(400).json({ message: "Validation failed", errors: data.error });
+        }
+        const subrace = await prisma.subRace.update({
+            where: { id: req.params.id },
+            data: data.data
+        });
+        return res.status(200).json(subrace);
+    } catch (err) {
+        return res.status(500).json({ message: "Error updating subrace", error: err });
+    }
+};
+
+const deleteSubrace = async (req, res) => {
+    try {
+        await prisma.subRace.delete({ where: { id: req.params.id } });
+        return res.status(200).json({ message: "Subrace deleted" });
+    } catch (err) {
+        return res.status(500).json({ message: "Error deleting subrace", error: err });
+    }
+};
+
+const subraceAbilitySchema = z.object({
+    subRaceId: z.string(),
+    name: z.string().min(1),
+    description: z.string().optional()
+});
+
+const getAllSubraceAbilities = async (req, res) => {
+    try {
+        const subraceAbilities = await prisma.subRaceAbility.findMany({
+            include: { subRace: true }
+        });
+        return res.status(200).json(subraceAbilities);
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching subrace abilities", error: err });
+    }
+};
+
+const getSubraceAbilityById = async (req, res) => {
+    try {
+        const subraceAbility = await prisma.subRaceAbility.findUnique({
+            where: { id: req.params.id },
+            include: { subRace: true }
+        });
+        if (!subraceAbility) {
+            return res.status(404).json({ message: "Subrace ability not found" });
+        }
+        return res.status(200).json(subraceAbility);
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching subrace ability", error: err });
+    }
+};
+
+const createSubraceAbility = async (req, res) => {
+    try {
+        const data = subraceAbilitySchema.safeParse(req.body);
+        if (!data.success) {
+            return res.status(400).json({ message: "Validation failed", errors: data.error });
+        }
+
+        const subRace = await prisma.subRace.findUnique({
+            where: { id: data.data.subRaceId }
+        });
+        
+        if (!subRace) {
+            return res.status(404).json({ message: "Subrace not found" });
+        }
+        
+        const subraceAbility = await prisma.subRaceAbility.create({ data: data.data });
+        return res.status(201).json(subraceAbility);
+    } catch (err) {
+        return res.status(500).json({ message: "Error creating subrace ability", error: err });
+    }
+};
+
+const updateSubraceAbility = async (req, res) => {
+    try {
+        const data = subraceAbilitySchema.partial().safeParse(req.body);
+        if (!data.success) {
+            return res.status(400).json({ message: "Validation failed", errors: data.error });
+        }
+        const subraceAbility = await prisma.subRaceAbility.update({
+            where: { id: req.params.id },
+            data: data.data
+        });
+        return res.status(200).json(subraceAbility);
+    } catch (err) {
+        return res.status(500).json({ message: "Error updating subrace ability", error: err });
+    }
+};
+
+const deleteSubraceAbility = async (req, res) => {
+    try {
+        await prisma.subRaceAbility.delete({ where: { id: req.params.id } });
+        return res.status(200).json({ message: "Subrace ability deleted" });
+    } catch (err) {
+        return res.status(500).json({ message: "Error deleting subrace ability", error: err });
     }
 };
 
@@ -573,6 +730,13 @@ module.exports = {
     updateRace,
     deleteRace,
     
+    // SubRace
+    getAllSubraces,
+    getSubraceById,
+    createSubrace,
+    updateSubrace,
+    deleteSubrace,
+    
     // Class
     getAllClasses,
     getClassById,
@@ -593,6 +757,13 @@ module.exports = {
     createRaceAbility,
     updateRaceAbility,
     deleteRaceAbility,
+    
+    // SubRace Ability
+    getAllSubraceAbilities,
+    getSubraceAbilityById,
+    createSubraceAbility,
+    updateSubraceAbility,
+    deleteSubraceAbility,
     
     // Spell
     getAllSpells,

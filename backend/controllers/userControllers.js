@@ -50,8 +50,9 @@ const createUserClassic = async (req, res) => {
 
 const login = async (req, res) => {
     try {
+        
         const data = loginSchema.safeParse(req.body);
-
+        
         if (!data.success) {
             return res.status(400).json({message: "Validation failed", errors: z.treeifyError(data.error)});
         }

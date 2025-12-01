@@ -203,7 +203,6 @@ const updateCharacter = async (req, res) => {
     }
 };
 
-// DELETE /characters/:id
 const deleteCharacter = async (req, res) => {
     try {
         const user = req.user;
