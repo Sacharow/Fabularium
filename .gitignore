@@ -1,3 +1,6 @@
+node_modules
+toDoBack.txt
+Fabularium_API_Collection.postman_collection.json
 # Logs
 logs
 *.log
