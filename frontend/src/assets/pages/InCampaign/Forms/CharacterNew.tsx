@@ -71,7 +71,7 @@ export default function CharacterNew() {
     const [skillProf, setSkillProf] = useState<Record<string, ProfLevel>>(INITIAL_SKILL_PROF);
     const [savingThrowProf, setSavingThrowProf] = useState<Record<string, ProfLevel>>({});
     const [initiativeBonus, setInitiativeBonus] = useState<number>(0);
-    const [speed, setSpeed] = useState<number>(30);
+    const [speed] = useState<number>(30);
     const [hitDice] = useState<number>(10);
     const [hitPointsMax, setHitPointsMax] = useState<number>(10);
     const [hitPointsCurrent, setHitPointsCurrent] = useState<number>(10);
@@ -707,7 +707,7 @@ export default function CharacterNew() {
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
                                                     value={initiativeBonus >= 0 ? `+${initiativeBonus}` : `${initiativeBonus}`}
-                                                    onChange={(e) => setInitiativeBonus(Number(e.target.value))} />
+                                                    readOnly />
                                             </div>
                                         </div>
                                         { /* Speed */}
@@ -720,7 +720,7 @@ export default function CharacterNew() {
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
                                                     value={speed}
-                                                    onChange={(e) => setSpeed(Number(e.target.value))} />
+                                                    readOnly />
                                             </div>
                                         </div>
                                         { /* hitPointsMax */}
@@ -733,7 +733,7 @@ export default function CharacterNew() {
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
                                                     value={hitPointsMax}
-                                                    onChange={(e) => setHitPointsMax(Number(e.target.value))} />
+                                                    readOnly />
                                             </div>
                                         </div>
                                         { /* Passive Perception */}
@@ -746,7 +746,7 @@ export default function CharacterNew() {
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
                                                     value={passivePerception}
-                                                    onChange={(e) => setPassivePerception(Number(e.target.value))} />
+                                                    readOnly />
                                             </div>
                                         </div>
                                     </div>
