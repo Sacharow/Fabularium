@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Map, Users, Scroll, UsersRound, Mountain, MapPin } from "lucide-react";
+import { Map, Users, Scroll, UsersRound, Mountain, Notebook } from "lucide-react";
 
 type Props = {
     active?: string | null;
@@ -7,13 +7,13 @@ type Props = {
 };
 
 export default function CampaignSidebar({ active: controlledActive = null, onChange }: Props) {
-    const buttons = 
+    const buttons =
         [
-            { name: 'Map', icon: Map },
+            { name: 'Maps', icon: Map },
             { name: 'Locations', icon: Mountain },
             { name: 'Characters', icon: Users },
-            { name: 'NPC', icon: UsersRound },
-            { name: 'Point of Interest', icon: MapPin },
+            { name: 'NPCs', icon: UsersRound },
+            { name: 'Quests', icon: Notebook },
             { name: 'Players', icon: UsersRound },
             { name: 'Notes', icon: Scroll },
         ]
