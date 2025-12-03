@@ -73,7 +73,7 @@ export default function GeneralView() {
                                 <h1 className="text-3xl font-bold">{introData.currentSection}</h1>
                                 <NavLink to={campaignId ? `/InCampaign/${campaignId}/${introData.urlName}/New` : '#'}>
                                     <button className="bg-orange-900 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
-                                        <p>Create New</p>
+                                        <p>Edit</p>
                                     </button>
                                 </NavLink>
                             </div>
@@ -82,16 +82,9 @@ export default function GeneralView() {
                             <div className="max-w-[1200px] mx-auto">
                                 <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                                     {visible.map((c) => (
-                                        <NavLink key={c.id} to={`/InCampaign/${campaignId}/General/${c.id}`}>
-                                            <button className="w-full aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer">
-                                                <div className="h-full grid grid-rows-[80%_20%]">
-                                                    <div className={`${c.color} flex items-center justify-center`}></div>
-                                                    <div className="bg-gray-800 flex items-center justify-center px-2">
-                                                        <span className="text-sm font-medium text-gray-100 text-center">{c.name}</span>
-                                                    </div>
-                                                </div>
-                                            </button>
-                                        </NavLink>
+                                        <div key={c.id}>
+                                            {/* Basic Campaign Information */}
+                                        </div>
                                     ))}
                                 </div>
                             </div>

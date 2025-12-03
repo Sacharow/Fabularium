@@ -846,8 +846,7 @@ export default function CharacterNew() {
                         <div className="bg-orange-700/30 rounded-md p-4 flex flex-col items-center">
                             <h1 className="text-2xl font-bold pb-6">Character Avatar</h1>
                             <div className="border-2 border-orange-700 border-dashed w-3/5 h-48 flex flex-col justify-center hover:border-orange-500">
-                                <p className="text-gray-400 uppercase text-center">SQUARE</p>
-                                <p className="text-gray-400 text-center">Click <span className="text-white font-bold">here</span> to upload image</p>
+                                <p className="text-gray-400 text-center p-2">Click <span className="text-white font-bold hover:underline cursor-pointer">here</span> to upload image</p>
                             </div>
                         </div>
                     </div>

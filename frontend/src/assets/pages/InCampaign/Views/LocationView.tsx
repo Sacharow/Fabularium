@@ -81,13 +81,13 @@ export default function LocationView() {
                         <div className="pt-6 px-6">
                             <div className="max-w-[1200px] mx-auto">
                                 <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                                    {visible.map((c) => (
-                                        <NavLink key={c.id} to={`/InCampaign/${campaignId}/Locations/${c.id}`}>
+                                    {visible.map((l) => (
+                                        <NavLink key={l.id} to={`/InCampaign/${campaignId}/Locations/${l.id}`}>
                                             <button className="w-full aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer">
                                                 <div className="h-full grid grid-rows-[80%_20%]">
-                                                    <div className={`${c.color} flex items-center justify-center`}></div>
-                                                    <div className="bg-gray-800 flex items-center justify-center px-2">
-                                                        <span className="text-sm font-medium text-gray-100 text-center">{c.name}</span>
+                                                    <div className={`${l.color} flex items-center justify-center`}></div>
+                                                    <div className="bg-orange-700 flex items-center justify-center px-2">
+                                                        <span className="text-sm font-medium text-gray-100 text-center">{l.name}</span>
                                                     </div>
                                                 </div>
                                             </button>
