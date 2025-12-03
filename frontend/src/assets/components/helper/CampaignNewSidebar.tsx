@@ -12,7 +12,7 @@ export default function CampaignNewSidebar({ campaignId }: Props) {
             { name: 'Maps', urlName: 'MapView', icon: Map },
             { name: 'Locations', urlName: 'LocationView', icon: Mountain },
             { name: 'Characters', urlName: 'CharacterView', icon: Users },
-            { name: 'NPCs', urlName: 'NPCView', icon: UsersRound },
+            { name: 'NPCs', urlName: 'NpcView', icon: UsersRound },
             { name: 'Quests', urlName: 'QuestView', icon: Notebook },
             { name: 'Players', urlName: 'PlayerView', icon: UsersRound },
             { name: 'Notes', urlName: 'NoteView', icon: Scroll },
