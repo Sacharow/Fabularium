@@ -68,7 +68,7 @@ function levelUpCharacter(characters: CharacterSection[], characterId: number): 
         level: (char.level ?? 1) + 1,
         hitPointsMax: (char.hitPointsMax ?? 10) + Math.ceil((1 + hitDice) / 2),
         hitPointsCurrent: (char.hitPointsCurrent ?? 10) + Math.ceil((1 + hitDice) / 2),
-        profBonus: ((char.level ?? 1) + 1) % 4 === 0 ? (char.profBonus ?? 2) + 1 : (char.profBonus ?? 2),
+        profBonus: Math.floor(((char.level ?? 1) + 1 + 3) / 4) + 1,
 
       }
     }
