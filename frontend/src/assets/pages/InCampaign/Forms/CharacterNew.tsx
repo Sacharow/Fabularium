@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import classes from "../../../components/constants/classes.json";
 import races from "../../../components/constants/races.json";
@@ -308,7 +308,7 @@ export default function CharacterNew() {
         const dexMod = stats.find(s => s.name === "Dexterity")?.modifier ?? 0;
         setArmorClass(10 + dexMod);
     }, [stats]);
-    
+
     useEffect(() => {
         const wisMod = stats.find(s => s.name === "Wisdom")?.modifier ?? 0;
         setPassivePerception(10 + skillProf["Perception"]! * profBonus + wisMod);
@@ -322,6 +322,12 @@ export default function CharacterNew() {
     // UI helper classes
     const inputGameplayInformation = `bg-black/80 w-full rounded-md`;
     const subTitleGameplayInformation = `text-gray-400 py-2`;
+    const { campaignId } = useParams<{ campaignId?: string }>();
+
+    const introData = {
+        currentSection: "Character Section",
+        urlName: "CharacterView"
+    };
 
     return (
         <div className="pt-6">
@@ -331,11 +337,11 @@ export default function CharacterNew() {
                     <div className="col-span-4">
                         <div className="pb-4">
                             <p className="text-gray-500 text-sm ">
-                                <button className="cursor-pointer hover:text-gray-400" onClick={() => navigate(-2)}>Campaigns </button>
+                                <NavLink to="/campaigns" className="cursor-pointer hover:text-gray-400">Campaigns</NavLink>
                                 <span> / </span>
-                                <button className="cursor-pointer hover:text-gray-400" onClick={() => navigate(-1)}>Sections</button>
+                                <NavLink to={`/InCampaign/${campaignId}/${introData.urlName}`} className="cursor-pointer hover:text-gray-400">{introData.urlName}</NavLink>
                                 <span> / </span>
-                                <button className="cursor-pointer hover:text-gray-400" onClick={() => navigate(0)}> New</button>
+                                <NavLink to="#" className="cursor-pointer hover:text-gray-400"> New</NavLink>
                             </p>
                         </div>
                         <div className="flex justify-between items-center">

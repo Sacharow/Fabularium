@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, NavLink } from "react-router-dom"
 
 type Stat = {
   name: string
@@ -69,10 +69,10 @@ function levelUpCharacter(characters: CharacterSection[], characterId: number): 
         hitPointsMax: (char.hitPointsMax ?? 10) + Math.ceil((1 + hitDice) / 2),
         hitPointsCurrent: (char.hitPointsCurrent ?? 10) + Math.ceil((1 + hitDice) / 2),
         profBonus: ((char.level ?? 1) + 1) % 4 === 0 ? (char.profBonus ?? 2) + 1 : (char.profBonus ?? 2),
-        
+
       }
     }
-        return char
+    return char
   })
 }
 
@@ -96,16 +96,25 @@ export default function CharacterPage() {
     )
   }
 
+  const introData = {
+    currentSection: "Character Section",
+    urlName: "CharacterView"
+  };
+
+
   return (
     <div className="p-6">
       <div className="pb-4">
-        <p className="text-gray-500 text-sm ">
-          <button className="cursor-pointer hover:text-gray-400" onClick={() => navigate(-2)}>Campaigns </button>
-          <span> / </span>
-          <button className="cursor-pointer hover:text-gray-400" onClick={() => navigate(-1)}>Sections</button>
-          <span> / </span>
-          <button className="cursor-pointer hover:text-gray-400" onClick={() => navigate(0)}> New</button>
-        </p>
+        <div className="max-w-6xl mx-auto">
+          <p className="text-gray-500 text-sm ">
+            <NavLink to="/campaigns" className="cursor-pointer hover:text-gray-400">Campaigns</NavLink>
+            <span> / </span>
+            <NavLink to={`/InCampaign/${char.campaignId}/${introData.urlName}`} className="cursor-pointer hover:text-gray-400">{introData.currentSection}</NavLink>
+            <span> / </span>
+            <NavLink to="#" className="cursor-pointer hover:text-gray-400"> {char.name}</NavLink>
+          </p>
+        </div>
+
       </div>
       <div className="max-w-6xl mx-auto grid gap-6 md:grid-cols-[320px_1fr]">
         <aside className="bg-orange-900 p-4 rounded-lg">
@@ -122,23 +131,23 @@ export default function CharacterPage() {
             <p className="mt-3 text-sm text-orange-300">{char.description}</p>
           )}
           <div className="mt-4">
-            {(char.level ?? 1) < 20 && (       
-            <button
-              type="button"
-              aria-label="Level up (temporary)"
-              onClick={() => {
-                if (!char) return
-                const updated = levelUpCharacter(characters, char.id)
-                setCharacters(updated)
-              }}
-              className="w-full bg-orange-700 hover:bg-orange-600 text-white text-sm py-2 rounded cursor-pointer"
-            >
-              Level Up
-            </button>
+            {(char.level ?? 1) < 20 && (
+              <button
+                type="button"
+                aria-label="Level up (temporary)"
+                onClick={() => {
+                  if (!char) return
+                  const updated = levelUpCharacter(characters, char.id)
+                  setCharacters(updated)
+                }}
+                className="w-full bg-orange-700 hover:bg-orange-600 text-white text-sm py-2 rounded cursor-pointer"
+              >
+                Level Up
+              </button>
             )}
             {(char.level ?? 1) === 20 && (
-              <div 
-              className="w-full bg-orange-700 text-white text-sm py-2 rounded text-center">
+              <div
+                className="w-full bg-orange-700 text-white text-sm py-2 rounded text-center">
                 Max Level Reached
               </div>
             )}
