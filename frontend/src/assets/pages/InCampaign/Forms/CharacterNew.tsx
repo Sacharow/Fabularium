@@ -314,11 +314,6 @@ export default function CharacterNew() {
         setPassivePerception(10 + skillProf["Perception"]! * profBonus + wisMod);
     }, [stats]);
 
-    useEffect(() => {
-        const dexMod = stats.find(s => s.name === "Dexterity")?.modifier ?? 0;
-        setArmorClass(10 + dexMod);
-    }, [stats]);
-
     // UI helper classes
     const inputGameplayInformation = `bg-black/80 w-full rounded-md`;
     const subTitleGameplayInformation = `text-gray-400 py-2`;
