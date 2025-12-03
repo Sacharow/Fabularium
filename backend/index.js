@@ -18,7 +18,7 @@ app.use(morgan("dev"));
 
 app.use('/users', userRoutes);
 app.use("/characters", auth, characterRoutes);
-app.use("/system", auth, checkAdmin, systemRoutes);
+app.use("/system", auth, systemRoutes);
 
 app.use('/', (req, res) => {
     res.send("żelo elo");
@@ -27,7 +27,7 @@ app.use('/', (req, res) => {
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-    console.log("elo żelo");
+    console.log("serwer działa na porcie 3000");
 });
 
 
