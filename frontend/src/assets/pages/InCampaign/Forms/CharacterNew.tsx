@@ -308,6 +308,16 @@ export default function CharacterNew() {
         const dexMod = stats.find(s => s.name === "Dexterity")?.modifier ?? 0;
         setArmorClass(10 + dexMod);
     }, [stats]);
+    
+    useEffect(() => {
+        const wisMod = stats.find(s => s.name === "Wisdom")?.modifier ?? 0;
+        setPassivePerception(10 + skillProf["Perception"]! * profBonus + wisMod);
+    }, [stats]);
+
+    useEffect(() => {
+        const dexMod = stats.find(s => s.name === "Dexterity")?.modifier ?? 0;
+        setArmorClass(10 + dexMod);
+    }, [stats]);
 
     // UI helper classes
     const inputGameplayInformation = `bg-black/80 w-full rounded-md`;
@@ -560,7 +570,7 @@ export default function CharacterNew() {
                                                             const stBtnClass = stProf > 0 ? 'px-3 py-1 rounded bg-orange-500 text-white cursor-pointer' : 'px-3 py-1 rounded bg-orange-800/50 text-white cursor-pointer';
                                                             return (
                                                                 <>
-                                                                    <button className={stBtnClass} onClick={() => updateStatProf(s.name)}>Proficiency</button>
+                                                                    <button className={stBtnClass} onClick={() => updateStatProf(s.name)}>Prof</button>
                                                                 </>
                                                             );
                                                         })()}
