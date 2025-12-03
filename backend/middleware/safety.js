@@ -2,6 +2,7 @@
 
 const { PrismaClient } = require("../generated/prisma/client");
 const prisma = new PrismaClient()
+const jwt = require("jsonwebtoken");
 
 const checkOwnership = async (model) => {
     return async (req, res, next) => {
@@ -53,4 +54,22 @@ const checkAdmin = async (req, res, next) => {
     next();
 }
 
-module.exports = {checkOwnership, checkAdmin};
+const auth = (req, res, next) => {
+    try {
+        const token = req.cookies.access_token;
+
+        if (!token) {
+            return res.status(401).json({ message: "Not logged in" });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: "Invalid token" });
+    }
+};
+
+
+module.exports = {checkOwnership, checkAdmin, auth};

@@ -6,17 +6,19 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes.js');
 const systemRoutes = require("./routes/systemRoutes.js");
 const characterRoutes = require("./routes/charactersRoutes.js");
-const {checkAdmin} = require("./middleware/safety.js");
+const {checkAdmin, auth} = require("./middleware/safety.js");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
 app.use(morgan("dev"));
 
 
 app.use('/users', userRoutes);
-app.use("/characters", characterRoutes);
-app.use("/system", checkAdmin, systemRoutes);
+app.use("/characters", auth, characterRoutes);
+app.use("/system", auth, checkAdmin, systemRoutes);
 
 app.use('/', (req, res) => {
     res.send("żelo elo");

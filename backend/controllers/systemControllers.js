@@ -409,7 +409,7 @@ const createSubraceAbility = async (req, res) => {
         const subRace = await prisma.subRace.findUnique({
             where: { id: data.data.subRaceId }
         });
-        
+
         if (!subRace) {
             return res.status(404).json({ message: "Subrace not found" });
         }
@@ -723,63 +723,55 @@ const deleteFeat = async (req, res) => {
 };
 
 module.exports = {
-    // Race
+
     getAllRaces,
     getRaceById,
     createRace,
     updateRace,
     deleteRace,
-    
-    // SubRace
+
     getAllSubraces,
     getSubraceById,
     createSubrace,
     updateSubrace,
     deleteSubrace,
-    
-    // Class
+
     getAllClasses,
     getClassById,
     createClass,
     updateClass,
     deleteClass,
-    
-    // Subclass
+
     getAllSubclasses,
     getSubclassById,
     createSubclass,
     updateSubclass,
     deleteSubclass,
     
-    // Race Ability
     getAllRaceAbilities,
     getRaceAbilityById,
     createRaceAbility,
     updateRaceAbility,
     deleteRaceAbility,
-    
-    // SubRace Ability
+
     getAllSubraceAbilities,
     getSubraceAbilityById,
     createSubraceAbility,
     updateSubraceAbility,
     deleteSubraceAbility,
-    
-    // Spell
+
     getAllSpells,
     getSpellById,
     createSpell,
     updateSpell,
     deleteSpell,
-    
-    // Item
+
     getAllItems,
     getItemById,
     createItem,
     updateItem,
     deleteItem,
-    
-    // Feature
+
     getAllFeatures,
     getFeatureById,
     createFeature,

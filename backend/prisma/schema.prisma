@@ -247,7 +247,7 @@ model CharacterSpellSlot {
   characterId String
   character   Character @relation(fields: [characterId], references: [id])
 
-  spellLevel  Int    // 1..9
+  spellLevel  Int    
   maxSlots    Int    @default(0)
   usedSlots   Int    @default(0)
 }
@@ -257,8 +257,8 @@ model Feature {
   id          String   @id @default(uuid())
   name        String
   description String?
-  sourceType  String?  // "race"|"class"|"feat"|"background"
-  sourceId    String?  // optional pointer to Race/Class/Feat
+  sourceType  String?
+  sourceId    String?
 
   characterFeatures CharacterFeature[]
 }
@@ -374,6 +374,7 @@ model CharacterEventLog {
   payload     Json?
   createdAt   DateTime @default(now())
 }
+
 model Campaign {
   id     String @id @default(uuid())
   name   String

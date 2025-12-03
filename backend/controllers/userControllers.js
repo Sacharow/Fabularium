@@ -4,7 +4,6 @@ const { PrismaClient, Role } = require("../generated/prisma/client");
 const jwt = require("jsonwebtoken");
 const z = require("zod");
 const crypt = require("bcryptjs");
-const { id } = require('zod/v4/locales');
 const path = require('path');
 
 const prisma = new PrismaClient();

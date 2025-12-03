@@ -89,6 +89,8 @@ const createCharacter = async (req, res) => {
             include: { stats: true }
         });
 
+        // PrismaClientKnownRequestError: \nInvalid `prisma.character.create()` invocation in\nD:\\repo\\Fabularium\\backend\\controllers\\charactersControl.js:70:48\n\n  67 \n  68 const data = parsed.data;\n  69 \n→ 70 const created = await prisma.character.create(\nForeign key constraint violated on the constraint: `Character_raceId_fkey`"
+
         return res.status(201).json(created);
     } catch (err) {
         return res.status(500).json({ message: "Failed to create character", error: String(err) });
