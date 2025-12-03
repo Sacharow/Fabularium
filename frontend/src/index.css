@@ -23,3 +23,14 @@ body::before {
     transform: rotate(45deg);
     z-index: -1;
 }
+
+/* Hide native number input spinner arrows (WebKit & Firefox) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
