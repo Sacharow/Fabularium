@@ -1,4 +1,6 @@
+import { useState } from "react";
 import data from "../data/assets.json";
+import ResourcesSidebar from "../components/helper/ResourcesSidebar";
 
 function getItemLabel(item: any) {
   if (!item) return "(empty)";
@@ -56,17 +58,59 @@ function Resources() {
     );
   }
 
-  return (
-    <div className="pt-6 px-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4">{phb.name}</h1>
-        {phb.acronym && <p className="text-sm text-gray-400 mb-4">Acronym: {phb.acronym}</p>}
+  const sections = ["Backgrounds", "Classes", "Feats", "Races", "Spells"];
+  const [activeSection, setActiveSection] = useState<string>(sections[0]);
 
-        <Section title="Backgrounds" items={phb.backgrounds} showLimit={30} />
-        <Section title="Classes" items={phb.classes} showLimit={30} />
-        <Section title="Feats" items={phb.feats} showLimit={30} />
-        <Section title="Races" items={phb.races} showLimit={30} />
-        <Section title="Spells" items={phb.spells} showLimit={30} />
+  function renderSection(name: string) {
+    switch (name) {
+      case "Backgrounds":
+        return <Section title="Backgrounds" items={phb.backgrounds} showLimit={30} />;
+      case "Classes":
+        return <Section title="Classes" items={phb.classes} showLimit={30} />;
+      case "Feats":
+        return <Section title="Feats" items={phb.feats} showLimit={30} />;
+      case "Races":
+        return <Section title="Races" items={phb.races} showLimit={30} />;
+      case "Spells":
+        return <Section title="Spells" items={phb.spells} showLimit={30} />;
+      default:
+        return null;
+    }
+  }
+
+  return (
+    <div className="pt-6">
+      <div className="w-full">
+        <div className="grid grid-cols-8 gap-6">
+          <div className="relative col-span-2">
+            <div className="fixed top-0 left-0 h-screen w-1/5 px-4 pt-16 border-r border-orange-700 bg-orange-500/10">
+              <h1 className="font-bold text-2xl">Resources</h1>
+              <h2 className="text-gray-500 text-sm">{phb.name}</h2>
+              <div className="flex flex-col pt-6 gap-y-2">
+                <ResourcesSidebar active={activeSection} onChange={setActiveSection} />
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-4">
+            <div className="pb-4">
+              <p className="text-gray-500 text-sm ">
+                <span>Book: </span>
+                <span className="font-medium">{phb.name}</span>
+                {phb.acronym && <span className="text-gray-400 ml-2">({phb.acronym})</span>}
+              </p>
+            </div>
+
+            <div className="pt-6 px-6">
+              <div className="max-w-6xl mx-auto">
+                <h1 className="text-3xl font-bold mb-4">{activeSection}</h1>
+                {renderSection(activeSection)}
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-2"></div>
+        </div>
       </div>
     </div>
   );
