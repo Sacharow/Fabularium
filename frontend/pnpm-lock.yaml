@@ -23,9 +23,6 @@ importers:
       express:
         specifier: ^5.1.0
         version: 5.2.1
-      expressjs:
-        specifier: ^1.0.1
-        version: 1.0.1
       lucide-react:
         specifier: ^0.545.0
         version: 0.545.0(react@19.2.0)
