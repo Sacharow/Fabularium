@@ -312,7 +312,7 @@ export default function CharacterNew() {
     useEffect(() => {
         const wisMod = stats.find(s => s.name === "Wisdom")?.modifier ?? 0;
         setPassivePerception(10 + skillProf["Perception"]! * profBonus + wisMod);
-    }, [stats]);
+    }, [stats, skillProf, profBonus]);
 
     // UI helper classes
     const inputGameplayInformation = `bg-black/80 w-full rounded-md`;
