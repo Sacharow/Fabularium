@@ -51,7 +51,7 @@ function Resources() {
   // Selected sources state — default: all selected
   const [selectedSources, setSelectedSources] = useState<Record<number, boolean>>(() => {
     const map: Record<number, boolean> = {};
-    sources.forEach((s, i) => (map[i] = true));
+    sources.forEach((_s, i) => (map[i] = true));
     return map;
   });
 
@@ -61,13 +61,13 @@ function Resources() {
 
   const selectAllSources = () => {
     const map: Record<number, boolean> = {};
-    sources.forEach((s, i) => (map[i] = true));
+    sources.forEach((_s, i) => (map[i] = true));
     setSelectedSources(map);
   };
 
   const clearAllSources = () => {
     const map: Record<number, boolean> = {};
-    sources.forEach((s, i) => (map[i] = false));
+    sources.forEach((_s, i) => (map[i] = false));
     setSelectedSources(map);
   };
 
