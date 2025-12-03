@@ -48,6 +48,9 @@ const createCampaign = async (req, res) => {
 	try {
 		const data = createCampaignSchema.safeParse(req.body);
         const user = req.user;
+		if (!user?.id) {
+			return res.status(401).json({ message: "Unauthorized" });
+		}
 		if (!data.success) {
 			return res.status(400).json({ message: "Validation failed", errors: data.error });
 		}
@@ -104,9 +107,20 @@ const getCampaignById = async (req, res) => {
 
 const updateCampaign = async (req, res) => {
 	try {
+		const user = req.user;
 		const parsed = updateCampaignSchema.safeParse({ ...req.body, id: req.params.id });
 		if (!parsed.success) {
 			return res.status(400).json({ message: "Validation failed", errors: parsed.error });
+		}
+		const ownerCheck = await prisma.campaign.findUnique({
+			where: { id: parsed.data.id },
+			select: { ownerId: true }
+		});
+		if (!ownerCheck) {
+			return res.status(404).json({ message: 'Campaign not found' });
+		}
+		if (ownerCheck.ownerId !== user.id) {
+			return res.status(403).json({ message: 'Forbidden' });
 		}
 		const campaign = await prisma.campaign.update({
 			where: { id: parsed.data.id },
@@ -124,7 +138,15 @@ const updateCampaign = async (req, res) => {
 
 const deleteCampaign = async (req, res) => {
 	try {
+		const user = req.user;
 		const id = req.params.id;
+		const ownerCheck = await prisma.campaign.findUnique({ where: { id }, select: { ownerId: true } });
+		if (!ownerCheck) {
+			return res.status(404).json({ message: 'Campaign not found' });
+		}
+		if (ownerCheck.ownerId !== user.id) {
+			return res.status(403).json({ message: 'Forbidden' });
+		}
 		await prisma.campaign.delete({ where: { id } });
 		return res.status(204).send();
 	} catch (err) {
@@ -135,9 +157,20 @@ const deleteCampaign = async (req, res) => {
 
 const generateJoinCode = async (req, res) => {
 	try {
+		const user = req.user;
 		const parsed = generateJoinCodeSchema.safeParse({ id: req.params.id });
 		if (!parsed.success) {
 			return res.status(400).json({ message: "Validation failed", errors: parsed.error });
+		}
+		const ownerCheck = await prisma.campaign.findUnique({
+			where: { id: parsed.data.id },
+			select: { ownerId: true }
+		});
+		if (!ownerCheck) {
+			return res.status(404).json({ message: 'Campaign not found' });
+		}
+		if (ownerCheck.ownerId !== user.id) {
+			return res.status(403).json({ message: 'Forbidden' });
 		}
 		const joinCode = await makeJoinCode();
 		const campaign = await prisma.campaign.update({
@@ -169,16 +202,27 @@ const joinCampaignUsingCode = async (req, res) => {
 			include: { contributors: true }
 		});
 		return res.status(200).json(updated);
-	} catch (err) {row
+	} catch (err) {
 		return res.status(500).json({ message: 'Failed to join campaign', error: String(err) });
 	}
 };
 
 const addContributor = async (req, res) => {
 	try {
+		const user = req.user;
 		const parsed = contributorSchema.safeParse(req.body);
 		if (!parsed.success) {
 			return res.status(400).json({ message: "Validation failed", errors: parsed.error });
+		}
+		const ownerCheck = await prisma.campaign.findUnique({
+			where: { id: parsed.data.campaignId },
+			select: { ownerId: true }
+		});
+		if (!ownerCheck) {
+			return res.status(404).json({ message: 'Campaign not found' });
+		}
+		if (ownerCheck.ownerId !== user.id) {
+			return res.status(403).json({ message: 'Forbidden' });
 		}
 		const updated = await prisma.campaign.update({
 			where: { id: parsed.data.campaignId },
@@ -193,11 +237,21 @@ const addContributor = async (req, res) => {
 
 const removeContributor = async (req, res) => {
 	try {
-        const user = req.user;
+		const user = req.user;
 		const parsed = contributorSchema.safeParse(req.body);
         
 		if (!parsed.success) {
 			return res.status(400).json({ message: "Validation failed", errors: parsed.error });
+		}
+		const ownerCheck = await prisma.campaign.findUnique({
+			where: { id: parsed.data.campaignId },
+			select: { ownerId: true }
+		});
+		if (!ownerCheck) {
+			return res.status(404).json({ message: 'Campaign not found' });
+		}
+		if (ownerCheck.ownerId !== user.id) {
+			return res.status(403).json({ message: 'Forbidden' });
 		}
 
 		const updated = await prisma.campaign.update({
@@ -229,7 +283,9 @@ const listContributors = async (req, res) => {
 const listCampaignCharacters = async (req, res) => {
 	try {
 		const id = req.params.id;
-		if (!z.string().safeParse(id).success) return res.status(400).json({ message: 'Invalid id' });
+		if (!z.string().safeParse(id).success)	{
+			return res.status(400).json({ message: 'Invalid id' });
+		}
 		const chars = await prisma.character.findMany({ where: { campaignId: id } });
 		return res.status(200).json(chars);
 	} catch (err) {
