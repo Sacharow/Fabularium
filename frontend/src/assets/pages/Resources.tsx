@@ -19,27 +19,7 @@ function getItemMeta(item: any) {
   return parts.join(" • ");
 }
 
-function Section({ title, items }: { title: string; items: any[] | undefined }) {
-  const count = Array.isArray(items) ? items.length : 0;
-
-  return (
-    <section className="mb-6">
-      <h2 className="text-2xl font-semibold mb-2">{title} ({count})</h2>
-      {count === 0 ? (
-        <div className="text-sm text-gray-400">No items.</div>
-      ) : (
-        <ul className="space-y-2">
-          {items!.map((it: any, i: number) => (
-            <li key={i} className="p-2 border rounded-md">
-              <div className="font-medium">{getItemLabel(it)}</div>
-              <div className="text-xs text-gray-500">{getItemMeta(it)}</div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
+// Render items grouped by book (book name + items)
 
 function Resources() {
   const assets = data as any[];
@@ -76,17 +56,44 @@ function Resources() {
     // backgrounds, classes, feats, races, spells
     const key = name.toLowerCase();
 
-    // aggregate items from selected sources in JSON order
-    const aggregated: any[] = [];
-    for (const src of sources) {
-      if (!src) continue;
-      const idx = sources.indexOf(src);
-      if (!selectedSources[idx]) continue;
+    // Build groups per selected source in file order
+    const groups: { src: any; items: any[] }[] = [];
+    sources.forEach((src: any, idx: number) => {
+      if (!src) return;
+      if (!selectedSources[idx]) return;
       const items = Array.isArray(src[key]) ? src[key] : [];
-      aggregated.push(...items);
+      groups.push({ src, items });
+    });
+
+    if (groups.length === 0) {
+      return <div className="text-sm text-gray-400">No sources selected.</div>;
     }
 
-    return <Section title={name} items={aggregated} />;
+    return (
+      <div className="space-y-6">
+        {groups.map((g, gi) => (
+          <section key={gi} className="mb-4">
+            <div className="bg-orange-900 text-white px-3 py-2 rounded-md mb-2 border-2 border-orange-700">
+              <h3 className="text-lg font-bold">{g.src.name} ({g.items.length})</h3>
+              {g.src.acronym && <div className="text-xs text-orange-200">{g.src.acronym}</div>}
+            </div>
+
+            {g.items.length === 0 ? (
+              <div className="text-sm text-gray-400">No items in this source.</div>
+            ) : (
+              <ul className="space-y-2">
+                {g.items.map((it: any, i: number) => (
+                  <li key={i} className="p-2 border rounded-md">
+                    <div className="font-medium">{getItemLabel(it)}</div>
+                    <div className="text-xs text-gray-500">{getItemMeta(it)}</div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))}
+      </div>
+    );
   }
 
   return (
