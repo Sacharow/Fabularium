@@ -266,7 +266,7 @@ export default function LocationNew() {
                                                 <option key={n} value={n}>{n}</option>
                                             ))}
                                         </select>
-                                        {npc.map((item, index) => (
+                                        {npcs.map((item, index) => (
                                             <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
                                                 <p>{item}</p>
                                                 <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeNpc(index)}>X</button>
