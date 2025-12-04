@@ -1,4 +1,5 @@
-import { useParams, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useParams, useNavigate, NavLink } from "react-router-dom"
 
 type Stat = {
   name: string
@@ -22,7 +23,7 @@ type CharacterSection = {
   equipment?: string[]
   money?: Record<string, number>
   background?: string
-  traits?: string
+  personalityTraits?: string
   ideals?: string
   bonds?: string
   flaws?: string
@@ -49,10 +50,41 @@ function loadFromSession(): CharacterSection[] {
   }
 }
 
+function saveToSession(characters: CharacterSection[]) {
+  try {
+    const str = JSON.stringify(characters)
+    sessionStorage.setItem(STORAGE_KEY, str)
+  } catch {
+    // ignore
+  }
+}
+
+function levelUpCharacter(characters: CharacterSection[], characterId: number): CharacterSection[] {
+  return characters.map((char) => {
+    if (char.id === characterId) {
+      const hitDice = char.hitDice ?? 1
+      return {
+        ...char,
+        level: (char.level ?? 1) + 1,
+        hitPointsMax: (char.hitPointsMax ?? 10) + Math.ceil((1 + hitDice) / 2),
+        hitPointsCurrent: (char.hitPointsCurrent ?? 10) + Math.ceil((1 + hitDice) / 2),
+        profBonus: Math.floor(((char.level ?? 1) + 1 + 3) / 4) + 1,
+
+      }
+    }
+    return char
+  })
+}
+
+
 export default function CharacterPage() {
   const { characterId } = useParams<{ characterId?: string }>()
   const navigate = useNavigate()
-  const characters = loadFromSession()
+  const [characters, setCharacters] = useState<CharacterSection[]>(() => loadFromSession())
+  useEffect(() => {
+    saveToSession(characters)
+  }, [characters])
+
   const char = characters.find((c) => c.id === Number(characterId))
 
   if (!char) {
@@ -64,8 +96,26 @@ export default function CharacterPage() {
     )
   }
 
+  const introData = {
+    currentSection: "Character Section",
+    urlName: "CharacterView"
+  };
+
+
   return (
     <div className="p-6">
+      <div className="pb-4">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-gray-500 text-sm ">
+            <NavLink to="/campaigns" className="cursor-pointer hover:text-gray-400">Campaigns</NavLink>
+            <span> / </span>
+            <NavLink to={`/InCampaign/${char.campaignId}/${introData.urlName}`} className="cursor-pointer hover:text-gray-400">{introData.currentSection}</NavLink>
+            <span> / </span>
+            <NavLink to="#" className="cursor-pointer hover:text-gray-400"> {char.name}</NavLink>
+          </p>
+        </div>
+
+      </div>
       <div className="max-w-6xl mx-auto grid gap-6 md:grid-cols-[320px_1fr]">
         <aside className="bg-orange-900 p-4 rounded-lg">
           <div className="flex items-center space-x-4">
@@ -80,6 +130,28 @@ export default function CharacterPage() {
           {char.description && (
             <p className="mt-3 text-sm text-orange-300">{char.description}</p>
           )}
+          <div className="mt-4">
+            {(char.level ?? 1) < 20 && (
+              <button
+                type="button"
+                aria-label="Level up (temporary)"
+                onClick={() => {
+                  if (!char) return
+                  const updated = levelUpCharacter(characters, char.id)
+                  setCharacters(updated)
+                }}
+                className="w-full bg-orange-700 hover:bg-orange-600 text-white text-sm py-2 rounded cursor-pointer"
+              >
+                Level Up
+              </button>
+            )}
+            {(char.level ?? 1) === 20 && (
+              <div
+                className="w-full bg-orange-700 text-white text-sm py-2 rounded text-center">
+                Max Level Reached
+              </div>
+            )}
+          </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
             <div className="bg-orange-800 p-2 rounded">
@@ -88,7 +160,7 @@ export default function CharacterPage() {
             </div>
             <div className="bg-orange-800 p-2 rounded">
               <div className="text-xs text-orange-400">Prof. Bonus</div>
-              <div className="font-medium">{char.profBonus ?? '—'}</div>
+              <div className="font-medium"> {(char.profBonus ?? '-') === '-' ? '-' : (char.profBonus! >= 0 ? `+${char.profBonus}` : `${char.profBonus}`)}</div>
             </div>
             <div className="bg-orange-800 p-2 rounded">
               <div className="text-xs text-orange-400">AC</div>
@@ -96,7 +168,7 @@ export default function CharacterPage() {
             </div>
             <div className="bg-orange-800 p-2 rounded">
               <div className="text-xs text-orange-400">Initiative</div>
-              <div className="font-medium">{char.initiativeBonus ?? '—'}</div>
+              <div className="font-medium"> {(char.initiativeBonus ?? '-') === '-' ? '-' : (char.initiativeBonus! >= 0 ? `+${char.initiativeBonus}` : `${char.initiativeBonus}`)}</div>
             </div>
           </div>
 
@@ -109,7 +181,7 @@ export default function CharacterPage() {
           {(char.money && Object.keys(char.money).length > 0) && (
             <div className="mt-4 text-sm">
               <div className="text-xs text-orange-400">Wealth</div>
-              <div className="mt-1 grid grid-cols-2 gap-1">
+              <div className="mt-1 flex flex-col gap-1">
                 {Object.entries(char.money).map(([k, v]) => (
                   <div key={k} className="flex justify-between">
                     <span className="capitalize">{k}</span>
@@ -183,12 +255,12 @@ export default function CharacterPage() {
             </div>
           </div>
 
-          {(char.background || char.traits || char.ideals || char.bonds || char.flaws) && (
+          {(char.background || char.personalityTraits || char.ideals || char.bonds || char.flaws) && (
             <div className="mt-4 bg-orange-900 p-4 rounded-lg">
               <h4 className="font-semibold">Background & Personality</h4>
               <div className="mt-2 text-sm space-y-2">
                 {char.background && <div><strong>Background:</strong> <span className="font-medium">{char.background}</span></div>}
-                {char.traits && <div><strong>Traits:</strong> <span className="font-medium">{char.traits}</span></div>}
+                {char.personalityTraits && <div><strong>Traits:</strong> <span className="font-medium">{char.personalityTraits}</span></div>}
                 {char.ideals && <div><strong>Ideals:</strong> <span className="font-medium">{char.ideals}</span></div>}
                 {char.bonds && <div><strong>Bonds:</strong> <span className="font-medium">{char.bonds}</span></div>}
                 {char.flaws && <div><strong>Flaws:</strong> <span className="font-medium">{char.flaws}</span></div>}
