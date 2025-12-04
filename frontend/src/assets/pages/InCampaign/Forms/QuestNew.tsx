@@ -197,7 +197,7 @@ export default function QuestNew() {
                                         </button>
                                     </li>
                                     <li>
-                                        <button onClick={() => setSelectedView('npcs')} className={`w-full text-left px-3 py-2 rounded ${selectedView === 'npc' ? 'bg-orange-700 text-white' : 'text-orange-300 hover:bg-orange-800'}`}>
+                                        <button onClick={() => setSelectedView('npcs')} className={`w-full text-left px-3 py-2 rounded ${selectedView === 'npcs' ? 'bg-orange-700 text-white' : 'text-orange-300 hover:bg-orange-800'}`}>
                                             Npc
                                         </button>
                                     </li>
