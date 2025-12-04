@@ -1,5 +1,5 @@
 import { useState } from "react";
-import data from "../data/assets.json";
+import data from "../data/resources.json";
 import ResourcesSidebar from "../components/helper/ResourcesSidebar";
 
 function getItemLabel(item: any) {

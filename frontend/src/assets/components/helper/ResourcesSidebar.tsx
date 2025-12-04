@@ -90,7 +90,7 @@ export default function ResourcesSidebar({ active: controlledActive = null, onCh
             <button type="button" onClick={() => onClearAll?.()} className="text-xs px-2 py-1 rounded bg-gray-700/50">Clear</button>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mr-2">
             {sources.map((s: any, i: number) => {
               const acronym = s?.acronym ?? s?.name ?? `#${i}`;
               const isActive = !!selectedSources?.[i];
