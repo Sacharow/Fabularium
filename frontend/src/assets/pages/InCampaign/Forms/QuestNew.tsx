@@ -41,9 +41,9 @@ export default function QuestNew() {
                 name,
                 description,
                 locations,
-                locationsIds,
+                locationId: locationsIds,
                 npcs,
-                npcsIds,
+                npcId: npcsIds,
                 rewards
             };
 
