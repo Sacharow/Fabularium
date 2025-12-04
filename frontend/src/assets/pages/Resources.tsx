@@ -239,34 +239,15 @@ function Resources() {
             <div className="fixed top-0 left-0 h-screen w-1/5 px-4 pt-16 border-r border-orange-700 bg-orange-500/10">
               <h1 className="font-bold text-2xl">Category</h1>
               <div className="flex flex-col pt-6 gap-y-2">
-                <ResourcesSidebar active={activeSection} onChange={setActiveSection} />
-                  <div className="mt-6 border-t border-orange-700 pt-4">
-                    <div className="text-sm text-gray-300 font-medium mb-2">Sources</div>
-                    <div className="flex gap-2 mb-3">
-                      <button type="button" onClick={selectAllSources} className="text-xs px-2 py-1 rounded bg-orange-700/80">All</button>
-                      <button type="button" onClick={clearAllSources} className="text-xs px-2 py-1 rounded bg-gray-700/50">Clear</button>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {sources.map((s: any, i: number) => {
-                          const acronym = s?.acronym ?? s?.name ?? `#${i}`;
-                          const isActive = !!selectedSources[i];
-                          const tileClass = `cursor-pointer px-2 py-1 rounded-md border flex items-center justify-center text-xs ${isActive ? 'bg-orange-700 text-white font-semibold' : 'bg-transparent text-orange-100 border-orange-700/30 hover:bg-orange-600/10'}`;
-                          return (
-                            <button
-                              key={i}
-                              type="button"
-                              aria-pressed={isActive}
-                              title={s?.name}
-                              className={tileClass}
-                              onClick={() => toggleSource(i)}
-                            >
-                              {acronym}
-                            </button>
-                          );
-                      })}
-                    </div>
-                  </div>
+                <ResourcesSidebar
+                  active={activeSection}
+                  onChange={setActiveSection}
+                  sources={sources}
+                  selectedSources={selectedSources}
+                  onToggleSource={toggleSource}
+                  onSelectAll={selectAllSources}
+                  onClearAll={clearAllSources}
+                />
               </div>
             </div>
           </div>

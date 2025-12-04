@@ -3,6 +3,11 @@ import { useState } from "react";
 type Props = {
   active?: string | null;
   onChange?: (name: string) => void;
+  sources?: any[];
+  selectedSources?: Record<number, boolean>;
+  onToggleSource?: (index: number) => void;
+  onSelectAll?: () => void;
+  onClearAll?: () => void;
 };
 
 function IconBackgrounds() {
@@ -46,7 +51,7 @@ function IconSpells() {
   );
 }
 
-export default function ResourcesSidebar({ active: controlledActive = null, onChange }: Props) {
+export default function ResourcesSidebar({ active: controlledActive = null, onChange, sources = [], selectedSources = {}, onToggleSource, onSelectAll, onClearAll }: Props) {
   const buttons = [
     { name: 'Backgrounds', icon: IconBackgrounds },
     { name: 'Classes', icon: IconClasses },
@@ -77,6 +82,35 @@ export default function ResourcesSidebar({ active: controlledActive = null, onCh
           </button>
         );
       })}
+      {sources && sources.length > 0 && (
+        <div className="mt-6 border-t border-orange-700 pt-4">
+          <div className="text-sm text-gray-300 font-medium mb-2">Sources</div>
+          <div className="flex gap-2 mb-3">
+            <button type="button" onClick={() => onSelectAll?.()} className="text-xs px-2 py-1 rounded bg-orange-700/80">All</button>
+            <button type="button" onClick={() => onClearAll?.()} className="text-xs px-2 py-1 rounded bg-gray-700/50">Clear</button>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {sources.map((s: any, i: number) => {
+              const acronym = s?.acronym ?? s?.name ?? `#${i}`;
+              const isActive = !!selectedSources?.[i];
+              const tileClass = `cursor-pointer px-2 py-1 rounded-md border flex items-center justify-center text-xs ${isActive ? 'bg-orange-700 text-white font-semibold' : 'bg-transparent text-orange-100 border-orange-700/30 hover:bg-orange-600/10'}`;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  aria-pressed={isActive}
+                  title={s?.name}
+                  className={tileClass}
+                  onClick={() => onToggleSource?.(i)}
+                >
+                  {acronym}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </>
   );
 }
