@@ -86,8 +86,8 @@ export default function NpcView() {
                                             <button className="w-full aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer">
                                                 <div className="h-full grid grid-rows-[80%_20%]">
                                                     <div className={`${c.color} flex items-center justify-center`}></div>
-                                                    <div className="bg-gray-800 flex items-center justify-center px-2">
-                                                        <span className="text-sm font-medium text-gray-100 text-center">{c.name}</span>
+                                                    <div className="bg-orange-700 flex items-center justify-center px-2">
+                                                        <span className="text-sm font-medium text-gray-100 text-center truncate">{c.name}</span>
                                                     </div>
                                                 </div>
                                             </button>

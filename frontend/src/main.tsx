@@ -8,7 +8,13 @@ import Login from "./assets/pages/Login";
 import Campaigns from "./assets/pages/Campaigns";
 import Characters from "./assets/pages/Characters";
 import Resources from "./assets/pages/Resources";
+
 import InCampaignCharacter from "./assets/pages/InCampaign/Sections/Character";
+import InCampaignLocation from "./assets/pages/InCampaign/Sections/Location";
+import InCampaignMap from "./assets/pages/InCampaign/Sections/Map";
+import InCampaignNpc from "./assets/pages/InCampaign/Sections/Npc";
+import InCampaignNote from "./assets/pages/InCampaign/Sections/Note";
+import InCampaignQuest from "./assets/pages/InCampaign/Sections/Quest";
 
 import MapNew from "./assets/pages/InCampaign/Forms/MapNew";
 import LocationNew from "./assets/pages/InCampaign/Forms/LocationNew";
@@ -36,7 +42,13 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/characters" element={<Characters />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/login" element={<Login />} />
+
         <Route path="/InCampaign/:campaignId/Characters/:characterId" element={<InCampaignCharacter />} />
+        <Route path="/InCampaign/:campaignId/Locations/:locationId" element={<InCampaignLocation />} />
+        <Route path="/InCampaign/:campaignId/Maps/:mapId" element={<InCampaignMap />} />
+        <Route path="/InCampaign/:campaignId/Npcs/:npcId" element={<InCampaignNpc />} />
+        <Route path="/InCampaign/:campaignId/Notes/:noteId" element={<InCampaignNote />} />
+        <Route path="/InCampaign/:campaignId/Quests/:questId" element={<InCampaignQuest />} />
 
         <Route path="/InCampaign/:campaignId/MapView/New" element={<MapNew />} />
         <Route path="/InCampaign/:campaignId/LocationView/New" element={<LocationNew />} />
