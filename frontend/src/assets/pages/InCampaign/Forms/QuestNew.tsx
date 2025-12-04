@@ -192,7 +192,7 @@ export default function QuestNew() {
                                         </button>
                                     </li>
                                     <li>
-                                        <button onClick={() => setSelectedView('locations')} className={`w-full text-left px-3 py-2 rounded ${selectedView === 'location' ? 'bg-orange-700 text-white' : 'text-orange-300 hover:bg-orange-800'}`}>
+                                        <button onClick={() => setSelectedView('locations')} className={`w-full text-left px-3 py-2 rounded ${selectedView === 'locations' ? 'bg-orange-700 text-white' : 'text-orange-300 hover:bg-orange-800'}`}>
                                             Location
                                         </button>
                                     </li>
