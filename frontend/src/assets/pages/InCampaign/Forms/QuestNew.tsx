@@ -11,10 +11,10 @@ export default function QuestNew() {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     // selected values
-    const [location, setLocation] = useState<string[]>([]);
-    const [locationId, setLocationId] = useState<string>("");
-    const [npc, setNpc] = useState<string[]>([]);
-    const [npcId, setNpcId] = useState<string>("");
+    const [locations, setLocations] = useState<string[]>([]);
+    const [locationsIds, setLocationsIds] = useState<string>("");
+    const [npcs, setNpcs] = useState<string[]>([]);
+    const [npcsIds, setNpcsIds] = useState<string>("");
     // available choices loaded from storage
     const [availableLocations, setAvailableLocations] = useState<string[]>([]);
     const [availableNpcs, setAvailableNpcs] = useState<string[]>([]);
@@ -40,10 +40,10 @@ export default function QuestNew() {
                 campaignId,
                 name,
                 description,
-                location,
-                locationId,
-                npc,
-                npcId,
+                locations,
+                locationsIds,
+                npcs,
+                npcsIds,
                 rewards
             };
 
@@ -57,11 +57,11 @@ export default function QuestNew() {
                 try { window.dispatchEvent(new Event('fabularium.quests.updated')) } catch (e) { /* ignore */ }
                     // Update related locations and NPCs so references stay in sync
                     try {
-                        if (Array.isArray(location) && location.length) {
-                            location.forEach((locName) => addQuestReferenceToLocation(locName, QuestData.name))
+                        if (Array.isArray(locations) && locations.length) {
+                            locations.forEach((locName) => addQuestReferenceToLocation(locName, QuestData.name))
                         }
-                        if (Array.isArray(npc) && npc.length) {
-                            npc.forEach((npcName) => addQuestReferenceToNpc(npcName, QuestData.name))
+                        if (Array.isArray(npcs) && npcs.length) {
+                            npcs.forEach((npcName) => addQuestReferenceToNpc(npcName, QuestData.name))
                         }
                     } catch (e) {
                         console.error('Failed to update location/npc references', e)
@@ -121,25 +121,25 @@ export default function QuestNew() {
     const addLocation = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const val = e.target.value;
         if (!val) return;
-        setLocation(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
-        setLocationId("");
+        setLocations(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
+        setLocationsIds("");
     }
 
     const removeLocation = (index: number) => {
-        setLocation(prev => prev.filter((_, i) => i !== index));
-        setLocationId("");
+        setLocations(prev => prev.filter((_, i) => i !== index));
+        setLocationsIds("");
     }
 
     const addNpc = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const val = e.target.value;
         if (!val) return;
-        setNpc(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
-        setNpcId("");
+        setNpcs(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
+        setNpcsIds("");
     }
 
     const removeNpc = (index: number) => {
-        setNpc(prev => prev.filter((_, i) => i !== index));
-        setNpcId("");
+        setNpcs(prev => prev.filter((_, i) => i !== index));
+        setNpcsIds("");
     }
 
     // UI helper classes
@@ -252,7 +252,7 @@ export default function QuestNew() {
                                                 <option key={l} value={l}>{l}</option>
                                             ))}
                                         </select>
-                                        {location.map((item, index) => (
+                                        {locations.map((item, index) => (
                                             <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
                                                 <p>{item}</p>
                                                 <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeLocation(index)}>X</button>
@@ -276,7 +276,7 @@ export default function QuestNew() {
                                                 <option key={n} value={n}>{n}</option>
                                             ))}
                                         </select>
-                                        {npc.map((item, index) => (
+                                        {npcs.map((item, index) => (
                                             <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
                                                 <p>{item}</p>
                                                 <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeNpc(index)}>X</button>

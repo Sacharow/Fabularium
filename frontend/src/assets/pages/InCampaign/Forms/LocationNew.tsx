@@ -10,10 +10,10 @@ export default function LocationNew() {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     // Relations
-    const [quest, setQuest] = useState<string[]>([]);
-    const [questId, setQuestId] = useState<string>("");
-    const [npc, setNpc] = useState<string[]>([]);
-    const [npcId, setNpcId] = useState<string>("");
+    const [quests, setQuests] = useState<string[]>([]);
+    const [questsIds, setQuestsIds] = useState<string>("");
+    const [npcs, setNpcs] = useState<string[]>([]);
+    const [npcsIds, setNpcsIds] = useState<string>("");
     const [availableQuests, setAvailableQuests] = useState<string[]>([]);
     const [availableNpcs, setAvailableNpcs] = useState<string[]>([]);
 
@@ -58,10 +58,10 @@ export default function LocationNew() {
                 name,
                 color: generateColor(),
                 description,
-                quests: quest,
-                questId,
-                npcs: npc,
-                npcId
+                quests: quests,
+                questsIds,
+                npcs: npcs,
+                npcsIds
             };
 
             try {
@@ -116,25 +116,25 @@ export default function LocationNew() {
             const addQuest = (e: React.ChangeEvent<HTMLSelectElement>) => {
                 const val = e.target.value;
                 if (!val) return;
-                setQuest(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
-                setQuestId("");
+                setQuests(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
+                setQuestsIds("");
             }
 
             const removeQuest = (index: number) => {
-                setQuest(prev => prev.filter((_, i) => i !== index));
-                setQuestId("");
+                setQuests(prev => prev.filter((_, i) => i !== index));
+                setQuestsIds("");
             }
 
             const addNpc = (e: React.ChangeEvent<HTMLSelectElement>) => {
                 const val = e.target.value;
                 if (!val) return;
-                setNpc(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
-                setNpcId("");
+                setNpcs(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
+                setNpcsIds("");
             }
 
             const removeNpc = (index: number) => {
-                setNpc(prev => prev.filter((_, i) => i !== index));
-                setNpcId("");
+                setNpcs(prev => prev.filter((_, i) => i !== index));
+                setNpcsIds("");
             }
     
     // UI helper classes
