@@ -2,7 +2,7 @@ import ViewIntroduction from "../../../components/helper/ViewIntroduction";
 import { NavLink, useParams, useMatch } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-export default function LocationView() {
+export default function NoteView() {
     const params = useParams();
     const match = useMatch("/InCampaign/:campaignId/*");
     const campaignId = params.campaignId ?? match?.params.campaignId ?? null
