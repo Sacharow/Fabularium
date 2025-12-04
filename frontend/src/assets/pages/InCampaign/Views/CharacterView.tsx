@@ -89,7 +89,7 @@ export default function CharacterView() {
                                                     <div className={`${c.color} flex items-center justify-center`}></div>
                                                     {/* bottom 20% - name */}
                                                     <div className="bg-orange-700 flex items-center justify-center px-2">
-                                                        <span className="text-sm font-medium text-gray-100 text-center line-clamp-3 truncate">{c.name}</span>
+                                                        <span className="text-sm font-medium text-gray-100 text-center line-clamp-3">{c.name}</span>
                                                     </div>
                                                 </div>
                                             </button>
