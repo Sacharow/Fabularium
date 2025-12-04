@@ -821,22 +821,22 @@ export default function CharacterNew() {
                             {(selectedView === 'all' || selectedView === 'equipment') && (
                                 <div className="bg-orange-700/30 p-4 rounded-md">
                                     <h1 className="text-2xl font-bold pb-4">Equipment</h1>
-                                    <div className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white min-h-20">
-                                        <div className="relative">
-                                            <button className="absolute top-1 right-1 bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded text-center cursor-pointer" onClick={() => createEquipment()}>Add Item</button>
-                                        </div>
+                                    <div className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white min-h-20 grid grid-cols-4">
+                                        <div className="col-span-3">
                                         {equipment.length === 0 && (
                                             <p className="text-gray-400">No equipment added yet.</p>
                                         )}
                                         {equipment.map((item, index) => (
-                                            <div key={index} className="flex justify-between items-center border-b border-gray-700 py-1 w-3/4">
-                                                <p>{item}</p>
-                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeEquipment(index)}>Remove</button>
+                                            <div key={index} className="flex justify-between items-center border-b border-orange-700 py-1 w-9/10">
+                                                <p className="truncate">{item}</p>
+                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeEquipment(index)}>X</button>
                                             </div>
                                         ))}
-
+                                        </div>
+                                        <div className="col-span-1">
+                                            <button className="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded text-center cursor-pointer" onClick={() => createEquipment()}>Add Item</button>
+                                        </div>
                                     </div>
-
                                 </div>
                             )}
 

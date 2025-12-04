@@ -87,7 +87,7 @@ export default function LocationView() {
                                                 <div className="h-full grid grid-rows-[80%_20%]">
                                                     <div className={`${l.color} flex items-center justify-center`}></div>
                                                     <div className="bg-orange-700 flex items-center justify-center px-2">
-                                                        <span className="text-sm font-medium text-gray-100 text-center">{l.name}</span>
+                                                        <span className="text-sm font-medium text-gray-100 text-center truncate">{l.name}</span>
                                                     </div>
                                                 </div>
                                             </button>

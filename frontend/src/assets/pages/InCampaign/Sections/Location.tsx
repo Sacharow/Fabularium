@@ -11,6 +11,10 @@ type ItemSection = {
   name: string
   color: string
   description?: string
+  npcs: string[]
+  npcId?: number[]
+  quests: string[]
+  questId?: number[]
 }
 
 const STORAGE_KEY = "fabularium.campaigns.location_section"
@@ -21,7 +25,18 @@ function loadFromSession(): ItemSection[] {
     if (!raw) return []
     const parsed = JSON.parse(raw)
     if (!Array.isArray(parsed)) return []
-    return parsed
+    // Ensure older entries have consistent shape
+    return parsed.map((p: any) => ({
+      id: Number(p.id ?? Date.now()),
+      campaignId: p.campaignId ?? null,
+      name: p.name ?? p.title ?? String(p.id ?? ''),
+      color: p.color ?? 'bg-slate-400',
+      description: p.description ?? p.desc ?? '',
+      quests: Array.isArray(p.quests) ? p.quests : (Array.isArray(p.quest) ? p.quest : []),
+      questId: Array.isArray(p.questId) ? p.questId : (p.questId ? [p.questId] : []),
+      npcs: Array.isArray(p.npcs) ? p.npcs : (Array.isArray(p.npc) ? p.npc : []),
+      npcId: Array.isArray(p.npcId) ? p.npcId : (p.npcId ? [p.npcId] : [])
+    }))
   } catch {
     return []
   }
@@ -76,10 +91,34 @@ export default function LocationPage() {
         </div>
 
       </div>
-      <div className="max-w-6xl mx-auto grid gap-6 md:grid-cols-[320px_1fr]">
+      <div className="max-w-6xl mx-auto grid gap-6 md:grid-cols-3">
         <div className="bg-orange-700/30 rounded-md p-4">
             <h1 className="text-2xl font-bold mb-4">{loc.name}</h1>
             <p className="text-gray-300 whitespace-pre-wrap">{loc.description || "No description provided."}</p>
+        </div>
+        <div className="bg-orange-700/30 rounded-md p-4">
+            <h1 className="text-2xl font-bold mb-2">Characters</h1>
+            {(loc.npcs ?? []).length === 0 ? (
+                <p className="text-gray-400">No characters added yet.</p>
+            ) : (
+                <ul className="list-disc list-inside">
+                    {(loc.npcs ?? []).map((npc, index) => (
+                        <li key={index} className="text-gray-300">{npc}</li>
+                    ))}
+                </ul>
+            )}
+        </div>
+        <div className="bg-orange-700/30 rounded-md p-4">
+            <h1 className="text-2xl font-bold mb-2">Quests</h1>
+            {(loc.quests ?? []).length === 0 ? (
+                <p className="text-gray-400">No quests added yet.</p>
+            ) : (
+                <ul className="list-disc list-inside">
+                    {(loc.quests ?? []).map((q, index) => (
+                        <li key={index} className="text-gray-300">{q}</li>
+                    ))}
+                </ul>
+            )}
         </div>
       </div>
     </div>

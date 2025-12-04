@@ -1,5 +1,6 @@
 import { useNavigate, useParams, NavLink } from "react-router-dom";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { addQuestReferenceToLocation, addQuestReferenceToNpc } from '../../../helper/storageRelations';
 
 export default function QuestNew() {
     // Navigation
@@ -29,7 +30,7 @@ export default function QuestNew() {
             return;
         }
         else {
-            const STORAGE_KEY = "fabularium.campaigns.Quest_section"
+            const STORAGE_KEY = "fabularium.campaigns.quest_section"
 
             const id = Date.now()
             const campaignId = params.campaignId ?? null
@@ -38,7 +39,12 @@ export default function QuestNew() {
                 id,
                 campaignId,
                 name,
-                description
+                description,
+                location,
+                locationId,
+                npc,
+                npcId,
+                rewards
             };
 
             try {
@@ -47,8 +53,19 @@ export default function QuestNew() {
                 const list = Array.isArray(parsed) ? parsed : []
                 list.push(QuestData)
                 sessionStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-                // Notify other components in-window that Quests changed
-                try { window.dispatchEvent(new Event('fabularium.Quests.updated')) } catch (e) { /* ignore */ }
+                // Notify other components in-window that quests changed
+                try { window.dispatchEvent(new Event('fabularium.quests.updated')) } catch (e) { /* ignore */ }
+                    // Update related locations and NPCs so references stay in sync
+                    try {
+                        if (Array.isArray(location) && location.length) {
+                            location.forEach((locName) => addQuestReferenceToLocation(locName, QuestData.name))
+                        }
+                        if (Array.isArray(npc) && npc.length) {
+                            npc.forEach((npcName) => addQuestReferenceToNpc(npcName, QuestData.name))
+                        }
+                    } catch (e) {
+                        console.error('Failed to update location/npc references', e)
+                    }
                 // navigate to the created Quest's page
                 if (campaignId) navigate(`/InCampaign/${campaignId}/Quests/${id}`)
                 else navigate(-1)
@@ -99,6 +116,30 @@ export default function QuestNew() {
 
     const removeReward = (index: number) => {
         setRewards(prev => prev.filter((_, i) => i !== index));
+    }
+
+    const addLocation = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const val = e.target.value;
+        if (!val) return;
+        setLocation(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
+        setLocationId("");
+    }
+
+    const removeLocation = (index: number) => {
+        setLocation(prev => prev.filter((_, i) => i !== index));
+        setLocationId("");
+    }
+
+    const addNpc = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const val = e.target.value;
+        if (!val) return;
+        setNpc(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
+        setNpcId("");
+    }
+
+    const removeNpc = (index: number) => {
+        setNpc(prev => prev.filter((_, i) => i !== index));
+        setNpcId("");
     }
 
     // UI helper classes
@@ -203,14 +244,20 @@ export default function QuestNew() {
                                     <div className={inputGameplayInformation}>
                                         <select
                                             className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                            value={location}
-                                            onChange={(e) => setLocation(e.target.value)}
+                                            value={""}
+                                            onChange={(e) => addLocation(e)}
                                         >
                                             <option value="">-- Select Location --</option>
                                             {availableLocations.map(l => (
                                                 <option key={l} value={l}>{l}</option>
                                             ))}
                                         </select>
+                                        {location.map((item, index) => (
+                                            <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
+                                                <p>{item}</p>
+                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeLocation(index)}>X</button>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             )}
@@ -221,8 +268,8 @@ export default function QuestNew() {
                                     <div className={inputGameplayInformation}>
                                         <select
                                             className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                            value={npc}
-                                            onChange={(e) => setNpc(e.target.value)}
+                                            value={""}
+                                            onChange={(e) => addNpc(e)}
                                         >
                                             <option value="">-- Select NPC --</option>
                                             {availableNpcs.map(n => (
@@ -230,9 +277,9 @@ export default function QuestNew() {
                                             ))}
                                         </select>
                                         {npc.map((item, index) => (
-                                            <div key={index} className="flex justify-between items-center border-b border-gray-700 py-1 w-3/4">
+                                            <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
                                                 <p>{item}</p>
-                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeNpc(index)}>Remove</button>
+                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeNpc(index)}>X</button>
                                             </div>
                                         ))}
                                     </div>
@@ -241,19 +288,21 @@ export default function QuestNew() {
                             {(selectedView === 'all' || selectedView === 'rewards') && (
                                 <div className="bg-orange-700/30 p-4 rounded-md">
                                     <h1 className="text-2xl font-bold pb-4">Rewards</h1>
-                                    <div className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white min-h-20">
-                                        <div className="relative">
-                                            <button className="absolute top-1 right-1 bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded text-center cursor-pointer" onClick={() => createReward()}>Add Rewards</button>
-                                        </div>
+                                    <div className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white min-h-20 grid grid-cols-4">
+                                        <div className="col-span-3">
                                         {rewards.length === 0 && (
                                             <p className="text-gray-400">No rewards added yet.</p>
                                         )}
                                         {rewards.map((item, index) => (
-                                            <div key={index} className="flex justify-between items-center border-b border-gray-700 py-1 w-3/4">
-                                                <p>{item}</p>
-                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeReward(index)}>Remove</button>
+                                            <div key={index} className="flex justify-between items-center border-b border-orange-700 py-1 w-9/10">
+                                                <p className="truncate">{item}</p>
+                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeReward(index)}>X</button>
                                             </div>
                                         ))}
+                                        </div>
+                                        <div className="col-span-1">
+                                            <button className="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded text-center cursor-pointer" onClick={() => createReward()}>Add Rewards</button>
+                                        </div>
                                     </div>
                                 </div>
                             )}
