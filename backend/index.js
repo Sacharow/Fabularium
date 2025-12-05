@@ -8,6 +8,7 @@ const systemRoutes = require("./routes/systemRoutes.js");
 const characterRoutes = require("./routes/charactersRoutes.js");
 const {checkAdmin, auth} = require("./middleware/safety.js");
 const cookieParser = require("cookie-parser");
+const campaignRoutes = require("./routes/campaignRoutes.js");
 
 const app = express();
 app.use(express.json());
@@ -18,16 +19,17 @@ app.use(morgan("dev"));
 
 app.use('/users', userRoutes);
 app.use("/characters", auth, characterRoutes);
-app.use("/system", auth, checkAdmin, systemRoutes);
+app.use("/system", auth, systemRoutes);
+app.use("/campaign", campaignRoutes);
 
 app.use('/', (req, res) => {
-    res.send("żelo elo");
+    res.send("app working");
 });
 
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-    console.log("elo żelo");
+    console.log("serwer działa na porcie 3000");
 });
 
 

@@ -53,7 +53,9 @@ model Users {
   updatedAt      DateTime  @updatedAt
 
   characters     Character[]
-  campaigns      Campaign[]
+  campaigns_owned      Campaign[] @relation(name: "CampaignOwner")
+  campaigns_contributed Campaign[] @relation(name: "CampaignContributors")
+
 }
 
 
@@ -381,9 +383,10 @@ model Campaign {
   description String
   joinCode String
 
-  owner   Users   @relation(fields: [ownerId], references: [id])
+  owner   Users   @relation(name: "CampaignOwner", fields: [ownerId], references: [id])
   ownerId String
 
+  contributors Users[] @relation(name: "CampaignContributors")
   characters Character[]
   missions Mission[]
   notes Note[]
@@ -392,16 +395,13 @@ model Campaign {
   npcs NPC[]
 }
 
-
-model Mission {
-  id     String @id @default(uuid())
-  title  String
-  description String
-  status Boolean
-
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String
+enum MissionStatus {
+  pending
+  in_progress
+  completed
 }
+
+
 
 model Note {
   id     String @id @default(uuid())
@@ -424,14 +424,29 @@ model Map {
   campaignId String
 }
 
+model Mission {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      MissionStatus
+
+  locationId  String
+  location    Location @relation(fields: [locationId], references: [id])
+
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+}
 
 model Location {
-  id     String @id @default(uuid())
-  name   String
+  id          String   @id @default(uuid())
+  name        String
   description String
 
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+
+  npcs        NPC[]
+  missions    Mission[]
 }
 
 
@@ -440,8 +455,11 @@ model NPC {
   name   String
   description String
 
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaigns   Campaign @relation(fields: [campaignId], references: [id])
   campaignId String
+
+  locations Location[]
 }
+
 
 
