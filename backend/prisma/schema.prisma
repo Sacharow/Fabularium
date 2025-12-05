@@ -401,15 +401,7 @@ enum MissionStatus {
   completed
 }
 
-model Mission {
-  id     String @id @default(uuid())
-  title  String
-  description String
-  status MissionStatus
 
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String
-}
 
 model Note {
   id     String @id @default(uuid())
@@ -432,15 +424,29 @@ model Map {
   campaignId String
 }
 
+model Mission {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      MissionStatus
+
+  locationId  String
+  location    Location @relation(fields: [locationId], references: [id])
+
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+}
 
 model Location {
-  id     String @id @default(uuid())
-  name   String
+  id          String   @id @default(uuid())
+  name        String
   description String
 
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String
-  npcs NPC[]
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+
+  npcs        NPC[]
+  missions    Mission[]
 }
 
 
@@ -449,7 +455,7 @@ model NPC {
   name   String
   description String
 
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaigns   Campaign @relation(fields: [campaignId], references: [id])
   campaignId String
 
   locations Location[]

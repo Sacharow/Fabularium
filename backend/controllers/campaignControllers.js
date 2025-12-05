@@ -31,6 +31,18 @@ const contributorSchema = z.object({
 	userId: z.string()
 });
 
+const npcSchema = z.object({
+	name: z.string().min(1),
+	description: z.string().min(1),
+	campaignId: z.string().optional()
+});
+
+const updateNPCSchema = z.object({
+	id: z.string(),
+	name: z.string().min(1).optional(),
+	description: z.string().min(1).optional()
+});
+
 
 const makeJoinCode = async () => {
 	for (let i = 0; i < 30; i++) {
@@ -293,6 +305,156 @@ const listCampaignCharacters = async (req, res) => {
 	}
 };
 
+const addNPC = async (req, res) => {
+	try {
+		const data = req.body;
+		const validated = npcSchema.safeParse(data);
+		if (!validated.success) {
+			return res.status(400).json({message: "Validation failed while adding npc", error: z.treeifyError(validated.error)});
+		}
+
+		const ownerCheck = await prisma.campaign.findUnique({
+			where: {
+				id: validated.data.campaignId,
+			},
+			select: {
+				ownerId: true
+			}
+		});
+
+		if (!ownerCheck) {
+			return res.status(404).json({message: "Campaign not found"});
+		}
+
+		if (ownerCheck.ownerId !== req.user.id) {
+			return res.status(403).json({message: "Forbidden, not yours campaign"});
+		}
+
+		const addedNpc = await prisma.nPC.create({data: validated.data});
+		return res.status(201).json(addedNpc);
+	} catch (er) {
+		return res.status(500).json({message: "Something went wrong with adding npc", error: er})
+	}
+};
+
+const getNPCs = async (req, res) => {
+	try {
+		const npcs = await prisma.nPC.findMany({
+			include: {
+				campaigns: true,
+				locations: true
+			}
+		});
+		return res.status(200).json(npcs);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to list NPCs', error: String(err) });
+	}
+};
+
+const getNPCById = async (req, res) => {
+	try {
+		const id = req.params.id;
+		if (!z.string().safeParse(id).success) {
+			return res.status(400).json({ message: 'Invalid id' });
+		}
+		const npc = await prisma.nPC.findUnique({
+			where: { id },
+			include: {
+				campaigns: true,
+				locations: true
+			}
+		});
+		if (!npc) {
+			return res.status(404).json({ message: 'NPC not found' });
+		}
+		return res.status(200).json(npc);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to get NPC', error: String(err) });
+	}
+};
+
+const updateNPC = async (req, res) => {
+	try {
+		const user = req.user;
+		const parsed = updateNPCSchema.safeParse({ ...req.body, id: req.params.id });
+		if (!parsed.success) {
+			return res.status(400).json({ message: "Validation failed", errors: parsed.error });
+		}
+		const npc = await prisma.nPC.findUnique({
+			where: { id: parsed.data.id },
+			select: { campaignId: true, campaigns: { select: { ownerId: true } } }
+		});
+		if (!npc) {
+			return res.status(404).json({ message: 'NPC not found' });
+		}
+		if (npc.campaigns.ownerId !== user.id) {
+			return res.status(403).json({ message: 'Forbidden' });
+		}
+		const updatedNPC = await prisma.nPC.update({
+			where: { id: parsed.data.id },
+			data: {
+				name: parsed.data.name,
+				description: parsed.data.description
+			},
+			include: {
+				campaigns: true,
+				locations: true
+			}
+		});
+		return res.status(200).json(updatedNPC);
+	} catch (err) {
+		if (String(err).includes('Record to update not found')) {
+			return res.status(404).json({ message: 'NPC not found' });
+		}
+		return res.status(500).json({ message: 'Failed to update NPC', error: String(err) });
+	}
+};
+
+const deleteNPC = async (req, res) => {
+	try {
+		const user = req.user;
+		const id = req.params.id;
+		if (!z.string().safeParse(id).success) {
+			return res.status(400).json({ message: 'Invalid id' });
+		}
+		const npc = await prisma.nPC.findUnique({
+			where: { id },
+			select: { campaignId: true, campaigns: { select: { ownerId: true } } }
+		});
+		if (!npc) {
+			return res.status(404).json({ message: 'NPC not found' });
+		}
+		if (npc.campaigns.ownerId !== user.id) {
+			return res.status(403).json({ message: 'Forbidden' });
+		}
+		await prisma.nPC.delete({ where: { id } });
+		return res.status(204).send();
+	} catch (err) {
+		if (String(err).includes('Record to delete does not exist')) {
+			return res.status(404).json({ message: 'NPC not found' });
+		}
+		return res.status(500).json({ message: 'Failed to delete NPC', error: String(err) });
+	}
+};
+
+const listCampaignNPCs = async (req, res) => {
+	try {
+		const id = req.params.id;
+		if (!z.string().safeParse(id).success) {
+			return res.status(400).json({ message: 'Invalid id' });
+		}
+		const npcs = await prisma.nPC.findMany({
+			where: { campaignId: id },
+			include: {
+				locations: true
+			}
+		});
+		return res.status(200).json(npcs);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to list campaign NPCs', error: String(err) });
+	}
+}
+
 module.exports = {
 	createCampaign,
 	getCampaigns,
@@ -304,7 +466,13 @@ module.exports = {
 	addContributor,
 	removeContributor,
 	listContributors,
-	listCampaignCharacters
+	listCampaignCharacters,
+	addNPC,
+	getNPCs,
+	getNPCById,
+	updateNPC,
+	deleteNPC,
+	listCampaignNPCs
 };
 
 
