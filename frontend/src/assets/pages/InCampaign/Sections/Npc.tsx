@@ -59,7 +59,7 @@ function saveToSession(npcs: NpcSection[]) {
 export default function NpcPage() {
   const { npcId } = useParams<{ npcId?: string }>()
   const navigate = useNavigate()
-  const [npcs, setNpcs] = useState<NpcSection[]>(() => loadFromSession())
+  const [npcs] = useState<NpcSection[]>(() => loadFromSession())
   
   useEffect(() => {
     saveToSession(npcs)
