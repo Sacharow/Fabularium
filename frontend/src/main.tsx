@@ -1,7 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from './context/AuthContext';
 import "./index.css";
+
 import Header from "./assets/components/Header";
 import Home from "./assets/pages/Home";
 import Login from "./assets/pages/Login";
@@ -34,6 +36,7 @@ import QuestView from "./assets/pages/InCampaign/Views/QuestView";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    <AuthProvider>
     <BrowserRouter>
       <Header />
       <Routes>
@@ -67,5 +70,6 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/InCampaign/:campaignId/QuestView" element={<QuestView />} />
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   </StrictMode>
 );
