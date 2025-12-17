@@ -648,7 +648,7 @@ export default function CharacterNew() {
                                             <div className="grid grid-cols-3 items-center bg-orange-800/30 p-2 rounded">
                                                 <span className="text-sm w-full">Initiative Bonus</span>
                                                 <div className="flex items-center justify-center gap-2 w-full">
-                                                    <span className="text-sm font-mediumr">{initiativeBonus}</span>
+                                                    <span className="text-sm font-medium">{initiativeBonus}</span>
                                                 </div>
                                             </div>
                                             <div className="grid grid-cols-3 items-center bg-orange-800/30 p-2 rounded">
