@@ -217,7 +217,7 @@ export default function CharacterNew() {
                 }
             } else {
                 // Clicking Exp: toggle expertise on/off
-                actualNewProf = current === 2 ? 0 : 2;
+                actualNewProf = current === 2 ? 1 : 2;
             }
 
             const next: Record<string, ProfLevel> = { ...prev, [skillName]: actualNewProf };
@@ -369,13 +369,13 @@ export default function CharacterNew() {
                                         </button>
                                     </li>
                                     <li>
-                                        <button onClick={() => setSelectedView('core')} className={`w-full text-left px-3 py-2 rounded ${selectedView === 'core' ? 'bg-orange-700 text-white' : 'text-orange-300 hover:bg-orange-800'}`}>
-                                            Core
+                                        <button onClick={() => setSelectedView('gameplay')} className={`w-full text-left px-3 py-2 rounded ${selectedView === 'gameplay' ? 'bg-orange-700 text-white' : 'text-orange-300 hover:bg-orange-800'}`}>
+                                            Gameplay
                                         </button>
                                     </li>
                                     <li>
-                                        <button onClick={() => setSelectedView('gameplay')} className={`w-full text-left px-3 py-2 rounded ${selectedView === 'gameplay' ? 'bg-orange-700 text-white' : 'text-orange-300 hover:bg-orange-800'}`}>
-                                            Gameplay
+                                        <button onClick={() => setSelectedView('core')} className={`w-full text-left px-3 py-2 rounded ${selectedView === 'core' ? 'bg-orange-700 text-white' : 'text-orange-300 hover:bg-orange-800'}`}>
+                                            Core
                                         </button>
                                     </li>
                                     <li>
@@ -542,54 +542,13 @@ export default function CharacterNew() {
                                 </div>
                             )}
 
-                            { /* Core Gameplay Information */}
-                            {(selectedView === 'all' || selectedView === 'core') && (
-                                <div className="bg-orange-700/30 p-4 rounded-md">
-                                    <h1 className="text-2xl font-bold pb-4">Core Statistics</h1>
-                                    <div className="grid grid-cols-3 grid-rows-2">
-                                        {stats.map((s) =>
-                                            <div key={s.name} className="pb-4 pr-4">
-                                                <p className={subTitleGameplayInformation}>{s.name}</p>
-                                                <div className="grid grid-cols-8 gap-2">
-                                                    <input
-                                                        type="number"
-                                                        min={0}
-                                                        max={30}
-                                                        className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white col-span-2"
-                                                        value={s.value}
-                                                        onChange={(e) => updateStatValue(s.name, Math.max(1, Math.min(30, Number(e.target.value) || 1)))} />
-                                                    <input
-                                                        type="number"
-                                                        className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white col-span-2 text-center"
-                                                        value={s.modifier}
-                                                        readOnly
-                                                    />
-                                                    {/* Stat proficiency (saving throw) control */}
-                                                    <div className="col-span-4 flex items-center gap-2">
-                                                        {(() => {
-                                                            const stProf = savingThrowProf[s.name] ?? 0;
-                                                            const stBtnClass = stProf > 0 ? 'px-3 py-1 rounded bg-orange-500 text-white cursor-pointer' : 'px-3 py-1 rounded bg-orange-800/50 text-white cursor-pointer';
-                                                            return (
-                                                                <>
-                                                                    <button className={stBtnClass} onClick={() => updateStatProf(s.name)}>Prof</button>
-                                                                </>
-                                                            );
-                                                        })()}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
                             { /* Gameplay Information */}
                             {(selectedView === 'all' || selectedView === 'gameplay') && (
                                 <div className="bg-orange-700/30 p-4 rounded-md">
                                     <h1 className="text-2xl font-bold pb-4">Gameplay Information</h1>
                                     <div className="grid grid-cols-2 gap-4">
                                         { /* Character Class */}
-                                        <div>
+                                        <div className="bg-orange-800/50 p-3 rounded">
                                             <p className={subTitleGameplayInformation}>
                                                 Level
                                             </p>
@@ -604,7 +563,7 @@ export default function CharacterNew() {
                                             </div>
                                         </div>
                                         { /* Proficiency Bonus */}
-                                        <div>
+                                        <div className="bg-orange-800/50 p-3 rounded">
                                             <p className={subTitleGameplayInformation}>
                                                 Proficiency Bonus
                                             </p>
@@ -617,7 +576,7 @@ export default function CharacterNew() {
                                             </div>
                                         </div>
                                         { /* Character Class */}
-                                        <div>
+                                        <div className="bg-orange-800/50 p-3 rounded">
                                             <p className={subTitleGameplayInformation}>
                                                 Class
                                             </p>
@@ -634,7 +593,7 @@ export default function CharacterNew() {
                                             </div>
                                         </div>
                                         { /* Character Race */}
-                                        <div>
+                                        <div className="bg-orange-800/50 p-3 rounded">
                                             <p className={subTitleGameplayInformation}>
                                                 Race
                                             </p>
@@ -651,7 +610,7 @@ export default function CharacterNew() {
                                             </div>
                                         </div>
                                         { /* Character Subclass */}
-                                        <div>
+                                        <div className="bg-orange-800/50 p-3 rounded">
                                             <p className={subTitleGameplayInformation}>
                                                 Subclass
                                             </p>
@@ -668,7 +627,7 @@ export default function CharacterNew() {
                                             </div>
                                         </div>
                                         { /* Character Background */}
-                                        <div>
+                                        <div className="bg-orange-800/50 p-3 rounded">
                                             <p className={subTitleGameplayInformation}>
                                                 Background
                                             </p>
@@ -684,71 +643,59 @@ export default function CharacterNew() {
                                                 </select>
                                             </div>
                                         </div>
-                                        { /* Character HitDice */}
-                                        <div>
-                                            <p className={subTitleGameplayInformation}>
-                                                HitDice
-                                            </p>
-                                            <div className={inputGameplayInformation}>
-                                                <input
-                                                    className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                                    placeholder="D10"
-                                                    value={`D${hitDice}`}
-                                                    readOnly />
+                                        {/* Not-Editable Section */}
+                                        <div className="col-span-2 flex flex-col rounded gap-2">
+                                            <div className="grid grid-cols-3 items-center bg-orange-800/30 p-2 rounded">
+                                                <span className="text-sm w-full">Initiative Bonus</span>
+                                                <div className="flex items-center justify-center gap-2 w-full">
+                                                    <span className="text-sm font-mediumr">{initiativeBonus}</span>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-3 items-center bg-orange-800/30 p-2 rounded">
+                                                <span className="text-sm w-full">Hit Dice</span>
+                                                <div className="flex items-center justify-center gap-2 w-full">
+                                                    <span className="text-sm font-medium">{hitDice}</span>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-3 items-center bg-orange-800/30 p-2 rounded">
+                                                <span className="text-sm w-full">Passive Perception</span>
+                                                <div className="flex items-center justify-center gap-2 w-full">
+                                                    <span className="text-sm font-medium">{passivePerception}</span>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-3 items-center bg-orange-800/30 p-2 rounded">
+                                                <span className="text-sm w-full">Max Hitpoints</span>
+                                                <div className="flex items-center justify-center gap-2 w-full">
+                                                    <span className="text-sm font-medium">{hitPointsCurrent}/{hitPointsMax}</span>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-3 items-center bg-orange-800/30 p-2 rounded">
+                                                <span className="text-sm w-full">Speed</span>
+                                                <div className="flex items-center justify-center gap-2 w-full">
+                                                    <span className="text-sm font-medium">{speed}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        { /* Initiative Bonus */}
-                                        <div>
-                                            <p className={subTitleGameplayInformation}>
-                                                Initiative Bonus
-                                            </p>
-                                            <div className={inputGameplayInformation}>
+                                    </div>
+                                </div>
+                            )}
+
+                            { /* Core Gameplay Information */}
+                            {(selectedView === 'all' || selectedView === 'core') && (
+                                <div className="bg-orange-700/30 p-4 rounded-md">
+                                    <h2 className="text-xl font-semibold pb-2">Ability Scores</h2>
+                                    <div className="grid grid-cols-3 grid-rows-2 gap-4 mb-6">
+                                        {stats.map((s) => (
+                                            <div key={s.name} className="bg-orange-800/50 p-3 rounded">
+                                                <p className="text-sm text-orange-300">{s.name}</p>
                                                 <input
-                                                    className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                                    placeholder="0"
-                                                    value={initiativeBonus >= 0 ? `+${initiativeBonus}` : `${initiativeBonus}`}
-                                                    readOnly />
+                                                    type="number"
+                                                    className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white mt-1"
+                                                    value={s.value}
+                                                    onChange={(e) => updateStatValue(s.name, Number(e.target.value))} />
+                                                <p className="text-xs text-gray-400 mt-1">Modifier: {s.modifier >= 0 ? `+${s.modifier}` : s.modifier}</p>
                                             </div>
-                                        </div>
-                                        { /* Speed */}
-                                        <div>
-                                            <p className={subTitleGameplayInformation}>
-                                                Speed
-                                            </p>
-                                            <div className={inputGameplayInformation}>
-                                                <input
-                                                    className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                                    placeholder="0"
-                                                    value={speed}
-                                                    readOnly />
-                                            </div>
-                                        </div>
-                                        { /* hitPointsMax */}
-                                        <div>
-                                            <p className={subTitleGameplayInformation}>
-                                                Hit Points Max
-                                            </p>
-                                            <div className={inputGameplayInformation}>
-                                                <input
-                                                    className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                                    placeholder="0"
-                                                    value={hitPointsMax}
-                                                    readOnly />
-                                            </div>
-                                        </div>
-                                        { /* Passive Perception */}
-                                        <div>
-                                            <p className={subTitleGameplayInformation}>
-                                                Passive Perception
-                                            </p>
-                                            <div className={inputGameplayInformation}>
-                                                <input
-                                                    className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
-                                                    placeholder="0"
-                                                    value={passivePerception}
-                                                    readOnly />
-                                            </div>
-                                        </div>
+                                        ))}
                                     </div>
                                 </div>
                             )}
@@ -756,38 +703,32 @@ export default function CharacterNew() {
                             { /* Skills */}
                             {(selectedView === 'all' || selectedView === 'skills') && (
                                 <div className="bg-orange-700/30 p-4 rounded-md">
-                                    <h1 className="text-2xl font-bold pb-4">Skills</h1>
-                                    <div className="grid grid-cols-2">
+                                    <h2 className="text-xl font-semibold pb-2">Skill Proficiencies</h2>
+                                    <div className="flex gap-2 flex-col">
                                         {stats.map((s) => (
-                                            <div key={s.name} className="pb-4 pr-4">
-                                                <div className="flex gap-4">
-                                                    <p className={subTitleGameplayInformation}>{s.name}</p>
-                                                    <p className={subTitleGameplayInformation}>{s.value}</p>
-                                                    <p className={subTitleGameplayInformation}>{s.modifier}</p>
-                                                </div>
+                                            <div key={s.name}>
                                                 {s.skills && Object.keys(s.skills).length > 0 && (
-                                                    Object.keys(s.skills).map((skillName) => {
-                                                        const profLevel = skillProf[skillName] ?? 0;
-                                                        const profBtnClass = profLevel > 0 ? 'px-3 py-1 rounded bg-orange-500 text-white cursor-pointer' : 'px-3 py-1 rounded bg-orange-800/50 text-white cursor-pointer';
-                                                        const expBtnClass = profLevel === 2 ? 'px-3 py-1 rounded bg-orange-500 text-white cursor-pointer' : 'px-3 py-1 rounded bg-orange-800/50 text-white cursor-pointer';
-                                                        return (
-                                                            <div key={skillName} className="pb-2">
-                                                                <p className="text-gray-400 text-sm">{skillName}</p>
-                                                                <div className="grid grid-cols-8 gap-2 items-center">
-                                                                    <input
-                                                                        type="number"
-                                                                        className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white col-span-2"
-                                                                        value={s.skills![skillName]}
-                                                                        readOnly
-                                                                    />
-                                                                    <div className="col-span-3 flex items-center gap-2">
-                                                                        <button className={profBtnClass} onClick={() => updateSkillProf(skillName, 1)}>Prof</button>
-                                                                        <button className={expBtnClass} onClick={() => updateSkillProf(skillName, 2)}>Exp</button>
-                                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <h1 className="text-lg font-semibold">{s.name}</h1>
+                                                        {Object.entries(s.skills).map(([skillName, skillValue]) => (
+                                                            <div key={skillName} className="flex items-center justify-between bg-orange-800/30 p-2 rounded">
+                                                                <span className="text-sm">{skillName}</span>
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-sm font-medium">{skillValue >= 0 ? `+${skillValue}` : skillValue}</span>
+                                                                    <button
+                                                                        onClick={() => updateSkillProf(skillName, 1)}
+                                                                        className={`px-2 py-1 text-xs rounded cursor-pointer hover:bg-orange-600 ${skillProf[skillName] >= 1 ? 'bg-orange-600' : 'bg-orange-800'}`}>
+                                                                        Prof
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => updateSkillProf(skillName, 2)}
+                                                                        className={`px-2 py-1 text-xs rounded cursor-pointer hover:bg-orange-600 ${skillProf[skillName] === 2 ? 'bg-orange-600' : 'bg-orange-800'}`}>
+                                                                        Exp
+                                                                    </button>
                                                                 </div>
                                                             </div>
-                                                        );
-                                                    })
+                                                        ))}
+                                                    </div>
                                                 )}
                                             </div>
                                         ))}
