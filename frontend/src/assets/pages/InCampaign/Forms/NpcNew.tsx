@@ -169,7 +169,7 @@ export default function NpcNew() {
             const list = Array.isArray(parsed) ? parsed : [];
             list.push(npcData);
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-            try { window.dispatchEvent(new Event('fabularium.npcs.updated')) } catch (e) { /* ignore */ }
+            try { window.dispatchEvent(new Event('fabularium.npcs.updated')); } catch (e) { /* ignore */ }
             if (campaignId) navigate(`/InCampaign/${campaignId}/NpcView/${id}`);
             else navigate(-1);
         } catch (e) {
