@@ -17,10 +17,10 @@ app.use(cors());
 app.use(morgan("dev"));
 
 
-app.use('/users', userRoutes);
-app.use("/characters", auth, characterRoutes);
-app.use("/system", auth, systemRoutes);
-app.use("/campaign", campaignRoutes);
+app.use('/api/users', userRoutes);
+app.use("/api/characters", auth, characterRoutes);
+app.use("/api/system", auth, systemRoutes);
+app.use("/api/campaigns", campaignRoutes);
 
 app.use('/', (req, res) => {
     res.send("app working");
