@@ -11,7 +11,7 @@ export default function QuestView() {
         id: number
         campaignId?: string | number
         name: string
-        color: string
+        description: string
     }
 
     const STORAGE_KEY = "fabularium.campaigns.quest_section"
@@ -80,14 +80,16 @@ export default function QuestView() {
                         </div>
                         <div className="pt-6 px-6">
                             <div className="max-w-[1200px] mx-auto">
-                                <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                                    {visible.map((c) => (
-                                        <NavLink key={c.id} to={`/InCampaign/${campaignId}/Quests/${c.id}`}>
-                                            <button className="w-full aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer">
-                                                <div className="h-full grid grid-rows-[80%_20%]">
-                                                    <div className={`${c.color} flex items-center justify-center`}></div>
-                                                    <div className="bg-gray-800 flex items-center justify-center px-2">
-                                                        <span className="text-sm font-medium text-gray-100 text-center">{c.name}</span>
+                                <div>
+                                    {visible.map((n) => (
+                                        <NavLink key={n.id} to={`/InCampaign/${campaignId}/Quests/${n.id}`}>
+                                            <button className="w-full rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer mb-4">
+                                                <div className="h-full grid grid-cols-10">
+                                                    <div className= "bg-orange-700 flex items-center justify-center px-2 col-span-3">
+                                                        <span className="text-sm font-medium text-gray-100 p-2 truncate">{n.name}</span>
+                                                    </div>
+                                                    <div className= "bg-orange-900 flex items-center justify-center px-2 col-span-7">
+                                                        <span className="text-sm font-medium text-gray-300 p-2 truncate">{n.description}</span>
                                                     </div>
                                                 </div>
                                             </button>

@@ -71,7 +71,7 @@ export default function CharacterNew() {
     const [skillProf, setSkillProf] = useState<Record<string, ProfLevel>>(INITIAL_SKILL_PROF);
     const [savingThrowProf, setSavingThrowProf] = useState<Record<string, ProfLevel>>({});
     const [initiativeBonus, setInitiativeBonus] = useState<number>(0);
-    const [speed, setSpeed] = useState<number>(30);
+    const [speed] = useState<number>(30);
     const [hitDice] = useState<number>(10);
     const [hitPointsMax, setHitPointsMax] = useState<number>(10);
     const [hitPointsCurrent, setHitPointsCurrent] = useState<number>(10);
@@ -707,7 +707,7 @@ export default function CharacterNew() {
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
                                                     value={initiativeBonus >= 0 ? `+${initiativeBonus}` : `${initiativeBonus}`}
-                                                    onChange={(e) => setInitiativeBonus(Number(e.target.value))} />
+                                                    readOnly />
                                             </div>
                                         </div>
                                         { /* Speed */}
@@ -720,7 +720,7 @@ export default function CharacterNew() {
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
                                                     value={speed}
-                                                    onChange={(e) => setSpeed(Number(e.target.value))} />
+                                                    readOnly />
                                             </div>
                                         </div>
                                         { /* hitPointsMax */}
@@ -733,7 +733,7 @@ export default function CharacterNew() {
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
                                                     value={hitPointsMax}
-                                                    onChange={(e) => setHitPointsMax(Number(e.target.value))} />
+                                                    readOnly />
                                             </div>
                                         </div>
                                         { /* Passive Perception */}
@@ -746,7 +746,7 @@ export default function CharacterNew() {
                                                     className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white"
                                                     placeholder="0"
                                                     value={passivePerception}
-                                                    onChange={(e) => setPassivePerception(Number(e.target.value))} />
+                                                    readOnly />
                                             </div>
                                         </div>
                                     </div>
@@ -821,22 +821,22 @@ export default function CharacterNew() {
                             {(selectedView === 'all' || selectedView === 'equipment') && (
                                 <div className="bg-orange-700/30 p-4 rounded-md">
                                     <h1 className="text-2xl font-bold pb-4">Equipment</h1>
-                                    <div className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white min-h-20">
-                                        <div className="relative">
-                                            <button className="absolute top-1 right-1 bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded text-center cursor-pointer" onClick={() => createEquipment()}>Add Item</button>
-                                        </div>
+                                    <div className="border-2 border-orange-700 rounded py-1 px-2 w-full bg-black text-white min-h-20 grid grid-cols-4">
+                                        <div className="col-span-3">
                                         {equipment.length === 0 && (
                                             <p className="text-gray-400">No equipment added yet.</p>
                                         )}
                                         {equipment.map((item, index) => (
-                                            <div key={index} className="flex justify-between items-center border-b border-gray-700 py-1 w-3/4">
-                                                <p>{item}</p>
-                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeEquipment(index)}>Remove</button>
+                                            <div key={index} className="flex justify-between items-center border-b border-orange-700 py-1 w-9/10">
+                                                <p className="truncate">{item}</p>
+                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeEquipment(index)}>X</button>
                                             </div>
                                         ))}
-
+                                        </div>
+                                        <div className="col-span-1">
+                                            <button className="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded text-center cursor-pointer" onClick={() => createEquipment()}>Add Item</button>
+                                        </div>
                                     </div>
-
                                 </div>
                             )}
 
@@ -846,8 +846,7 @@ export default function CharacterNew() {
                         <div className="bg-orange-700/30 rounded-md p-4 flex flex-col items-center">
                             <h1 className="text-2xl font-bold pb-6">Character Avatar</h1>
                             <div className="border-2 border-orange-700 border-dashed w-3/5 h-48 flex flex-col justify-center hover:border-orange-500">
-                                <p className="text-gray-400 uppercase text-center">SQUARE</p>
-                                <p className="text-gray-400 text-center">Click <span className="text-white font-bold">here</span> to upload image</p>
+                                <p className="text-gray-400 text-center p-2">Click <span className="text-white font-bold hover:underline cursor-pointer">here</span> to upload image</p>
                             </div>
                         </div>
                     </div>
