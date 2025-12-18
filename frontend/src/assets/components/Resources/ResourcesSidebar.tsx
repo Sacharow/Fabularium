@@ -86,8 +86,8 @@ export default function ResourcesSidebar({ active: controlledActive = null, onCh
         <div className="mt-6 border-t border-orange-700 pt-4">
           <div className="text-sm text-gray-300 font-medium mb-2">Sources</div>
           <div className="flex gap-2 mb-3">
-            <button type="button" onClick={() => onSelectAll?.()} className="text-xs px-2 py-1 rounded bg-orange-700/80">All</button>
-            <button type="button" onClick={() => onClearAll?.()} className="text-xs px-2 py-1 rounded bg-gray-700/50">Clear</button>
+            <button type="button" onClick={() => onSelectAll?.()} className="cursor-pointer text-xs px-2 py-1 rounded bg-orange-700/70 hover:bg-orange-700">All</button>
+            <button type="button" onClick={() => onClearAll?.()} className="cursor-pointer text-xs px-2 py-1 rounded bg-gray-700/50 hover:bg-gray-700/70">Clear</button>
           </div>
 
           <div className="flex flex-wrap gap-2 mr-2">
