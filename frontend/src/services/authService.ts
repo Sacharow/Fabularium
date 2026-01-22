@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:3000';
 
 export const authService = {
   async login(credentials: { name?: string; email?: string; password: string }) {
-    const response = await fetch(`${API_URL}/users/login`, {
+    const response = await fetch(`${API_URL}/api/users/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -14,7 +14,7 @@ export const authService = {
   },
 
   async register(data: { name: string; email: string; password: string }) {
-    const response = await fetch(`${API_URL}/users/register`, {
+    const response = await fetch(`${API_URL}/api/users/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
