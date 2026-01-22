@@ -100,7 +100,7 @@ export const resourceService = {
 
   async getFeats(): Promise<any[]> {
     try {
-      const response = await fetch(`${API_BASE}/features`);
+      const response = await fetch(`${API_BASE}/feats`);
       if (!response.ok) throw new Error('Failed to fetch feats');
       const data: APIResponse<any> = await response.json();
       return data.results;
@@ -112,7 +112,7 @@ export const resourceService = {
 
   async getFeatDetail(index: string): Promise<any> {
     try {
-      const response = await fetch(`${API_BASE}/features/${index}`);
+      const response = await fetch(`${API_BASE}/feats/${index}`);
       if (!response.ok) throw new Error(`Failed to fetch feat detail: ${index}`);
       return response.json();
     } catch (error) {

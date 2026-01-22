@@ -82,7 +82,38 @@ function Resources() {
 
   // accordion state: only one expanded item key at a time (format: "bookIdx-itemIdx")
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
-  const toggleExpanded = (key: string) => setExpandedKey((prev) => (prev === key ? null : key));
+  const toggleExpanded = async (key: string) => {
+    if (expandedKey === key) {
+      setExpandedKey(null);
+      return;
+    }
+
+    setExpandedKey(key);
+
+    // Parse key to get item index (format: "gi-i")
+    // Note: gi is currently always 0 because we only have one source "D&D 5e SRD"
+    const [, i] = key.split("-").map(Number);
+    const section = activeSection.toLowerCase();
+    const item = resources[section][i];
+
+    if (item && !item._detailed && item.index) {
+      try {
+        const details = await resourceService.getResourceDetail(section, item.index);
+        if (details) {
+          setResources(prev => {
+            const newSectionData = [...prev[section]];
+            newSectionData[i] = { ...newSectionData[i], ...details, _detailed: true };
+            return {
+              ...prev,
+              [section]: newSectionData
+            };
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching item details:", err);
+      }
+    }
+  };
 
   function formatSkillProficiencies(sp: any) {
     if (!sp) return null;

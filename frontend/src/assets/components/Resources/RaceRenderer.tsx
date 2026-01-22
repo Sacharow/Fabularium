@@ -13,8 +13,22 @@ export default function RaceRenderer({ item }: { item: RaceType }) {
 
   return (
     <div className="text-sm text-gray-200">
-      {size && <div><strong>Size:</strong> {size}</div>}
-      {speed && <div><strong>Speed:</strong> {typeof speed === 'object' ? JSON.stringify(speed) : speed}</div>}
+      <div className="flex gap-4 mb-2 text-xs text-orange-200">
+        {size && <div><strong>Size:</strong> {size}</div>}
+        {speed && (
+          <div>
+            <strong>Speed:</strong> {typeof speed === 'object' 
+              ? Object.entries(speed).map(([k, v]) => `${k} ${v}ft.`).join(', ') 
+              : `${speed} ft.`}
+          </div>
+        )}
+      </div>
+
+      {item.age && <div className="mb-2"><strong>Age:</strong> {item.age}</div>}
+      {item.alignment && <div className="mb-2"><strong>Alignment:</strong> {item.alignment}</div>}
+      {item.size_description && <div className="mb-2">{item.size_description}</div>}
+      {item.language_desc && <div className="mb-2"><strong>Languages:</strong> {item.language_desc}</div>}
+
       {Array.isArray(entries) ? entries.map((e, i) => <EntryRenderer key={i} node={e} />) : <EntryRenderer node={entries} />}
 
       {subraces && subraces.length > 0 && (

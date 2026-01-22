@@ -1,5 +1,7 @@
 import EntryRenderer from "./EntryRenderer";
 import ClassRenderer from "./ClassRenderer";
+import RaceRenderer from "./RaceRenderer";
+import SpellRenderer from "./SpellRenderer";
 
 type Props = {
   bookIdx: number;
@@ -53,19 +55,57 @@ export default function ResourceItem({ bookIdx, itemIdx, item, sectionKey, expan
 
       {expanded && (
         <div className="mt-2 pl-4 pr-2">
-          {/* common entries */}
-          {Array.isArray(item.entries) && item.entries.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
-          {Array.isArray(item.entry) && item.entry.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
+          {!item._detailed && item.index ? (
+            <div className="text-xs text-gray-500 animate-pulse">Loading details...</div>
+          ) : (
+            <>
+              {/* common entries */}
+              {Array.isArray(item.entries) && item.entries.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
+              {Array.isArray(item.entry) && item.entry.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
+              {Array.isArray(item.desc) && sectionKey !== "spells" && sectionKey !== "races" && item.desc.map((d: any, idx: number) => (
+                <p key={idx} className="text-sm text-gray-200 mb-2">{d}</p>
+              ))}
 
-          {/* per-category renderers */}
-          {sectionKey === "classes" && <ClassRenderer item={item} />}
+              {/* per-category renderers */}
+              {sectionKey === "classes" && <ClassRenderer item={item} />}
+              {sectionKey === "races" && <RaceRenderer item={item} />}
+              {sectionKey === "spells" && <SpellRenderer item={item} />}
 
-          {/* background-only fields */}
-          {sectionKey === "backgrounds" && item.skillProficiencies && (
-            <div className="text-sm text-gray-200 mb-1">Skill Proficiencies: {formatSkillProficiencies?.(item.skillProficiencies)}</div>
-          )}
-          {sectionKey === "backgrounds" && item.languageProficiencies && (
-            <div className="text-sm text-gray-200 mb-1">Language Proficiencies: {formatLanguageProficiencies?.(item.languageProficiencies)}</div>
+              {/* background-only fields */}
+              {sectionKey === "backgrounds" && (item.skillProficiencies || item.starting_proficiencies) && (
+                <div className="text-sm text-gray-200 mb-1">
+                  <strong>Skill Proficiencies:</strong> {item.skillProficiencies ? formatSkillProficiencies?.(item.skillProficiencies) : 
+                    item.starting_proficiencies?.filter((p: any) => p.index.startsWith('skill-')).map((p: any) => p.name.replace('Skill: ', '')).join(', ')}
+                </div>
+              )}
+              {sectionKey === "backgrounds" && (item.languageProficiencies || item.language_options) && (
+                <div className="text-sm text-gray-200 mb-1">
+                  <strong>Language Proficiencies:</strong> {item.languageProficiencies ? formatLanguageProficiencies?.(item.languageProficiencies) : 
+                    (item.language_options ? `Choose ${item.language_options.choose}` : '—')}
+                </div>
+              )}
+              {sectionKey === "backgrounds" && item.feature && (
+                <div className="mt-2">
+                  <div className="font-semibold text-orange-200 text-sm">{item.feature.name}</div>
+                  {Array.isArray(item.feature.desc) ? item.feature.desc.map((d: any, idx: number) => (
+                    <p key={idx} className="text-sm text-gray-200 mb-1">{d}</p>
+                  )) : <p className="text-sm text-gray-200 mb-1">{String(item.feature.desc)}</p>}
+                </div>
+              )}
+              {sectionKey === "backgrounds" && item.starting_equipment && (
+                <div className="mt-2">
+                  <div className="font-semibold text-orange-200 text-sm">Starting Equipment</div>
+                  <ul className="list-disc ml-5 text-sm text-gray-200">
+                    {item.starting_equipment.map((eq: any, idx: number) => (
+                      <li key={idx}>{eq.quantity}x {eq.equipment.name}</li>
+                    ))}
+                    {item.starting_equipment_options?.map((opt: any, idx: number) => (
+                      <li key={`opt-${idx}`} className="italic text-gray-400">Choose {opt.choose} from {opt.from.equipment_category?.name || 'options'}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
