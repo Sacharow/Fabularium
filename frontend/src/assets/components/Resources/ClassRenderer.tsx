@@ -25,7 +25,7 @@ export default function ClassRenderer({ item }: { item: any }) {
         <h2 className="text-3xl font-bold mb-2">{item.name}</h2>
         {item.short && <p className="italic text-gray-400 mb-4">{item.short}</p>}
 
-        <div className="space-y-1 text-sm">
+        <div className="space-y-1 text-sm mb-4">
           {item.source && <p><span className="font-semibold text-orange-200">Source:</span> <span className="text-gray-200">{item.source}</span></p>}
           {hit_die && <p><span className="font-semibold text-orange-200">Hit Die:</span> <span className="text-gray-200">d{hit_die}</span></p>}
           {primary && <p><span className="font-semibold text-orange-200">Primary Ability:</span> <span className="text-gray-200">{primary}</span></p>}
@@ -42,6 +42,12 @@ export default function ClassRenderer({ item }: { item: any }) {
             </p>
           )}
         </div>
+
+        {/* GENERIC ENTRIES/DESCRIPTION */}
+        {Array.isArray(item.entries) && item.entries.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
+        {Array.isArray(item.desc) && item.desc.map((d: any, idx: number) => (
+          <p key={idx} className="text-sm text-gray-200 mb-2">{d}</p>
+        ))}
       </section>
 
       {/* CLASS TABLE */}

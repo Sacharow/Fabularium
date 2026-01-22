@@ -59,12 +59,16 @@ export default function ResourceItem({ bookIdx, itemIdx, item, sectionKey, expan
             <div className="text-xs text-gray-500 animate-pulse">Loading details...</div>
           ) : (
             <>
-              {/* common entries */}
-              {Array.isArray(item.entries) && item.entries.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
-              {Array.isArray(item.entry) && item.entry.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
-              {Array.isArray(item.desc) && sectionKey !== "spells" && sectionKey !== "races" && item.desc.map((d: any, idx: number) => (
-                <p key={idx} className="text-sm text-gray-200 mb-2">{d}</p>
-              ))}
+              {/* common entries - only for generic sections without specialized renderers */}
+              {sectionKey !== "classes" && sectionKey !== "races" && sectionKey !== "spells" && (
+                <>
+                  {Array.isArray(item.entries) && item.entries.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
+                  {Array.isArray(item.entry) && item.entry.map((en: any, idx: number) => <div key={idx}><EntryRenderer node={en} /></div>)}
+                  {Array.isArray(item.desc) && item.desc.map((d: any, idx: number) => (
+                    <p key={idx} className="text-sm text-gray-200 mb-2">{d}</p>
+                  ))}
+                </>
+              )}
 
               {/* per-category renderers */}
               {sectionKey === "classes" && <ClassRenderer item={item} />}
