@@ -3,6 +3,20 @@ import EntryRenderer from "./EntryRenderer";
 export default function ClassRenderer({ item }: { item: any }) {
   if (!item) return null;
 
+  // Map API fields to expected fields (handle both old and new formats)
+  const hit_die = item.hd || item.hit_die;
+  const primary = item.primary;
+  const proficiency = item.proficiency;
+  const armor = item.armor || [];
+  const weapons = item.weapons || [];
+  const skills = item.skills;
+  const startingEquipment = item.startingEquipment;
+  const classTableGroups = item.classTableGroups;
+  const classFeatures = item.classFeatures;
+  const subclasses = item.subclasses || [];
+  const subclassTitle = item.subclassTitle || "Subclasses";
+  const multiclass = item.multiclass;
+
   return (
     <div className="space-y-10 text-gray-200 leading-relaxed">
 
@@ -12,16 +26,16 @@ export default function ClassRenderer({ item }: { item: any }) {
         {item.short && <p className="italic text-gray-400 mb-4">{item.short}</p>}
 
         <div className="space-y-1 text-sm">
-          <p><span className="font-semibold text-orange-200">Source:</span> <span className="text-gray-200">{item.source}</span></p>
-          <p><span className="font-semibold text-orange-200">Hit Die:</span> <span className="text-gray-200">{item.hd}</span></p>
-          <p><span className="font-semibold text-orange-200">Primary Ability:</span> <span className="text-gray-200">{item.primary}</span></p>
+          {item.source && <p><span className="font-semibold text-orange-200">Source:</span> <span className="text-gray-200">{item.source}</span></p>}
+          {hit_die && <p><span className="font-semibold text-orange-200">Hit Die:</span> <span className="text-gray-200">d{hit_die}</span></p>}
+          {primary && <p><span className="font-semibold text-orange-200">Primary Ability:</span> <span className="text-gray-200">{primary}</span></p>}
 
-          {item.proficiency && (
+          {proficiency && (
             <p>
               <span className="font-semibold text-orange-200">Saving Throws:</span>{" "}
               <span className="text-gray-200">
-                {Object.keys(item.proficiency)
-                  .filter((key) => item.proficiency[key])
+                {Object.keys(proficiency)
+                  .filter((key) => proficiency[key])
                   .map((key) => key.toUpperCase())
                   .join(", ")}
               </span>
@@ -31,11 +45,11 @@ export default function ClassRenderer({ item }: { item: any }) {
       </section>
 
       {/* CLASS TABLE */}
-      {Array.isArray(item.classTableGroups) && item.classTableGroups.length > 0 && (
+      {Array.isArray(classTableGroups) && classTableGroups.length > 0 && (
         <section>
           <h3 className="text-2xl font-bold mb-2">Class Table</h3>
 
-          {item.classTableGroups.map((group: any, gi: number) => (
+          {classTableGroups.map((group: any, gi: number) => (
             <div key={gi} className="overflow-auto mb-3 border border-orange-700 rounded">
               <table className="w-full text-sm border-collapse">
                 {Array.isArray(group.colLabels) && group.colLabels.length > 0 && (
@@ -76,24 +90,24 @@ export default function ClassRenderer({ item }: { item: any }) {
       <section>
         <h3 className="text-2xl font-bold mb-2">Proficiencies</h3>
 
-        <p><span className="font-semibold text-orange-200">Armor:</span> <span className="text-gray-200">{Array.isArray(item.armor) ? item.armor.join(", ") : "—"}</span></p>
-        <p><span className="font-semibold text-orange-200">Weapons:</span> <span className="text-gray-200">{Array.isArray(item.weapons) ? item.weapons.join(", ") : "—"}</span></p>
+        <p><span className="font-semibold text-orange-200">Armor:</span> <span className="text-gray-200">{Array.isArray(armor) && armor.length > 0 ? armor.join(", ") : "—"}</span></p>
+        <p><span className="font-semibold text-orange-200">Weapons:</span> <span className="text-gray-200">{Array.isArray(weapons) && weapons.length > 0 ? weapons.join(", ") : "—"}</span></p>
 
-        {item.skills && (
+        {skills && (
           <p>
             <span className="font-semibold text-orange-200">Skills:</span>{" "}
-            <span className="text-gray-200">Choose {item.skills.choose} from {Array.isArray(item.skills.from) ? item.skills.from.join(", ") : String(item.skills.from)}</span>
+            <span className="text-gray-200">Choose {skills.choose} from {Array.isArray(skills.from) ? skills.from.join(", ") : String(skills.from)}</span>
           </p>
         )}
       </section>
 
       {/* STARTING EQUIPMENT */}
-      {item.startingEquipment && (
+      {startingEquipment && (
         <section>
           <h3 className="text-2xl font-bold mb-2">Starting Equipment</h3>
 
           <ul className="list-disc ml-6 space-y-1 text-sm">
-            {Array.isArray(item.startingEquipment.default) ? item.startingEquipment.default.map((eq: any, i: number) => (
+            {Array.isArray(startingEquipment.default) ? startingEquipment.default.map((eq: any, i: number) => (
               <li key={i} className="text-gray-200">
                 {typeof eq === "string" ? (
                   eq
@@ -104,18 +118,18 @@ export default function ClassRenderer({ item }: { item: any }) {
             )) : <li className="text-gray-400">—</li>}
           </ul>
 
-          {item.startingEquipment.goldAlternative && (
-            <p className="mt-2 text-gray-400">Gold alternative: {item.startingEquipment.goldAlternative} gp</p>
+          {startingEquipment.goldAlternative && (
+            <p className="mt-2 text-gray-400">Gold alternative: {startingEquipment.goldAlternative} gp</p>
           )}
         </section>
       )}
 
       {/* CLASS FEATURES */}
-      {Array.isArray(item.classFeatures) && (
+      {Array.isArray(classFeatures) && classFeatures.length > 0 && (
         <section>
           <h3 className="text-2xl font-bold mb-4">Class Features</h3>
 
-          {item.classFeatures.map((featuresAtLevel: any[] = [], lvl: number) => (
+          {classFeatures.map((featuresAtLevel: any[] = [], lvl: number) => (
             <div key={lvl} className="mb-6">
               <h4 className="text-xl font-semibold mb-1">Level {lvl + 1}</h4>
 
@@ -149,11 +163,11 @@ export default function ClassRenderer({ item }: { item: any }) {
       )}
 
       {/* SUBCLASSES */}
-      {Array.isArray(item.subclasses) && item.subclasses.length > 0 && (
+      {Array.isArray(subclasses) && subclasses.length > 0 && (
         <section>
-          <h3 className="text-2xl font-bold mb-4">{item.subclassTitle}</h3>
+          <h3 className="text-2xl font-bold mb-4">{subclassTitle}</h3>
 
-          {item.subclasses.map((sub: any, si: number) => (
+          {subclasses.map((sub: any, si: number) => (
             <div key={si} className="mb-10">
               <h4 className="text-xl font-semibold text-orange-200">{sub.name}</h4>
               {sub.source && <p className="text-gray-400 mb-2">{sub.source}</p>}
@@ -182,14 +196,14 @@ export default function ClassRenderer({ item }: { item: any }) {
       )}
 
       {/* MULTICLASSING */}
-      {item.multiclass && (
+      {multiclass && (
         <section>
           <h3 className="text-2xl font-bold mb-2">Multiclassing</h3>
 
           <p className="font-semibold">Requirements:</p>
           <ul className="list-disc ml-6 mb-2 text-gray-200">
-            {item.multiclass.require && typeof item.multiclass.require === 'object' ?
-              Object.entries(item.multiclass.require)
+            {multiclass.require && typeof multiclass.require === 'object' ?
+              Object.entries(multiclass.require)
                 .filter(([k]) => k !== "type")
                 .map(([k, v]: any) => (
                   <li key={k}>{k.toUpperCase()} {String(v)}</li>
@@ -198,11 +212,11 @@ export default function ClassRenderer({ item }: { item: any }) {
             }
           </ul>
 
-          {item.multiclass.proficiencies && (
+          {multiclass.proficiencies && (
             <>
               <p className="font-semibold text-orange-200">Proficiencies gained:</p>
-              <p className="text-gray-200">Armor: {Array.isArray(item.multiclass.proficiencies.armor) ? item.multiclass.proficiencies.armor.join(", ") : "—"}</p>
-              <p className="text-gray-200">Weapons: {Array.isArray(item.multiclass.proficiencies.weapons) ? item.multiclass.proficiencies.weapons.join(", ") : "—"}</p>
+              <p className="text-gray-200">Armor: {Array.isArray(multiclass.proficiencies.armor) ? multiclass.proficiencies.armor.join(", ") : "—"}</p>
+              <p className="text-gray-200">Weapons: {Array.isArray(multiclass.proficiencies.weapons) ? multiclass.proficiencies.weapons.join(", ") : "—"}</p>
             </>
           )}
         </section>

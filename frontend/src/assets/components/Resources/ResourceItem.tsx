@@ -15,7 +15,7 @@ type Props = {
 function getItemLabel(item: any) {
   if (!item) return "(empty)";
   if (typeof item === "string") return item;
-  return item.name || item.title || item.ability || item.URL || item.Source || item.source || JSON.stringify(item).slice(0, 80) + "...";
+  return item.name || item.title || item.ability || item.index || item.url || item.URL || item.Source || item.source || JSON.stringify(item).slice(0, 80) + "...";
 }
 
 function getItemMeta(item: any) {
@@ -25,6 +25,8 @@ function getItemMeta(item: any) {
   if (item.source) parts.push(String(item.source));
   if (item.acronym) parts.push(String(item.acronym));
   if (item.ability) parts.push(String(item.ability));
+  if (item.index) parts.push(`#${item.index}`);
+  if (item.url) parts.push(item.url);
   if (item.URL) parts.push(item.URL);
   return parts.join(" • ");
 }

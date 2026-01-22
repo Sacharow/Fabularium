@@ -1,21 +1,71 @@
-import { useState } from "react";
-import data from "../data/resources.json";
+import { useState, useEffect } from "react";
 import ResourcesSidebar from "../components/Resources/ResourcesSidebar";
 import ResourceItem from "../components/Resources/ResourceItem";
+import { resourceService } from "../../services/resourceService";
 
 function Resources() {
-  const assets = data as any[];
   const sections = ["Backgrounds", "Classes", "Feats", "Races", "Spells"];
   const [activeSection, setActiveSection] = useState<string>(sections[0]);
+  
+  // API data state
+  const [resources, setResources] = useState<Record<string, any[]>>({
+    backgrounds: [],
+    classes: [],
+    feats: [],
+    races: [],
+    spells: [],
+  });
+  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Build sources list from the JSON (top-to-bottom)
-  const sources = Array.isArray(assets) ? assets : [];
+  // Fetch data from API on mount
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const [backgrounds, classes, feats, races, spells] = await Promise.all([
+          resourceService.getBackgrounds(),
+          resourceService.getClasses(),
+          resourceService.getFeats(),
+          resourceService.getRaces(),
+          resourceService.getSpells(),
+        ]);
+        
+        setResources({
+          backgrounds: backgrounds || [],
+          classes: classes || [],
+          feats: feats || [],
+          races: races || [],
+          spells: spells || [],
+        });
+      } catch (err) {
+        console.error('Error fetching resources:', err);
+        setError('Failed to load resources');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchResources();
+  }, []);
 
-  // Selected sources state — default: all selected
-  const [selectedSources, setSelectedSources] = useState<Record<number, boolean>>(() => {
-    const map: Record<number, boolean> = {};
-    sources.forEach((_s, i) => (map[i] = true));
-    return map;
+  // For API data, we'll treat the entire collection as one "source"
+  const sources = [{
+    name: "D&D 5e SRD",
+    acronym: "SRD",
+    backgrounds: resources.backgrounds,
+    classes: resources.classes,
+    feats: resources.feats,
+    races: resources.races,
+    spells: resources.spells,
+  }];
+
+  // Selected sources state — default: all selected (only one source from API)
+  const [selectedSources, setSelectedSources] = useState<Record<number, boolean>>({
+    0: true, // Always show the single SRD source
   });
 
   const toggleSource = (index: number) => {
@@ -23,15 +73,11 @@ function Resources() {
   };
 
   const selectAllSources = () => {
-    const map: Record<number, boolean> = {};
-    sources.forEach((_s, i) => (map[i] = true));
-    setSelectedSources(map);
+    setSelectedSources({ 0: true });
   };
 
   const clearAllSources = () => {
-    const map: Record<number, boolean> = {};
-    sources.forEach((_s, i) => (map[i] = false));
-    setSelectedSources(map);
+    setSelectedSources({ 0: false });
   };
 
   // accordion state: only one expanded item key at a time (format: "bookIdx-itemIdx")
@@ -84,6 +130,14 @@ function Resources() {
       const items = Array.isArray(src[key]) ? src[key] : [];
       groups.push({ src, items });
     });
+
+    if (loading) {
+      return <div className="text-sm text-gray-400">Loading resources...</div>;
+    }
+
+    if (error) {
+      return <div className="text-sm text-red-400">Error: {error}</div>;
+    }
 
     if (groups.length === 0) {
       return <div className="text-sm text-gray-400">No sources selected.</div>;
