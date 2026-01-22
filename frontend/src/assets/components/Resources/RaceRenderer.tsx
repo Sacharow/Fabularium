@@ -61,16 +61,42 @@ export default function RaceRenderer({ item }: { item: RaceType }) {
           {subraces.map((sr, si) => {
             const key = `sr-${si}`;
             const open = openSubrace === key;
-            const subraceEntries = sr.entries ?? sr.desc ?? [];
+            const subraceEntries = sr.entries ?? (typeof sr.desc === 'string' ? [sr.desc] : sr.desc) ?? [];
+            const subraceTraits = sr.traits ?? [];
+
             return (
               <div key={si} className="border border-orange-700/20 rounded mb-2">
-                <button className="w-full p-2 flex justify-between" onClick={() => setOpenSubrace(open ? null : key)}>
-                  <div className="font-medium">{sr.name}</div>
+                <button className="w-full p-2 flex justify-between hover:bg-orange-700/10 cursor-pointer" onClick={() => setOpenSubrace(open ? null : key)}>
+                  <div className="font-medium text-orange-100">{sr.name}</div>
                   <div className="text-xs">{open ? "▾" : "▸"}</div>
                 </button>
                 {open && (
-                  <div className="p-2">
-                    {Array.isArray(subraceEntries) ? subraceEntries.map((e, i) => <EntryRenderer key={i} node={e} />) : <EntryRenderer node={subraceEntries} />}
+                  <div className="p-2 pt-0 space-y-3">
+                    {sr.ability_bonuses && sr.ability_bonuses.length > 0 && (
+                      <div className="text-xs">
+                        <span className="font-semibold text-orange-200">Ability Bonuses:</span>{" "}
+                        <span className="text-gray-300">
+                          {sr.ability_bonuses.map((ab: any) => `${ab.ability_score.name} +${ab.bonus}`).join(', ')}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="text-sm">
+                      {Array.isArray(subraceEntries) ? subraceEntries.map((e: any, i: number) => <EntryRenderer key={i} node={e} />) : <EntryRenderer node={subraceEntries} />}
+                    </div>
+
+                    {subraceTraits.length > 0 && (
+                      <div className="space-y-2">
+                        {subraceTraits.map((trait: any, ti: number) => (
+                          <div key={ti} className="text-sm">
+                            <div className="font-semibold text-orange-200 text-xs">{trait.name}</div>
+                            {Array.isArray(trait.desc) ? trait.desc.map((d: any, di: number) => (
+                              <p key={di} className="text-gray-300 text-xs mb-1">{d}</p>
+                            )) : <p className="text-gray-300 text-xs mb-1">{String(trait.desc)}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

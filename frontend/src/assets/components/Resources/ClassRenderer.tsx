@@ -1,6 +1,8 @@
+import { useState } from "react";
 import EntryRenderer from "./EntryRenderer";
 
 export default function ClassRenderer({ item }: { item: any }) {
+  const [openSubclass, setOpenSubclass] = useState<string | null>(null);
   if (!item) return null;
 
   // Map API fields to expected fields (handle both old and new formats)
@@ -173,31 +175,49 @@ export default function ClassRenderer({ item }: { item: any }) {
         <section>
           <h3 className="text-2xl font-bold mb-4">{subclassTitle}</h3>
 
-          {subclasses.map((sub: any, si: number) => (
-            <div key={si} className="mb-10">
-              <h4 className="text-xl font-semibold text-orange-200">{sub.name}</h4>
-              {sub.source && <p className="text-gray-400 mb-2">{sub.source}</p>}
-              {sub.desc && <p className="mb-4 text-gray-200">{sub.desc}</p>}
+          {subclasses.map((sub: any, si: number) => {
+            const key = `sc-${si}`;
+            const open = openSubclass === key;
 
-              {Array.isArray(sub.subclassFeatures) && sub.subclassFeatures.map((sf: any, sfi: number) => (
-                <div key={sfi} className="mb-4">
-                  <p className="font-semibold text-orange-200">
-                    {sf.level != null && (
-                      <span className="text-yellow-300">Level {sf.level}: </span>
-                    )}
-                    {sf.name}
-                  </p>
+            return (
+              <div key={si} className="border border-orange-700/20 rounded mb-4">
+                <button 
+                  className="w-full p-3 flex justify-between items-center hover:bg-orange-700/10 cursor-pointer text-left" 
+                  onClick={() => setOpenSubclass(open ? null : key)}
+                >
+                  <div>
+                    <div className="text-xl font-semibold text-orange-200">{sub.name}</div>
+                    {sub.source && <div className="text-xs text-gray-400">{sub.source}</div>}
+                  </div>
+                  <div className="text-sm">{open ? "▾" : "▸"}</div>
+                </button>
+                
+                {open && (
+                  <div className="p-3 pt-0 border-t border-orange-700/10 mt-3">
+                    {sub.desc && <p className="mb-4 text-gray-200 text-sm italic">{sub.desc}</p>}
 
-                  {/* ENTRIES -> EntryRenderer */}
-                  {Array.isArray(sf.entries) && sf.entries.map((entry: any, ei: number) => (
-                    <div key={ei} className="ml-3">
-                      <EntryRenderer node={entry} />
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          ))}
+                    {Array.isArray(sub.subclassFeatures) && sub.subclassFeatures.map((sf: any, sfi: number) => (
+                      <div key={sfi} className="mb-4 last:mb-0">
+                        <p className="font-semibold text-orange-200 text-sm">
+                          {sf.level != null && (
+                            <span className="text-yellow-300">Level {sf.level}: </span>
+                          )}
+                          {sf.name}
+                        </p>
+
+                        {/* ENTRIES -> EntryRenderer */}
+                        {Array.isArray(sf.entries) && sf.entries.map((entry: any, ei: number) => (
+                          <div key={ei} className="ml-3">
+                            <EntryRenderer node={entry} />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </section>
       )}
 

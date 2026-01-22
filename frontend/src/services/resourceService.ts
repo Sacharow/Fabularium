@@ -61,6 +61,71 @@ export const resourceService = {
         classData.classTableGroups = this.formatClassTable(levelsData);
       }
 
+      // Map proficiencies for ClassRenderer
+      if (Array.isArray(classData.proficiencies)) {
+        classData.armor = classData.proficiencies
+          .filter((p: any) => p.index.includes('armor') || p.index.includes('shields'))
+          .map((p: any) => p.name);
+        classData.weapons = classData.proficiencies
+          .filter((p: any) => p.index.includes('weapon') || p.index.includes('bows') || p.index.includes('axes') || p.index.includes('swords'))
+          .map((p: any) => p.name);
+      }
+
+      // Map saving throws
+      if (Array.isArray(classData.saving_throws)) {
+        classData.proficiency = {};
+        classData.saving_throws.forEach((st: any) => {
+          classData.proficiency[st.index] = true;
+        });
+      }
+
+      // Map skill choices
+      if (Array.isArray(classData.proficiency_choices)) {
+        const skillChoice = classData.proficiency_choices.find((c: any) => c.desc && c.desc.toLowerCase().includes('choose'));
+        if (skillChoice) {
+          classData.skills = {
+            choose: skillChoice.choose,
+            from: skillChoice.from.options.map((opt: any) => opt.item.name.replace('Skill: ', ''))
+          };
+        }
+      }
+
+      // Fetch subclass details
+      if (Array.isArray(classData.subclasses)) {
+        classData.subclasses = await Promise.all(
+          classData.subclasses.map(async (scRef: any) => {
+            try {
+              const scRes = await fetch(`https://www.dnd5eapi.co${scRef.url}`);
+              if (!scRes.ok) return scRef;
+              const scData = await scRes.json();
+
+              // Fetch subclass features
+              const scFeaturesRes = await fetch(`https://www.dnd5eapi.co/api/2014/subclasses/${scData.index}/features`);
+              if (scFeaturesRes.ok) {
+                const scFeaturesList = await scFeaturesRes.json();
+                const scFeaturesDetails = await Promise.all(
+                  scFeaturesList.results.map(async (f: any) => {
+                    try {
+                      const fRes = await fetch(`https://www.dnd5eapi.co${f.url}`);
+                      return fRes.ok ? fRes.json() : f;
+                    } catch (e) {
+                      return f;
+                    }
+                  })
+                );
+                scData.subclassFeatures = scFeaturesDetails.map(f => ({
+                  ...f,
+                  entries: f.desc || []
+                }));
+              }
+              return scData;
+            } catch (e) {
+              return scRef;
+            }
+          })
+        );
+      }
+
       return classData;
     } catch (error) {
       console.error(`Error fetching class detail ${index}:`, error);
@@ -72,7 +137,7 @@ export const resourceService = {
     if (!levelsData || levelsData.length === 0) return [];
     
     // Determine column labels based on what's in class_specific or other fields
-    // Basic columns: Level, Prof Bonus
+    // Basic columns: Prof Bonus
     const colLabels = ["Proficiency Bonus"];
     const keys: string[] = ["prof_bonus"];
     
@@ -90,31 +155,26 @@ export const resourceService = {
     });
 
     const rows = levelsData.map(lvl => {
-      const row = [lvl.level]; // First column is Level (though ClassRenderer might handle it separately)
-      // Actually ClassRenderer handles Level column separately in some versions, 
-      // let's check its code.
-      
-      const rowData = [lvl.level];
+      const rowData: any[] = [];
       keys.forEach(k => {
+        let val: any = "—";
         if (k === "prof_bonus") {
-          rowData.push(`+${lvl[k]}`);
+          val = `+${lvl[k]}`;
         } else if (lvl.class_specific && lvl.class_specific[k] !== undefined) {
-          rowData.push(lvl.class_specific[k]);
-        } else {
-          rowData.push("—");
+          val = lvl.class_specific[k];
+          // Format complex objects
+          if (typeof val === 'object' && val !== null) {
+            if (val.dice_count && val.dice_value) {
+              val = `${val.dice_count}d${val.dice_value}`;
+            } else {
+              val = JSON.stringify(val);
+            }
+          }
         }
+        rowData.push(val);
       });
       return rowData;
     });
-
-    // ClassRenderer code shows it expects Level to be separate:
-    // <th className="p-2 text-left text-xs text-orange-100 border-b border-orange-700">Level</th>
-    // {group.colLabels.map((label: string, i: number) => ( ... ))}
-    // So colLabels should NOT include Level.
-    // And rows[i] should probably start with Level? Wait.
-    // <td className="p-2 border-b border-orange-700/50">{row[0]}</td>
-    // {row.slice(1).map((cell: any, ci: number) => ( ... ))}
-    // Yes, row[0] is Level.
 
     return [{
       colLabels: colLabels,
@@ -167,6 +227,38 @@ export const resourceService = {
              });
            }
         });
+      }
+
+      // Fetch subraces details
+      if (Array.isArray(raceData.subraces) && raceData.subraces.length > 0) {
+        raceData.subraces = await Promise.all(
+          raceData.subraces.map(async (srRef: any) => {
+            try {
+              const srRes = await fetch(`https://www.dnd5eapi.co${srRef.url}`);
+              if (!srRes.ok) return srRef;
+              const srData = await srRes.json();
+
+              // Fetch details for subrace racial traits
+              if (Array.isArray(srData.racial_traits) && srData.racial_traits.length > 0) {
+                const traitsDetails = await Promise.all(
+                  srData.racial_traits.map(async (t: any) => {
+                    try {
+                      const res = await fetch(`https://www.dnd5eapi.co${t.url}`);
+                      return res.ok ? res.json() : t;
+                    } catch (e) {
+                      return t;
+                    }
+                  })
+                );
+                
+                srData.traits = traitsDetails;
+              }
+              return srData;
+            } catch (e) {
+              return srRef;
+            }
+          })
+        );
       }
 
       return raceData;
