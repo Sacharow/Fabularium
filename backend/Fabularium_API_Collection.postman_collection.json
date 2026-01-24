@@ -1,0 +1,530 @@
+{
+	"info": {
+		"_postman_id": "fabularium-api-collection",
+		"name": "Fabularium API Collection",
+		"description": "Complete API collection for Fabularium backend with all endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+
+			{
+				"info": {
+					"_postman_id": "fabularium-api-collection",
+					"name": "Fabularium API Collection",
+					"description": "Pełna kolekcja Postman dla Fabularium backend. Każdy endpoint, metoda, parametry, body, przykłady, opisy. Autoryzację JWT/cookie uzupełnij samodzielnie.",
+					"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+				},
+				"variable": [
+					{ "key": "baseUrl", "value": "http://localhost:3000/api", "type": "string" }
+				],
+				"item": [
+					// ... (tutaj zostanie wygenerowana pełna, szczegółowa kolekcja Postman, zgodnie z kodem backendu)
+				]
+			}
+					"response": []
+				},
+				{
+					"name": "Create Race Ability (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Darkvision\",\n  \"description\": \"See in the dark up to 60 feet\",\n  \"raceId\": \"dwarf-id\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/race-abilities",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "race-abilities"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Race Ability (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/race-abilities/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "race-abilities", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Race Ability (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/race-abilities/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "race-abilities", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System - Spells",
+			"item": [
+				{
+					"name": "Get All Spells",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/spells",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "spells"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Spell By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/spells/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "spells", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Spell (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Fireball\",\n  \"level\": 3,\n  \"school\": \"Evocation\",\n  \"castingTime\": \"1 action\",\n  \"range\": \"150 feet\",\n  \"components\": \"V, S, M\",\n  \"duration\": \"Instantaneous\",\n  \"description\": \"A bright streak flashes from your pointing finger...\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/spells",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "spells"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Spell (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/spells/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "spells", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Spell (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/spells/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "spells", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System - Items",
+			"item": [
+				{
+					"name": "Get All Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/items",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "items"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Item By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/items/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "items", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Item (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Longsword\",\n  \"type\": \"Weapon\",\n  \"rarity\": \"Common\",\n  \"weight\": 3,\n  \"value\": 15,\n  \"description\": \"A versatile martial weapon\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/items",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "items"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Item (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": 20\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/items/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "items", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Item (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/items/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "items", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System - Features",
+			"item": [
+				{
+					"name": "Get All Features",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/features",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "features"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Feature By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/features/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "features", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Feature (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Second Wind\",\n  \"description\": \"Regain hit points as a bonus action\",\n  \"level\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/features",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "features"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Feature (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/features/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "features", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Feature (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/features/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "features", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System - Feats",
+			"item": [
+				{
+					"name": "Get All Feats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/feats",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "feats"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Feat By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/feats/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "feats", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Feat (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Great Weapon Master\",\n  \"description\": \"You've learned to put the weight of a weapon to your advantage\",\n  \"prerequisites\": \"None\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/feats",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "feats"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Feat (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/feats/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "feats", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Feat (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/feats/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "feats", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}

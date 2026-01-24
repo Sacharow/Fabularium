@@ -8,6 +8,6 @@ router.get("/mycharacters", listMyCharacters);
 router.post("/", createCharacter);
 router.get("/character/:id", checkOwnership, getCharacterById);
 router.delete("/:id", checkOwnership, deleteCharacter);
-router.patch("/:id", checkOwnership, updateCharacter);
+router.put("/:id", checkOwnership, updateCharacter);
 
 module.exports = router;

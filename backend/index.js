@@ -12,20 +12,20 @@ const campaignRoutes = require("./routes/campaignRoutes.js");
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
-const swaggerOptions = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: "Fabularium API",
-            version: '1.0.0',
-            description: "Api documentation for Fabularium"
-        },
-        servers: [
-            {URL: 'http://localhost:3000/api'}
-        ],
-    },
-    apis: ['./routes/*.js', './controllers/*.js']
-};
+// const swaggerOptions = {
+//     definition: {
+//         openapi: '3.0.0',
+//         info: {
+//             title: "Fabularium API",
+//             version: '1.0.0',
+//             description: "Api documentation for Fabularium"
+//         },
+//         servers: [
+//             {URL: 'http://localhost:3000/api/'}
+//         ],
+//     },
+//     apis: ['./routes/*.js', './controllers/*.js']
+// }; <--- na razie wywalam
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 

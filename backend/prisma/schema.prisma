@@ -177,7 +177,7 @@ model CharacterCombatStats {
 
 model Item {
   id          String   @id @default(uuid())
-  name        String
+  name        String   @unique
   type        String    // weapon, armor, gear, consumable...
   description String?
   weight      Float?
@@ -205,7 +205,7 @@ model InventoryItem {
 
 model Spell {
   id          String   @id @default(uuid())
-  name        String
+  name        String   @unique
   level       Int
   school      String?
   castingTime String?
@@ -303,7 +303,7 @@ model RaceAbility {
   id      String @id @default(uuid())
   raceId  String
   race    Race   @relation(fields: [raceId], references: [id])
-  name    String
+    name    String   @unique
   description String?
 }
 
@@ -332,7 +332,7 @@ model Subclass {
   id        String @id @default(uuid())
   classId   String
   class     Class  @relation(fields: [classId], references: [id])
-  name      String
+  name      String @unique
   description String?
 
   characters Character[]
@@ -363,7 +363,7 @@ model CharacterCurrency {
 
 model Feat {
   id          String @id @default(uuid())
-  name        String
+    name        String   @unique
   description String?
 }
 
@@ -451,14 +451,48 @@ model Location {
 
 
 model NPC {
-  id     String @id @default(uuid())
-  name   String
+  id          String   @id @default(uuid())
+  name        String
   description String
 
-  campaigns   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
 
-  locations Location[]
+  locations   Location[]
+}
+
+model Monster {
+  id        String   @id @default(uuid())
+  apiId     String   @unique // np. "adult-black-dragon"
+  name      String
+  size      Size?
+  type      String
+  subtype   String?
+  alignment String?
+  armorClass Int?
+  
+  hitPoints Int?
+  hitDice   String?
+  speed     Json?
+  stats     Json? // str, dex, con, int, wis, cha
+  actions   Json?
+  legendaryActions Json?
+  specialAbilities Json?
+  languages String?
+  challengeRating Float?
+  xp        Int?
+  senses    Json?
+  damageImmunities String?
+  conditionImmunities String?
+  damageResistances String?
+  damageVulnerabilities String?
+  savingThrows Json?
+  skills    Json?
+  reactions Json?
+  environment String?
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 
