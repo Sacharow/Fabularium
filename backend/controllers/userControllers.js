@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const z = require("zod");
 const crypt = require("bcryptjs");
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
 
 const prisma = new PrismaClient();
 
@@ -57,7 +58,11 @@ const login = async (req, res) => {
         }
 
         const validated = data.data;
-        const user = await prisma.users.findFirst({ where: {name: validated.name} });
+        const user = await prisma.users.findFirst({ where: {
+            OR:[
+                {name: validated.name}, {email: validated.email}
+            ]}
+        });
         if (!user) {
             return res.status(404).json({message: "No such user in database"});
         }
@@ -74,22 +79,25 @@ const login = async (req, res) => {
                 role: user.role
             },
             process.env.JWT_SECRET,
-            {expiresIn: "20m"}
+            {expiresIn: "1h"}
         )
 
-        res.cookie("access_token", token, {
+        const refreshToken = jwt.sign({id: user.id, role: user.role}, process.env.JWT_SECRET, {expiresIn: "1d"});
+
+        res.cookie("refresh_token", refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
-            maxAge: 20 * 60 * 1000,
             path: "/"
-        });
+        }).header("Authorization", token).send(user);
 
         return res.json({message: "Logged in"});
 
 
     } catch (error) {
-        return res.status(500).json({message: "An error occured while logging in", error: error});
+        console.log(error);
+        
+        return res.status(500).json({message: "An error occured while logging in", error});
     }
 };
 
@@ -107,7 +115,22 @@ const logout = async (req, res) => {
     }
 }
 
-//dodaj refresh token
+const refresh = (req, res) => {
+    const refreshToken = req.cookies.refresh_token;
+    
+    if (!refreshToken) {
+        return res.status(401).json({message: 'Access denied. No refresh token provided'});
+    }
+
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+        const accessToken = jwt.sign({user: decoded.user}, process.env.JWT_SECRET);
+
+        res.header("Authorization", accessToken).send(decoded.user);
+    } catch (err) {
+        return res.status(500).json({message: "Error with refreshing token", err});
+    }
+}
 
 
 const getAllUsers = async (req, res) => {
@@ -121,4 +144,4 @@ const getAllUsers = async (req, res) => {
 
 
 
-module.exports = {getAllUsers, createUserClassic, login, logout};
+module.exports = {getAllUsers, createUserClassic, login, logout, refresh};

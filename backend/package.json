@@ -28,6 +28,8 @@
     "passport-http": "^0.3.0",
     "prettier": "^3.6.2",
     "supabase": "^2.54.11",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
