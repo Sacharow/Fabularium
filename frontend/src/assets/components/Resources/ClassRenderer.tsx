@@ -5,6 +5,122 @@ export default function ClassRenderer({ item }: { item: any }) {
   const [openSubclass, setOpenSubclass] = useState<string | null>(null);
   if (!item) return null;
 
+  const fullSlots = [
+    [2,0,0,0,0,0,0,0,0],
+    [3,0,0,0,0,0,0,0,0],
+    [4,2,0,0,0,0,0,0,0],
+    [4,3,0,0,0,0,0,0,0],
+    [4,3,2,0,0,0,0,0,0],
+    [4,3,3,0,0,0,0,0,0],
+    [4,3,3,1,0,0,0,0,0],
+    [4,3,3,2,0,0,0,0,0],
+    [4,3,3,3,1,0,0,0,0],
+    [4,3,3,3,2,0,0,0,0],
+    [4,3,3,3,2,1,0,0,0],
+    [4,3,3,3,2,1,0,0,0],
+    [4,3,3,3,2,1,1,0,0],
+    [4,3,3,3,2,1,1,0,0],
+    [4,3,3,3,2,1,1,1,0],
+    [4,3,3,3,2,1,1,1,0],
+    [4,3,3,3,2,1,1,1,1],
+    [4,3,3,3,3,1,1,1,1],
+    [4,3,3,3,3,2,1,1,1],
+    [4,3,3,3,3,2,2,1,1],
+  ];
+
+  const halfSlots = [
+    [2,0,0,0,0],
+    [3,0,0,0,0],
+    [3,0,0,0,0],
+    [4,2,0,0,0],
+    [4,2,0,0,0],
+    [4,3,0,0,0],
+    [4,3,0,0,0],
+    [4,3,2,0,0],
+    [4,3,2,0,0],
+    [4,3,2,0,0],
+    [4,3,2,0,0],
+    [4,3,2,1,0],
+    [4,3,2,1,0],
+    [4,3,2,1,0],
+    [4,3,2,1,0],
+    [4,3,2,1,1],
+    [4,3,3,1,1],
+    [4,3,3,2,1],
+    [4,3,3,2,2],
+    [4,3,3,2,2]
+  ];
+
+  // warlock
+  const warlockSlots = [1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4];
+  const warlockSlotLevel = [1,1,2,2,3,3,4,4,5,5,5,5,5,5,5,5,5,5,5,5];
+  const warlockCantrips = [2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4];
+  const warlockPrepared = [2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15];
+
+  // full casters
+  const bardCantrips = [2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4];
+  const bardPrepared = [4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22];
+  const clericCantrips = [3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5];
+  const clericPrepared = [4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22];
+  const druidCantrips = [2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4];
+  const druidPrepared = [4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22];
+  const sorcCantrips = [4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6];
+  const sorcPrepared = [2,4,6,7,9,10,12,12,14,15,16,16,17,17,18,18,19,20,21,22];
+  const wizardCantrips = [3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5];
+  const wizardPrepared = [4,5,6,7,9,10,11,12,14,15,16,16,17,18,19,21,22,23,24,25];
+
+  // half casters
+  const paladinPrepared = [2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15];
+  const rangerPrepared = [2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15];
+
+  const cantripsFallback = (key: string, lvl: number) => {
+    switch (key) {
+      case "bard": return bardCantrips[lvl - 1] ?? "—";
+      case "cleric": return clericCantrips[lvl - 1] ?? "—";
+      case "druid": return druidCantrips[lvl - 1] ?? "—";
+      case "sorcerer": return sorcCantrips[lvl - 1] ?? "—";
+      case "wizard": return wizardCantrips[lvl - 1] ?? "—";
+      case "warlock": return warlockCantrips[lvl - 1] ?? "—";
+      default: return "—";
+    }
+  };
+
+  const spellsKnownFallback = (key: string, lvl: number) => {
+    switch (key) {
+      case "bard": return bardPrepared[lvl - 1] ?? "—";
+      case "sorcerer": return sorcPrepared[lvl - 1] ?? "—";
+      case "warlock": return warlockPrepared[lvl - 1] ?? "—";
+      case "cleric": return clericPrepared[lvl - 1] ?? "—";
+      case "druid": return druidPrepared[lvl - 1] ?? "—";
+      case "wizard": return wizardPrepared[lvl - 1] ?? "—";
+      case "paladin": return paladinPrepared[lvl - 1] ?? "—";
+      case "ranger": return rangerPrepared[lvl - 1] ?? "—";
+      default: return null;
+    }
+  };
+
+  const slotRow = (slotArr: number[]) => [...slotArr];
+
+  const buildSlots = (key: string, lvl: number) => {
+    const lower = key.toLowerCase();
+    if (lower === "warlock") {
+      return { pactSlots: warlockSlots[lvl - 1] ?? "—", pactLevel: warlockSlotLevel[lvl - 1] ?? "—", slots: [] };
+    }
+
+    // Full casters use level directly; half casters use their dedicated table rows
+    if (["bard","cleric","druid","sorcerer","wizard"].includes(lower)) {
+      const base = fullSlots[lvl - 1] || fullSlots[fullSlots.length - 1];
+      return { pactSlots: "—", pactLevel: "—", slots: slotRow(base) };
+    }
+
+    if (["paladin","ranger"].includes(lower)) {
+      const base = halfSlots[lvl - 1] || halfSlots[halfSlots.length - 1];
+      return { pactSlots: "—", pactLevel: "—", slots: slotRow(base) };
+    }
+
+    return { pactSlots: "—", pactLevel: "—", slots: [] };
+  };
+
   // Map API fields to expected fields (handle both old and new formats)
   const hit_die = item.hd || item.hit_die;
   const primary = item.primary;
@@ -99,9 +215,31 @@ export default function ClassRenderer({ item }: { item: any }) {
         <section>
           <h3 className="text-2xl font-bold mb-2">Spellcasting</h3>
 
-          {/* Minimal progression table: cantrips, spells prepared/known, slots */}
+          {/* Minimal progression table: cantrips, spells prepared/known, slots (using local rules tables) */}
           {(() => {
-            const isWarlock = String(item.index || "").toLowerCase() === "warlock";
+            const key = String(item.index || item.name || "").toLowerCase();
+            const isWarlock = key === "warlock";
+            const isHalfCaster = ["paladin", "ranger"].includes(key);
+            const showCantrips = !isHalfCaster;
+
+            const progression = Array.from({ length: 20 }, (_, i) => {
+              const lvl = i + 1;
+              const built = buildSlots(key, lvl);
+              const cs = (item.levels?.[i]?.class_specific) || {};
+              const cantrips = cs.cantrips_known ?? cantripsFallback(key, lvl);
+              const prepared = cs.spells_prepared ?? cs.spells_known ?? spellsKnownFallback(key, lvl) ?? "—";
+              return {
+                level: lvl,
+                cantrips,
+                prepared,
+                slots: built.slots,
+                pactSlots: built.pactSlots,
+                pactLevel: built.pactLevel,
+                cs,
+              };
+            });
+
+            const slotHeaderCount = isWarlock ? 0 : (isHalfCaster ? 5 : 9);
 
             return (
               <div className="overflow-auto border border-orange-700 rounded">
@@ -109,15 +247,17 @@ export default function ClassRenderer({ item }: { item: any }) {
                   <thead>
                     <tr className="bg-orange-800/20">
                       <th className="p-2 text-left text-xs text-orange-100 border-b border-orange-700">Level</th>
-                      <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Cantrips</th>
+                      {showCantrips && (
+                        <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Cantrips</th>
+                      )}
                       <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Spells Prepared</th>
                       {isWarlock ? (
                         <>
-                          <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Pact Slots</th>
+                          <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Spell Slots</th>
                           <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Slot Level</th>
                         </>
                       ) : (
-                        Array.from({ length: 9 }, (_, i) => i + 1).map(level => (
+                        Array.from({ length: slotHeaderCount }, (_, i) => i + 1).map(level => (
                           <th key={`slot-${level}`} className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">
                             {level}
                           </th>
@@ -126,39 +266,25 @@ export default function ClassRenderer({ item }: { item: any }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {item.levels.map((level: any, idx: number) => {
-                      const cs = level.class_specific || {};
-                      const cantrips = cs.cantrips_known ?? "—";
-                      const spellsPrepared = cs.spells_known ?? cs.spells_prepared ?? "—";
-
-                      if (isWarlock) {
-                        return (
-                          <tr key={idx} className={idx % 2 === 0 ? "bg-orange-800/10" : "bg-transparent"}>
-                            <td className="p-2 text-sm border-b border-orange-800 font-medium">{level.level}</td>
-                            <td className="p-2 text-center text-sm border-b border-orange-800">{cantrips}</td>
-                            <td className="p-2 text-center text-sm border-b border-orange-800">{spellsPrepared}</td>
-                            <td className="p-2 text-center text-sm border-b border-orange-800">{cs.spell_slots ?? "—"}</td>
-                            <td className="p-2 text-center text-sm border-b border-orange-800">{cs.spell_slot_level ?? "—"}</td>
-                          </tr>
-                        );
-                      }
-
-                      return (
-                        <tr key={idx} className={idx % 2 === 0 ? "bg-orange-800/10" : "bg-transparent"}>
-                          <td className="p-2 text-sm border-b border-orange-800 font-medium">{level.level}</td>
-                          <td className="p-2 text-center text-sm border-b border-orange-800">{cantrips}</td>
-                          <td className="p-2 text-center text-sm border-b border-orange-800">{spellsPrepared}</td>
-                          {Array.from({ length: 9 }, (_, i) => {
-                            const slotKey = `spell_slots_level_${i + 1}`;
-                            return (
-                              <td key={slotKey} className="p-2 text-center text-sm border-b border-orange-800">
-                                {cs[slotKey] ?? "—"}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })}
+                    {progression.map((row, idx) => (
+                      <tr key={idx} className={idx % 2 === 0 ? "bg-orange-800/10" : "bg-transparent"}>
+                        <td className="p-2 text-sm border-b border-orange-800 font-medium">{row.level}</td>
+                        {showCantrips && (
+                          <td className="p-2 text-center text-sm border-b border-orange-800">{row.cantrips}</td>
+                        )}
+                        <td className="p-2 text-center text-sm border-b border-orange-800">{row.prepared}</td>
+                        {isWarlock ? (
+                          <>
+                            <td className="p-2 text-center text-sm border-b border-orange-800">{row.pactSlots}</td>
+                            <td className="p-2 text-center text-sm border-b border-orange-800">{row.pactLevel}</td>
+                          </>
+                        ) : (
+                          row.slots.slice(0, slotHeaderCount).map((val: any, iSlot: number) => (
+                            <td key={iSlot} className="p-2 text-center text-sm border-b border-orange-800">{val || "—"}</td>
+                          ))
+                        )}
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
