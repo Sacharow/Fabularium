@@ -213,7 +213,7 @@ function Resources() {
       <div className="w-full">
         <div className="grid grid-cols-8 gap-6">
           <div className="relative col-span-2">
-            <div className="fixed top-0 left-0 h-screen w-1/5 px-4 pt-16 border-r border-orange-700 bg-orange-500/10">
+            <div className="fixed top-4 left-0 h-screen w-1/5 px-4 pt-16 border-r border-orange-700 bg-orange-500/10">
               <h1 className="font-bold text-2xl">Category</h1>
               <div className="flex flex-col pt-6 gap-y-2">
                 <ResourcesSidebar
