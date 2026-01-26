@@ -10,11 +10,10 @@ export default function LocationNew() {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     // Relations
-    const [quests, setQuests] = useState<string[]>([]);
-    const [questsIds, setQuestsIds] = useState<string>("");
+    const [selectedQuestIds, setSelectedQuestIds] = useState<string[]>([]);
     const [npcs, setNpcs] = useState<string[]>([]);
     const [npcsIds, setNpcsIds] = useState<string>("");
-    const [availableQuests, setAvailableQuests] = useState<string[]>([]);
+    const [availableQuests, setAvailableQuests] = useState<{ id: string; title: string }[]>([]);
     const [availableNpcs, setAvailableNpcs] = useState<string[]>([]);
 
     // Sidebar tab selection: 'all' shows all sections, otherwise only selected
@@ -27,102 +26,88 @@ export default function LocationNew() {
             return;
         }
         else {
-            const STORAGE_KEY = "fabularium.campaigns.location_section"
+                    const campaignId = params.campaignId ?? null
+                    if (!campaignId) {
+                        alert('Campaign id missing');
+                        return;
+                    }
+                    fetch(`http://localhost:3000/api/campaigns/${campaignId}/locations`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, description })
+                    })
+                        .then(async (res) => {
+                            if (!res.ok) {
+                                const txt = await res.text();
+                                throw new Error(txt || 'Failed to create location');
+                            }
+                            return res.json();
+                        })
+                        .then(async (created) => {
+                            // if quests were selected, update each mission to link to this location
+                            try {
+                                if (Array.isArray(selectedQuestIds) && selectedQuestIds.length > 0) {
+                                    await Promise.all(selectedQuestIds.map((mid) => fetch(`http://localhost:3000/api/campaigns/${campaignId}/missions/${mid}`, {
+                                        method: 'PUT',
+                                        credentials: 'include',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ locationId: created.id })
+                                    })))
+                                }
+                            } catch (e) {
+                                console.error('Failed to link missions to location', e)
+                            }
 
-            function rand<T>(arr: T[]) {
-                return arr[Math.floor(Math.random() * arr.length)]
-            }
-
-            function generateColor() {
-                const colors = [
-                    "bg-red-400",
-                    "bg-blue-400",
-                    "bg-emerald-400",
-                    "bg-violet-400",
-                    "bg-yellow-400",
-                    "bg-slate-400",
-                    "bg-pink-400",
-                    "bg-amber-400",
-                    "bg-cyan-400",
-                    "bg-lime-400"
-                ]
-                return rand(colors)
-            }
-
-            const id = Date.now()
-            const campaignId = params.campaignId ?? null
-
-            const locationData = {
-                id,
-                campaignId,
-                name,
-                color: generateColor(),
-                description,
-                quests: quests,
-                questsIds,
-                npcs: npcs,
-                npcsIds
-            };
-
-            try {
-                const raw = sessionStorage.getItem(STORAGE_KEY)
-                const parsed = raw ? JSON.parse(raw) : []
-                const list = Array.isArray(parsed) ? parsed : []
-                list.push(locationData)
-                sessionStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-                // Notify other components in-window that locations changed
-                try { window.dispatchEvent(new Event('fabularium.locations.updated')) } catch (e) { /* ignore */ }
-                // navigate to the created location's page
-                if (campaignId) navigate(`/InCampaign/${campaignId}/Locations/${id}`)
-                else navigate(-1)
-            } catch (e) {
-                console.error('Failed to save location to sessionStorage', e)
-            }
+                            if (campaignId) navigate(`/InCampaign/${campaignId}/Locations/${created.id}`)
+                            else navigate(-1)
+                        })
+                        .catch((e) => {
+                            console.error('Failed to create location', e);
+                            alert('Failed to create location');
+                        });
         }
     }
 
-    // Load available quests and npcs from storage and listen for updates
-            useEffect(() => {
-                function loadLists() {
-                    try {
-                        const qRaw = sessionStorage.getItem("fabularium.campaigns.quest_section");
-                        const qParsed = qRaw ? JSON.parse(qRaw) : [];
-                        const qNames = Array.isArray(qParsed) ? qParsed.map((q: any) => q.name ?? q.title ?? String(q.id ?? q)) : [];
-                        setAvailableQuests(qNames);
+    // Load available quests and npcs from backend
+    useEffect(() => {
+        const campaignId = params.campaignId ?? null;
+        if (!campaignId) return;
 
-                        const npcRaw = sessionStorage.getItem("fabularium.campaigns.npc_section");
-                        const npcParsed = npcRaw ? JSON.parse(npcRaw) : [];
-                        const npcNames = Array.isArray(npcParsed) ? npcParsed.map((n: any) => n.name ?? n.title ?? String(n.id ?? n)) : [];
-                        setAvailableNpcs(npcNames);
-                    } catch (e) {
-                        console.error('Failed to load available quests/npcs', e);
-                    }
-                }
+        // fetch campaign missions
+        fetch(`http://localhost:3000/api/campaigns/${campaignId}`, { credentials: 'include' })
+            .then(async (res) => {
+                if (!res.ok) throw new Error('Failed to fetch campaign');
+                return res.json();
+            })
+            .then((data) => {
+                const qList = Array.isArray(data.missions) ? data.missions.map((m: any) => ({ id: String(m.id), title: m.title ?? m.name ?? String(m.id) })) : [];
+                setAvailableQuests(qList);
+            })
+            .catch((e) => console.error('Failed to load missions', e));
 
-                loadLists();
+        // fetch npcs
+        fetch(`http://localhost:3000/api/campaigns/${campaignId}/npcs`, { credentials: 'include' })
+            .then(async (res) => {
+                if (!res.ok) throw new Error('Failed to fetch npcs');
+                return res.json();
+            })
+            .then((data) => {
+                const npcNames = Array.isArray(data) ? data.map((n: any) => n.name ?? String(n.id)) : [];
+                setAvailableNpcs(npcNames);
+            })
+            .catch((e) => console.error('Failed to load npcs', e));
 
-                const onQuestsUpdated = () => loadLists();
-                const onNpcsUpdated = () => loadLists();
-
-                window.addEventListener('fabularium.quests.updated', onQuestsUpdated as EventListener);
-                window.addEventListener('fabularium.npcs.updated', onNpcsUpdated as EventListener);
-
-                return () => {
-                    window.removeEventListener('fabularium.quests.updated', onQuestsUpdated as EventListener);
-                    window.removeEventListener('fabularium.npcs.updated', onNpcsUpdated as EventListener);
-                };
-            }, []);
+    }, [params.campaignId]);
 
             const addQuest = (e: React.ChangeEvent<HTMLSelectElement>) => {
                 const val = e.target.value;
                 if (!val) return;
-                setQuests(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
-                setQuestsIds("");
+                setSelectedQuestIds(prev => prev.includes(val) ? prev : [...prev, val]);
             }
 
             const removeQuest = (index: number) => {
-                setQuests(prev => prev.filter((_, i) => i !== index));
-                setQuestsIds("");
+                setSelectedQuestIds(prev => prev.filter((_, i) => i !== index));
             }
 
             const addNpc = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -239,15 +224,18 @@ export default function LocationNew() {
                                         >
                                             <option value="">-- Select Quest --</option>
                                             {availableQuests.map(q => (
-                                                <option key={q} value={q}>{q}</option>
+                                                <option key={q.id} value={q.id}>{q.title}</option>
                                             ))}
                                         </select>
-                                        {quests.map((item, index) => (
-                                            <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
-                                                <p>{item}</p>
+                                        {selectedQuestIds.map((qid, index) => {
+                                            const q = availableQuests.find(a => a.id === qid)
+                                            return (
+                                              <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
+                                                <p>{q ? q.title : qid}</p>
                                                 <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeQuest(index)}>X</button>
-                                            </div>
-                                        ))}
+                                              </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             )}

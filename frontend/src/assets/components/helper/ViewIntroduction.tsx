@@ -2,7 +2,7 @@ import CampaignNewSidebar from "./CampaignNewSidebar";
 import { NavLink } from "react-router-dom";
 
 type Props = {
-    campaignData: { id: number; name: string; dm: string };
+    campaignData: { id: string; name: string; dm: string };
     introData: { currentSection: string; urlName: string };
 }
 
@@ -12,7 +12,7 @@ export default function ViewIntroduction({ campaignData, introData }: Props) {
         <div className="w-full">
             <div className="grid grid-cols-8 gap-6">
                 <div className="relative col-span-2">
-                    <div className="fixed top-0 left-0 h-screen w-1/5 px-4 pt-16 border-r border-orange-700 bg-orange-500/10">
+                    <div className="fixed top-6 left-0 h-screen w-1/5 px-4 pt-16 border-r border-orange-700 bg-orange-500/10">
                         <h1 className="font-bold text-2xl">{campaignData.name}</h1>
                         <h2 className="text-gray-500 text-sm">DM: {campaignData.dm}</h2>
                         <div className="flex flex-col pt-6 gap-y-2">

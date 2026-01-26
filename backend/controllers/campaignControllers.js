@@ -7,8 +7,7 @@ const crypto = require("crypto");
 
 const createCampaignSchema = z.object({
 	name: z.string().min(1),
-	description: z.string().min(1),
-	ownerId: z.string()
+	description: z.string().min(1)
 });
 
 const updateCampaignSchema = z.object({
@@ -103,7 +102,7 @@ const getCampaignById = async (req, res) => {
 				owner: true,
 				contributors: true,
 				characters: true,
-				missions: true,
+				missions: { include: { location: true } },
 				notes: true,
 				maps: true,
 				locations: { include: { npcs: true } },
@@ -353,18 +352,19 @@ const getNPCs = async (req, res) => {
 
 const getNPCById = async (req, res) => {
 	try {
-		const id = req.params.id;
-		if (!z.string().safeParse(id).success) {
+		const campaignId = req.params.id;
+		const npcId = req.params.npcId;
+		if (!z.string().safeParse(campaignId).success || !z.string().safeParse(npcId).success) {
 			return res.status(400).json({ message: 'Invalid id' });
 		}
 		const npc = await prisma.nPC.findUnique({
-			where: { id },
+			where: { id: npcId },
 			include: {
-				campaigns: true,
+				campaign: true,
 				locations: true
 			}
 		});
-		if (!npc) {
+		if (!npc || npc.campaignId !== campaignId) {
 			return res.status(404).json({ message: 'NPC not found' });
 		}
 		return res.status(200).json(npc);
@@ -382,12 +382,12 @@ const updateNPC = async (req, res) => {
 		}
 		const npc = await prisma.nPC.findUnique({
 			where: { id: parsed.data.id },
-			select: { campaignId: true, campaigns: { select: { ownerId: true } } }
+			select: { campaignId: true, campaign: { select: { ownerId: true } } }
 		});
 		if (!npc) {
 			return res.status(404).json({ message: 'NPC not found' });
 		}
-		if (npc.campaigns.ownerId !== user.id) {
+		if (npc.campaign.ownerId !== user.id) {
 			return res.status(403).json({ message: 'Forbidden' });
 		}
 		const updatedNPC = await prisma.nPC.update({
@@ -397,7 +397,7 @@ const updateNPC = async (req, res) => {
 				description: parsed.data.description
 			},
 			include: {
-				campaigns: true,
+				campaign: true,
 				locations: true
 			}
 		});
@@ -455,6 +455,205 @@ const listCampaignNPCs = async (req, res) => {
 	}
 }
 
+// exports moved to bottom after all functions are defined
+
+const createLocation = async (req, res) => {
+	try {
+		const data = req.body;
+		if (!data || typeof data.name !== 'string' || data.name.trim().length === 0) {
+			return res.status(400).json({ message: 'Validation failed: name is required' });
+		}
+		const campaignId = req.params.id || data.campaignId;
+		if (!campaignId) return res.status(400).json({ message: 'campaignId is required' });
+
+		// check if user is contributor or owner
+		const campaign = await prisma.campaign.findUnique({ where: { id: campaignId }, include: { contributors: true } });
+		if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
+		const userId = req.user?.id;
+		if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+		const isContributor = campaign.ownerId === userId || campaign.contributors.some(c => c.id === userId);
+		if (!isContributor) return res.status(403).json({ message: 'Forbidden' });
+
+		const created = await prisma.location.create({
+			data: {
+				name: data.name,
+				description: data.description ?? '',
+				campaignId: campaignId
+			}
+		});
+		return res.status(201).json(created);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to create location', error: String(err) });
+	}
+};
+
+const listCampaignLocations = async (req, res) => {
+	try {
+		const id = req.params.id;
+		if (!z.string().safeParse(id).success) return res.status(400).json({ message: 'Invalid id' });
+		// include npcs and missions so frontend can show connected quests
+		const locations = await prisma.location.findMany({ where: { campaignId: id }, include: { npcs: true, missions: true } });
+		return res.status(200).json(locations);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to list campaign locations', error: String(err) });
+	}
+};
+
+const createMission = async (req, res) => {
+	try {
+		const data = req.body;
+		const campaignId = req.params.id || data.campaignId;
+		if (!campaignId) return res.status(400).json({ message: 'campaignId is required' });
+		if (!data || typeof data.title !== 'string' || data.title.trim().length === 0) return res.status(400).json({ message: 'title is required' });
+		if (!data.locationId) return res.status(400).json({ message: 'locationId is required' });
+
+		const campaign = await prisma.campaign.findUnique({ where: { id: campaignId }, include: { contributors: true } });
+		if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
+		const userId = req.user?.id;
+		if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+		const isContributor = campaign.ownerId === userId || campaign.contributors.some(c => c.id === userId);
+		if (!isContributor) return res.status(403).json({ message: 'Forbidden' });
+
+		const created = await prisma.mission.create({
+			data: {
+				title: data.title,
+				description: data.description ?? '',
+				status: data.status ?? 'pending',
+				locationId: data.locationId,
+				campaignId: campaignId
+			}
+		});
+		return res.status(201).json(created);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to create mission', error: String(err) });
+	}
+};
+
+const updateMission = async (req, res) => {
+	try {
+		const campaignId = req.params.id; // campaign id in route
+		const missionId = req.params.missionId;
+		const data = req.body;
+		if (!z.string().safeParse(campaignId).success) return res.status(400).json({ message: 'Invalid campaign id' });
+		if (!z.string().safeParse(missionId).success) return res.status(400).json({ message: 'Invalid mission id' });
+
+		// only allow updating locationId for now
+		if (!data || (data.locationId !== null && typeof data.locationId !== 'string')) return res.status(400).json({ message: 'locationId must be a string or null' });
+
+		const campaign = await prisma.campaign.findUnique({ where: { id: campaignId }, include: { contributors: true } });
+		if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
+		const userId = req.user?.id;
+		if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+		const isContributor = campaign.ownerId === userId || campaign.contributors.some(c => c.id === userId);
+		if (!isContributor) return res.status(403).json({ message: 'Forbidden' });
+
+		// verify mission exists and belongs to campaign
+		const mission = await prisma.mission.findUnique({ where: { id: missionId } });
+		if (!mission || mission.campaignId !== campaignId) return res.status(404).json({ message: 'Mission not found in campaign' });
+
+		const updated = await prisma.mission.update({ where: { id: missionId }, data: { locationId: data.locationId } });
+		return res.status(200).json(updated);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to update mission', error: String(err) });
+	}
+};
+
+const createNote = async (req, res) => {
+	try {
+		const data = req.body;
+		const campaignId = req.params.id || data.campaignId;
+		if (!campaignId) return res.status(400).json({ message: 'campaignId is required' });
+		if (!data || typeof data.name !== 'string' || data.name.trim().length === 0) return res.status(400).json({ message: 'name is required' });
+
+		const campaign = await prisma.campaign.findUnique({ where: { id: campaignId }, include: { contributors: true } });
+		if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
+		const user = req.user;
+		if (!user?.id) return res.status(401).json({ message: 'Unauthorized' });
+		const isContributor = campaign.ownerId === user.id || campaign.contributors.some(c => c.id === user.id);
+		if (!isContributor) return res.status(403).json({ message: 'Forbidden' });
+
+		const created = await prisma.note.create({
+			data: {
+				name: data.name,
+				description: data.description ?? '',
+				author: user.name ?? user.id ?? 'unknown',
+				date: new Date(),
+				campaignId: campaignId
+			}
+		});
+		return res.status(201).json(created);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to create note', error: String(err) });
+	}
+};
+
+const mapSchema = z.object({
+	name: z.string().min(1),
+	description: z.string().optional(),
+	file: z.string().optional()
+});
+
+const createMap = async (req, res) => {
+	try {
+		const data = req.body;
+		const campaignId = req.params.id || data.campaignId;
+		if (!campaignId) return res.status(400).json({ message: 'campaignId is required' });
+
+		const validated = mapSchema.safeParse(data);
+		if (!validated.success) {
+			return res.status(400).json({ message: 'Validation failed', errors: validated.error });
+		}
+
+		const campaign = await prisma.campaign.findUnique({ where: { id: campaignId }, include: { contributors: true } });
+		if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
+
+		const user = req.user;
+		if (!user?.id) return res.status(401).json({ message: 'Unauthorized' });
+
+		const isContributor = campaign.ownerId === user.id || campaign.contributors.some(c => c.id === user.id);
+		if (!isContributor) return res.status(403).json({ message: 'Forbidden' });
+
+		const created = await prisma.map.create({
+			data: {
+				name: validated.data.name,
+				description: validated.data.description ?? '',
+				file: validated.data.file ?? '',
+				campaignId: campaignId
+			}
+		});
+		return res.status(201).json(created);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to create map', error: String(err) });
+	}
+};
+
+const listCampaignMaps = async (req, res) => {
+	try {
+		const id = req.params.id;
+		if (!z.string().safeParse(id).success) return res.status(400).json({ message: 'Invalid id' });
+		const maps = await prisma.map.findMany({ where: { campaignId: id } });
+		return res.status(200).json(maps);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to list campaign maps', error: String(err) });
+	}
+};
+
+const getMapById = async (req, res) => {
+	try {
+		const campaignId = req.params.id;
+		const mapId = req.params.mapId;
+		if (!z.string().safeParse(campaignId).success) return res.status(400).json({ message: 'Invalid campaign id' });
+		if (!z.string().safeParse(mapId).success) return res.status(400).json({ message: 'Invalid map id' });
+
+		const map = await prisma.map.findUnique({ where: { id: mapId } });
+		if (!map || map.campaignId !== campaignId) return res.status(404).json({ message: 'Map not found in campaign' });
+		return res.status(200).json(map);
+	} catch (err) {
+		return res.status(500).json({ message: 'Failed to get map', error: String(err) });
+	}
+};
+
 module.exports = {
 	createCampaign,
 	getCampaigns,
@@ -472,7 +671,19 @@ module.exports = {
 	getNPCById,
 	updateNPC,
 	deleteNPC,
-	listCampaignNPCs
+	listCampaignNPCs,
+	createLocation,
+	listCampaignLocations
 };
+
+// maps
+module.exports.createMap = createMap;
+module.exports.listCampaignMaps = listCampaignMaps;
+module.exports.getMapById = getMapById;
+
+// export newly added controllers
+module.exports.createMission = createMission;
+module.exports.createNote = createNote;
+module.exports.updateMission = updateMission;
 
 
