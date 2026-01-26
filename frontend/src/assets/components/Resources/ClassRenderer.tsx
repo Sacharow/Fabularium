@@ -94,6 +94,79 @@ export default function ClassRenderer({ item }: { item: any }) {
         </section>
       )}
 
+      {/* SPELLCASTING TABLE - focused view */}
+      {item.spellcasting && Array.isArray(item.levels) && item.levels.length > 0 && (
+        <section>
+          <h3 className="text-2xl font-bold mb-2">Spellcasting</h3>
+
+          {/* Minimal progression table: cantrips, spells prepared/known, slots */}
+          {(() => {
+            const isWarlock = String(item.index || "").toLowerCase() === "warlock";
+
+            return (
+              <div className="overflow-auto border border-orange-700 rounded">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-orange-800/20">
+                      <th className="p-2 text-left text-xs text-orange-100 border-b border-orange-700">Level</th>
+                      <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Cantrips</th>
+                      <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Spells Prepared</th>
+                      {isWarlock ? (
+                        <>
+                          <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Pact Slots</th>
+                          <th className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">Slot Level</th>
+                        </>
+                      ) : (
+                        Array.from({ length: 9 }, (_, i) => i + 1).map(level => (
+                          <th key={`slot-${level}`} className="p-2 text-center text-xs text-orange-100 border-b border-orange-700">
+                            {level}
+                          </th>
+                        ))
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {item.levels.map((level: any, idx: number) => {
+                      const cs = level.class_specific || {};
+                      const cantrips = cs.cantrips_known ?? "—";
+                      const spellsPrepared = cs.spells_known ?? cs.spells_prepared ?? "—";
+
+                      if (isWarlock) {
+                        return (
+                          <tr key={idx} className={idx % 2 === 0 ? "bg-orange-800/10" : "bg-transparent"}>
+                            <td className="p-2 text-sm border-b border-orange-800 font-medium">{level.level}</td>
+                            <td className="p-2 text-center text-sm border-b border-orange-800">{cantrips}</td>
+                            <td className="p-2 text-center text-sm border-b border-orange-800">{spellsPrepared}</td>
+                            <td className="p-2 text-center text-sm border-b border-orange-800">{cs.spell_slots ?? "—"}</td>
+                            <td className="p-2 text-center text-sm border-b border-orange-800">{cs.spell_slot_level ?? "—"}</td>
+                          </tr>
+                        );
+                      }
+
+                      return (
+                        <tr key={idx} className={idx % 2 === 0 ? "bg-orange-800/10" : "bg-transparent"}>
+                          <td className="p-2 text-sm border-b border-orange-800 font-medium">{level.level}</td>
+                          <td className="p-2 text-center text-sm border-b border-orange-800">{cantrips}</td>
+                          <td className="p-2 text-center text-sm border-b border-orange-800">{spellsPrepared}</td>
+                          {Array.from({ length: 9 }, (_, i) => {
+                            const slotKey = `spell_slots_level_${i + 1}`;
+                            return (
+                              <td key={slotKey} className="p-2 text-center text-sm border-b border-orange-800">
+                                {cs[slotKey] ?? "—"}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()}
+        </section>
+      )}
+
       {/* PROFICIENCIES */}
       <section>
         <h3 className="text-2xl font-bold mb-2">Proficiencies</h3>

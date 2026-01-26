@@ -59,6 +59,8 @@ export const resourceService = {
       if (levelsResponse.ok) {
         const levelsData = await levelsResponse.json();
         classData.classTableGroups = this.formatClassTable(levelsData);
+        // Preserve full levels data for spellcasting table in ClassRenderer
+        classData.levels = levelsData;
       }
 
       // Map proficiencies for ClassRenderer
