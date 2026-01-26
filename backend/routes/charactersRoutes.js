@@ -6,8 +6,8 @@ const router = require("express").Router();
 
 router.get("/mycharacters", listMyCharacters);
 router.post("/", createCharacter);
-router.get("/character/:id", checkOwnership, getCharacterById);
-router.delete("/:id", checkOwnership, deleteCharacter);
-router.put("/:id", checkOwnership, updateCharacter);
+router.get("/:id", checkOwnership("character"), getCharacterById);
+router.delete("/:id", checkOwnership("character"), deleteCharacter);
+router.put("/:id", checkOwnership("character"), updateCharacter);
 
 module.exports = router;

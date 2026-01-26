@@ -2,7 +2,7 @@ import { Globe, Map, Users, Scroll, UsersRound, Mountain, Notebook } from "lucid
 import { useLocation, useNavigate } from "react-router-dom";
 
 type Props = {
-    campaignId?: string | number;
+    campaignId?: string;
 }
 
 export default function CampaignNewSidebar({ campaignId }: Props) {

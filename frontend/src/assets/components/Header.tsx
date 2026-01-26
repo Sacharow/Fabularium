@@ -1,9 +1,11 @@
 import { NavLink } from "react-router-dom";
 import menuItems from "./constants/menu";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Menu, X, Bell, BellDot } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 function Header() {
+  const { isAuthenticated, user } = useAuth();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
@@ -15,9 +17,19 @@ function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const leftMenuItems = menuItems.slice(0, 1);
-  const centerMenuItems = menuItems.slice(1, 5);
-  const rightMenuItems = menuItems.slice(5);
+  const resolvedMenuItems = useMemo(
+    () =>
+      menuItems.map((item) =>
+        item.name === "Profile"
+          ? { ...item, href: isAuthenticated ? "/profile" : "/login" }
+          : item,
+      ),
+    [isAuthenticated],
+  );
+
+  const leftMenuItems = resolvedMenuItems.slice(0, 1);
+  const centerMenuItems = resolvedMenuItems.slice(1, 5);
+  const rightMenuItems = resolvedMenuItems.slice(5);
 
   const [exampleNotifications, setExampleNotifications] = useState<string[]>([
     "Your scribe called you!",
@@ -34,10 +46,10 @@ function Header() {
     `flex flex-row gap-2 justify-center items-center transition-all duration-200 hover:text-yellow-300 ${isActive ? "text-yellow-300" : "text-white"}`;
 
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
-    `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-white/10 hover:text-yellow-300 ${isActive ? "bg-white/20 text-yellow-300" : "text-white"}`;
+    `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-orange-700 hover:text-yellow-300 ${isActive ? "bg-orange-700 text-yellow-300" : "text-white"}`;
 
   const navItemClassMobile = ({ isActive }: { isActive: boolean }) =>
-    `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-start items-center px-4 py-3 hover:bg-white/10 hover:text-yellow-300 ${isActive ? "bg-white/20 text-yellow-300" : "text-white"}`;
+    `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-start items-center px-4 py-3 hover:bg-orange-700 hover:text-yellow-300 ${isActive ? "bg-orange-700 text-yellow-300" : "text-white"}`;
 
   return (
     <header className="sticky top-0 w-full z-50 bg-gradient-to-r from-orange-900 via-orange-800 to-orange-900 shadow-lg border-b border-orange-700/50">
@@ -70,7 +82,7 @@ function Header() {
             {/* Notification Dropdown */}
             <div className="relative">
               <button
-                className={`cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-white/10 hover:text-yellow-300 ${isNotificationOpen ? "bg-white/20 text-yellow-300" : "text-white"}`}
+                className={`cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-orange-700 hover:text-yellow-300 ${isNotificationOpen ? "bg-orange-700 text-yellow-300" : "text-white"}`}
                 onClick={() => setNotificationOpen(!isNotificationOpen)}
               >
                 {exampleNotifications.length > 0 ? (
@@ -136,7 +148,10 @@ function Header() {
             {rightMenuItems.map((item) => (
               <NavLink key={item.name} to={item.href} className={navItemClass}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.name}</span>
+                {item.name === "Profile" && user ? (
+                  <span className="font-medium">{user.name}</span>
+                ) : (
+                <span className="font-medium">{item.name}</span>)}
               </NavLink>
             ))}
           </div>

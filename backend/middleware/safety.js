@@ -4,7 +4,7 @@ const { PrismaClient } = require("../generated/prisma/client");
 const prisma = new PrismaClient()
 const jwt = require("jsonwebtoken");
 
-const checkOwnership = async (model) => {
+const checkOwnership = (model) => {
     return async (req, res, next) => {
         const user = req.user;
 
@@ -20,7 +20,7 @@ const checkOwnership = async (model) => {
 
         const resource = await prisma[model].findUnique({
             where: {
-                id: Number(id)
+                id: id
             },
             select: {
                 ownerId: true

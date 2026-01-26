@@ -9,8 +9,12 @@ import Home from "./assets/pages/Home";
 import Login from "./assets/pages/Login";
 import Register from "./assets/pages/Register";
 import Campaigns from "./assets/pages/Campaigns";
+import CreateCampaign from "./assets/pages/CreateCampaign";
 import Characters from "./assets/pages/Characters";
+import CharacterNewStandalone from "./assets/pages/CharacterNewStandalone";
+import CharacterStandaloneView from "./assets/pages/CharacterStandaloneView";
 import Resources from "./assets/pages/Resources";
+import Profile from "./assets/pages/Profile";
 
 import InCampaignCharacter from "./assets/pages/InCampaign/Sections/Character";
 import InCampaignLocation from "./assets/pages/InCampaign/Sections/Location";
@@ -45,10 +49,14 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/campaigns" element={<Campaigns />} />
+        <Route path="/campaigns/new" element={<CreateCampaign />} />
         <Route path="/characters" element={<Characters />} />
+        <Route path="/characters/new" element={<CharacterNewStandalone />} />
+        <Route path="/characters/:characterId" element={<CharacterStandaloneView />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
 
         <Route
           path="/InCampaign/:campaignId/Characters/:characterId"

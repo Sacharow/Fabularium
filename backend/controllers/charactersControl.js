@@ -146,7 +146,9 @@ const listMyCharacters = async (req, res) => {
                 classId: true,
                 raceId: true,
                 campaignId: true,
-                updatedAt: true
+                updatedAt: true,
+                class: { select: { name: true } },
+                race: { select: { name: true } }
             }
         });
 

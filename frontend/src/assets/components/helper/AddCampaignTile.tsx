@@ -1,8 +1,12 @@
-function AddCampaignTile({ onClick }: { onClick?: () => void }) {
+import { useNavigate } from "react-router-dom";
+
+function AddCampaignTile() {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full">
       <button
-        onClick={onClick}
+        onClick={() => navigate("/campaigns/new")}
         className="aspect-square w-full rounded-lg border-2 border-dashed border-gray-500/60 flex flex-col items-center justify-center gap-2 hover:border-gray-400/80 transition-colors"
         aria-label="Add new campaign"
       >

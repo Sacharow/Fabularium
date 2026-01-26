@@ -33,47 +33,41 @@ type NpcSection = {
   passivePerception?: number
 }
 
-const STORAGE_KEY = "fabularium.campaigns.npc_section"
-
-function loadFromSession(): NpcSection[] {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed
-  } catch {
-    return []
-  }
-}
-
-function saveToSession(npcs: NpcSection[]) {
-  try {
-    const str = JSON.stringify(npcs)
-    sessionStorage.setItem(STORAGE_KEY, str)
-  } catch {
-    // ignore
-  }
-}
-
 export default function NpcPage() {
-  const { npcId } = useParams<{ npcId?: string }>()
-  const navigate = useNavigate()
-  const [npcs] = useState<NpcSection[]>(() => loadFromSession())
-  
+  const { npcId, campaignId } = useParams<{ npcId?: string, campaignId?: string }>()
+  const navigate = useNavigate();
+  const [npc, setNpc] = useState<NpcSection | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    saveToSession(npcs)
-  }, [npcs])
+    if (!campaignId || !npcId) return;
+    setLoading(true);
+    setError(null);
+    fetch(`http://localhost:3000/api/campaigns/${campaignId}/npcs/${npcId}`, { credentials: 'include' })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('Failed to fetch NPC');
+        // Spróbuj sparsować JSON, jeśli nie wyjdzie, zgłoś czytelny błąd
+        try {
+          return await res.json();
+        } catch (err) {
+          const text = await res.text();
+          throw new Error('Invalid JSON from backend: ' + text);
+        }
+      })
+      .then((data) => setNpc(data))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [campaignId, npcId]);
 
-  const npc = npcs.find((n) => n.id === Number(npcId))
-
-  if (!npc) {
+  if (loading) return <div className="p-6">Loading...</div>;
+  if (error || !npc) {
     return (
       <div className="p-6">
-        <p>NPC not found.</p>
+        <p>{error || 'NPC not found.'}</p>
         <button onClick={() => navigate(-1)} className="mt-4 underline">Go back</button>
       </div>
-    )
+    );
   }
 
   const introData = {

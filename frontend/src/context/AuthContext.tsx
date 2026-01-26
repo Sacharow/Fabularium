@@ -1,6 +1,16 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 interface AuthContextType {
+  user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -14,19 +24,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is already logged in
     const checkAuth = async () => {
+      setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:3000/users', {
-          credentials: 'include'
-        });
-        setIsAuthenticated(response.ok);
+        const { authService } = await import('../services/authService');
+        const me = await authService.me();
+        setUser(me);
+        setIsAuthenticated(true);
       } catch {
+        setUser(null);
         setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
     };
     checkAuth();
@@ -37,7 +52,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
     try {
       const { authService } = await import('../services/authService');
-      await authService.login(credentials);
+      const res = await authService.login(credentials);
+      setUser(res.user);
       setIsAuthenticated(true);
     } catch (err: any) {
       setError(err.message);
@@ -65,12 +81,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { authService } = await import('../services/authService');
     await authService.logout();
     setIsAuthenticated(false);
+    setUser(null);
   };
 
   const clearError = () => setError(null);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, error, login, register, logout, clearError }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, error, login, register, logout, clearError }}>
       {children}
     </AuthContext.Provider>
   );

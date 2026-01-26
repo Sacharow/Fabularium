@@ -25,9 +25,22 @@ export const authService = {
   },
 
   async logout() {
-    await fetch(`${API_URL}/users/logout`, {
+    await fetch(`${API_URL}/api/users/logout`, {
       method: 'POST',
       credentials: 'include'
     });
+  },
+
+  async me() {
+    const response = await fetch(`${API_URL}/api/users/me`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error('Unauthenticated');
+    }
+
+    return response.json();
   }
 };

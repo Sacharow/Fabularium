@@ -20,32 +20,33 @@ export default function NoteNew() {
             return;
         }
         else {
-            const STORAGE_KEY = "fabularium.campaigns.note_section"
-
-            const id = Date.now()
             const campaignId = params.campaignId ?? null
-
-            const noteData = {
-                id,
-                campaignId,
-                name,
-                description
-            };
-
-            try {
-                const raw = sessionStorage.getItem(STORAGE_KEY)
-                const parsed = raw ? JSON.parse(raw) : []
-                const list = Array.isArray(parsed) ? parsed : []
-                list.push(noteData)
-                sessionStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-                // Notify other components in-window that notes changed
-                try { window.dispatchEvent(new Event('fabularium.notes.updated')) } catch (e) { /* ignore */ }
-                // navigate to the created note's page
-                if (campaignId) navigate(`/InCampaign/${campaignId}/Notes/${id}`)
-                else navigate(-1)
-            } catch (e) {
-                console.error('Failed to save note to sessionStorage', e)
+            if (!campaignId) {
+                alert('Campaign id missing');
+                return;
             }
+
+            fetch(`http://localhost:3000/api/campaigns/${campaignId}/notes`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description })
+            })
+                .then(async (res) => {
+                    if (!res.ok) {
+                        const txt = await res.text();
+                        throw new Error(txt || 'Failed to create note');
+                    }
+                    return res.json();
+                })
+                .then((created) => {
+                    if (campaignId) navigate(`/InCampaign/${campaignId}/Notes/${created.id}`)
+                    else navigate(-1)
+                })
+                .catch((e) => {
+                    console.error('Failed to create note', e);
+                    alert('Failed to create note');
+                });
         }
     }
     
