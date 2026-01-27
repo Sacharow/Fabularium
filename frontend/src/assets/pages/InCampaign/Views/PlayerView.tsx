@@ -1,49 +1,11 @@
 import ViewIntroduction from "../../../components/helper/ViewIntroduction";
-import { NavLink, useParams, useMatch } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { useCampaign } from "../../../../context/CampaignContext";
 
 export default function PlayerView() {
-    const params = useParams();
-    const match = useMatch("/InCampaign/:campaignId/*");
-    const campaignId = params.campaignId ?? match?.params.campaignId ?? null
-
-    type Campaign = {
-        id: string;
-        name: string;
-        description?: string;
-        owner?: { id: string; name: string };
-        createdAt?: string;
-        updatedAt?: string;
-    };
-
-    type Player = {
-        id: string;
-        name: string;
-        color: string;
-    }
-    
-    const [campaign, setCampaign] = useState<Campaign | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [items, setItems] = useState<Player[]>([]);
-    
-        useEffect(() => {
-            if (!campaignId) return;
-            setLoading(true);
-            setError(null);
-            fetch(`http://localhost:3000/api/campaigns/${campaignId}`, {
-                credentials: 'include',
-            })
-                .then(async (res) => {
-                    if (!res.ok) throw new Error('Failed to fetch campaign');
-                    return res.json();
-                })
-                .then((data) => {
-                    setCampaign(data);
-                })
-                .catch((err) => setError(err.message))
-                .finally(() => setLoading(false));
-        }, [campaignId]);
+    const { campaign, loading, error } = useCampaign();
+    const items: { id: string; name: string; color: string }[] = Array.isArray((campaign as any)?.players) ? (campaign as any).players : [];
+    const campaignId = campaign?.id;
 
 
     const introData = {
@@ -78,7 +40,7 @@ export default function PlayerView() {
                         <div className="pt-6 px-6">
                             <div className="max-w-[1200px] mx-auto">
                                 <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                                    {items.map((i) => (
+                                    {items.map((i: { id: string; name: string; color: string }) => (
                                         <NavLink key={i.id} to={`/InCampaign/${campaignId}/Players/${i.id}`}>
                                             <button className="w-full aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer">
                                                 <div className="h-full grid grid-rows-[80%_20%]">

@@ -38,6 +38,7 @@ import NpcView from "./assets/pages/InCampaign/Views/NpcView";
 import NoteView from "./assets/pages/InCampaign/Views/NoteView";
 import PlayerView from "./assets/pages/InCampaign/Views/PlayerView";
 import QuestView from "./assets/pages/InCampaign/Views/QuestView";
+import InCampaignLayout from "./assets/pages/InCampaign/InCampaignLayout";
 
 function AppRoutes() {
   const location = useLocation();
@@ -108,29 +109,16 @@ function AppRoutes() {
           element={<QuestNew />}
         />
 
-        <Route
-          path="/InCampaign/:campaignId/CharacterView"
-          element={<CharacterView />}
-        />
-        <Route
-          path="/InCampaign/:campaignId/GeneralView"
-          element={<GeneralView />}
-        />
-        <Route
-          path="/InCampaign/:campaignId/LocationView"
-          element={<LocationView />}
-        />
-        <Route path="/InCampaign/:campaignId/MapView" element={<MapView />} />
-        <Route path="/InCampaign/:campaignId/NpcView" element={<NpcView />} />
-        <Route path="/InCampaign/:campaignId/NoteView" element={<NoteView />} />
-        <Route
-          path="/InCampaign/:campaignId/PlayerView"
-          element={<PlayerView />}
-        />
-        <Route
-          path="/InCampaign/:campaignId/QuestView"
-          element={<QuestView />}
-        />
+        <Route path="/InCampaign/:campaignId" element={<InCampaignLayout />}>
+          <Route path="CharacterView" element={<CharacterView />} />
+          <Route path="GeneralView" element={<GeneralView />} />
+          <Route path="LocationView" element={<LocationView />} />
+          <Route path="MapView" element={<MapView />} />
+          <Route path="NpcView" element={<NpcView />} />
+          <Route path="NoteView" element={<NoteView />} />
+          <Route path="PlayerView" element={<PlayerView />} />
+          <Route path="QuestView" element={<QuestView />} />
+        </Route>
       </Routes>
     </>
   );

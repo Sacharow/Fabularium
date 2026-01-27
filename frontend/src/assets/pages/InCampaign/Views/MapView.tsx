@@ -1,68 +1,28 @@
 import ViewIntroduction from "../../../components/helper/ViewIntroduction";
-import { NavLink, useParams, useMatch } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { useCampaign } from "../../../../context/CampaignContext";
 
 export default function MapView() {
-    const params = useParams();
-    const match = useMatch("/InCampaign/:campaignId/*");
-    const campaignId = params.campaignId ?? match?.params.campaignId ?? null
-
-    type Campaign = {
-        id: string;
-        name: string;
-        description?: string;
-        owner?: { id: string; name: string };
-        createdAt?: string;
-        updatedAt?: string;
-    };
-
-    type Map = {
-        id: string;
-        name: string;
-        color: string;
-        file?: string;
+    const { campaign, loading, error } = useCampaign();
+    // map colors are not stored on backend; generate display colors
+    function rand<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
+    function generateColor(): string {
+        const colors = [
+            "bg-red-400",
+            "bg-blue-400",
+            "bg-emerald-400",
+            "bg-violet-400",
+            "bg-yellow-400",
+            "bg-slate-400",
+            "bg-pink-400",
+            "bg-amber-400",
+            "bg-cyan-400",
+            "bg-lime-400"
+        ];
+        return rand(colors);
     }
-    
-    const [campaign, setCampaign] = useState<Campaign | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [items, setItems] = useState<Map[]>([]);
-    
-        useEffect(() => {
-            if (!campaignId) return;
-            setLoading(true);
-            setError(null);
-            fetch(`http://localhost:3000/api/campaigns/${campaignId}`, {
-                credentials: 'include',
-            })
-                .then(async (res) => {
-                    if (!res.ok) throw new Error('Failed to fetch campaign');
-                    return res.json();
-                })
-                .then((data) => {
-                        setCampaign(data);
-                        // map colors are not stored on backend; generate display colors
-                        function rand(arr:any[]) { return arr[Math.floor(Math.random() * arr.length)]; }
-                        function generateColor() {
-                            const colors = [
-                                "bg-red-400",
-                                "bg-blue-400",
-                                "bg-emerald-400",
-                                "bg-violet-400",
-                                "bg-yellow-400",
-                                "bg-slate-400",
-                                "bg-pink-400",
-                                "bg-amber-400",
-                                "bg-cyan-400",
-                                "bg-lime-400"
-                            ];
-                            return rand(colors);
-                        }
-                        setItems(Array.isArray(data.maps) ? data.maps.map((m:any) => ({ id: m.id, name: m.name, color: generateColor(), file: m.file })) : []);
-                })
-                .catch((err) => setError(err.message))
-                .finally(() => setLoading(false));
-        }, [campaignId]);
+    const items: { id: string; name: string; color: string; file?: string }[] = Array.isArray((campaign as any)?.maps) ? (campaign as any).maps.map((m: any) => ({ id: m.id, name: m.name, color: generateColor(), file: m.file })) : [];
+    const campaignId = campaign?.id;
 
 
     const introData = {
@@ -97,7 +57,7 @@ export default function MapView() {
                         <div className="pt-6 px-6">
                             <div className="max-w-[1200px] mx-auto">
                                 <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                                    {items.map((i) => (
+                                    {items.map((i: { id: string; name: string; color: string; file?: string }) => (
                                         <NavLink key={i.id} to={`/InCampaign/${campaignId}/Maps/${i.id}`}>
                                             <button className="w-full aspect-square rounded-lg overflow-hidden shadow hover:scale-[1.03] transition-transform cursor-pointer">
                                                 <div className="h-full grid grid-rows-[80%_20%]">
