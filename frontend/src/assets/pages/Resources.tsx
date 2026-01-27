@@ -11,7 +11,6 @@ function Resources() {
   const [spellSearch, setSpellSearch] = useState<string>("");
   const [spellSearchError, setSpellSearchError] = useState<string | null>(null);
   const [spellSort, setSpellSort] = useState<"alpha" | "school" | "level">("alpha");
-  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   
   // API data state
   const [resources, setResources] = useState<Record<string, any[]>>({
@@ -316,78 +315,57 @@ function Resources() {
             <div className="pt-6 px-6">
               <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold mb-4">{activeSection}</h1>
-                {activeSection.toLowerCase() === "spells" && (
-                  <div className="flex flex-wrap gap-4 mb-4 items-end">
-                    <div className="flex flex-col">
-                      <label className="text-xs text-gray-300 mb-1">Search</label>
-                      <input
-                        type="text"
-                        value={spellSearch}
-                        onChange={(e) => handleSpellSearchChange(e.target.value)}
-                        placeholder="e.g. fireball"
-                        className="bg-orange-900/30 border border-orange-700/70 rounded px-3 py-2 text-sm text-white placeholder:text-orange-200/60 focus:outline-none focus:border-orange-400"
-                      />
-                      {spellSearchError && <span className="text-xs text-red-300 mt-1">{spellSearchError}</span>}
-                    </div>
-                    <div className="flex flex-col relative">
-                      <label className="text-xs text-gray-300 mb-1">Sort by</label>
-                      <button
-                        onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                        className="bg-orange-900/30 border border-orange-700/70 rounded px-3 py-2 text-sm text-white text-left flex justify-between items-center hover:bg-orange-600/10"
-                      >
-                        <span>
-                          {spellSort === "alpha" && "Alphabetical"}
-                          {spellSort === "school" && "School of Magic"}
-                          {spellSort === "level" && "Spell Level"}
-                        </span>
-                        <span className="text-xs">▾</span>
-                      </button>
-                      {sortDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-orange-900/40 border border-orange-700/70 rounded shadow-lg z-10 overflow-hidden">
-                          <button
-                            onClick={() => {
-                              setSpellSort("alpha");
-                              setSortDropdownOpen(false);
-                            }}
-                            className={`w-full text-left px-3 py-2 text-sm hover:bg-orange-600/40 transition-colors ${
-                              spellSort === "alpha" ? "bg-orange-700/50 border-l-2 border-orange-400" : ""
-                            }`}
-                          >
-                            Alphabetical
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSpellSort("school");
-                              setSortDropdownOpen(false);
-                            }}
-                            className={`w-full text-left px-3 py-2 text-sm hover:bg-orange-600/40 transition-colors ${
-                              spellSort === "school" ? "bg-orange-700/50 border-l-2 border-orange-400" : ""
-                            }`}
-                          >
-                            School of Magic
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSpellSort("level");
-                              setSortDropdownOpen(false);
-                            }}
-                            className={`w-full text-left px-3 py-2 text-sm hover:bg-orange-600/40 transition-colors ${
-                              spellSort === "level" ? "bg-orange-700/50 border-l-2 border-orange-400" : ""
-                            }`}
-                          >
-                            Spell Level
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
                 {renderSection(activeSection)}
               </div>
             </div>
           </div>
 
-          <div className="col-span-2"></div>
+          <div className="col-span-2">
+            {activeSection.toLowerCase() === "spells" && (
+              <div className="fixed right-6 top-24 w-64 px-4 py-6 space-y-4">
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-300 mb-1">Search</label>
+                  <input
+                    type="text"
+                    value={spellSearch}
+                    onChange={(e) => handleSpellSearchChange(e.target.value)}
+                    placeholder="e.g. fireball"
+                    className="bg-orange-900/30 border border-orange-700/70 rounded px-3 py-2 text-sm text-white placeholder:text-orange-200/60 focus:outline-none focus:border-orange-400"
+                  />
+                  {spellSearchError && <span className="text-xs text-red-300 mt-1">{spellSearchError}</span>}
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-300 mb-2">Sort by</label>
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => setSpellSort("alpha")}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+                        spellSort === "alpha" ? "bg-orange-700/50 border border-orange-400" : "bg-orange-900/30 border border-orange-700/70 hover:bg-orange-600/10"
+                      }`}
+                    >
+                      Alphabetical
+                    </button>
+                    <button
+                      onClick={() => setSpellSort("school")}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+                        spellSort === "school" ? "bg-orange-700/50 border border-orange-400" : "bg-orange-900/30 border border-orange-700/70 hover:bg-orange-600/10"
+                      }`}
+                    >
+                      School of Magic
+                    </button>
+                    <button
+                      onClick={() => setSpellSort("level")}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+                        spellSort === "level" ? "bg-orange-700/50 border border-orange-400" : "bg-orange-900/30 border border-orange-700/70 hover:bg-orange-600/10"
+                      }`}
+                    >
+                      Spell Level
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
