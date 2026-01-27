@@ -105,7 +105,7 @@ export default function PlayerView() {
                           </span>
                           {user?.id === campaign?.owner?.id && (
                             <button
-                              className="ml-4 bg-red-700 hover:bg-red-900 text-white rounded w-8 h-8 flex items-center justify-center font-bold text-lg"
+                              className="ml-4 bg-orange-700 hover:bg-orange-500 text-white rounded w-8 h-8 flex items-center justify-center font-bold text-lg cursor-pointer"
                               style={{ borderRadius: 4 }}
                               title="Usuń gracza"
                               // onClick={() => handleRemove(i.id)}
