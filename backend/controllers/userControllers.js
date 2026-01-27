@@ -93,9 +93,7 @@ const login = async (req, res) => {
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             path: "/"
-        }).header("Authorization", accessToken);
-
-        const { passwordHashed, ...safeUser } = user;
+        }).header("Authorization", token).json({message: "Logged in"});
 
         return res.status(200).json({ message: "Logged in", user: safeUser });
 

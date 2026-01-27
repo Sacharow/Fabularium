@@ -28,10 +28,16 @@ const swaggerJsdoc = require('swagger-jsdoc');
 //     apis: ['./routes/*.js', './controllers/*.js']
 // }; <--- na razie wywalam
 
-//const swaggerSpec = swaggerJsdoc(swaggerOptions);
+// const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 const app = express();
 app.use(express.json());
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return res.status(400).json({ error: "Invalid JSON" });
+  }
+  next(err);
+});
 app.use(cookieParser());
 app.use(cors({
     origin: 'http://localhost:5173',
