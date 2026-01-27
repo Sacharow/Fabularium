@@ -1,42 +1,9 @@
 import ViewIntroduction from "../../../components/helper/ViewIntroduction";
-import { NavLink, useParams, useMatch } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { useCampaign } from "../../../../context/CampaignContext";
 
 export default function GeneralView() {
-    const params = useParams();
-    const match = useMatch("/InCampaign/:campaignId/*");
-    const campaignId = params.campaignId ?? match?.params.campaignId ?? null
-
-    type Campaign = {
-        id: string;
-        name: string;
-        description?: string;
-        owner?: { id: string; name: string };
-        createdAt?: string;
-        updatedAt?: string;
-    };
-
-    const [campaign, setCampaign] = useState<Campaign | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (!campaignId) return;
-        setLoading(true);
-        setError(null);
-        fetch(`http://localhost:3000/api/campaigns/${campaignId}`, {
-            credentials: 'include',
-        })
-            .then(async (res) => {
-                if (!res.ok) throw new Error('Failed to fetch campaign');
-                return res.json();
-            })
-            .then((data) => {
-                setCampaign(data);
-            })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
-    }, [campaignId]);
+    const { campaign, loading, error } = useCampaign();
 
 
     const introData = {
@@ -50,7 +17,7 @@ export default function GeneralView() {
     return (
         <div className="pt-6">
             <ViewIntroduction campaignData={{
-                id: campaign?.id || campaignId || '',
+                id: campaign?.id || '',
                 name: campaign?.name || 'Campaign',
                 dm: campaign?.owner?.name || 'DM',
             }} introData={introData} />
@@ -61,7 +28,7 @@ export default function GeneralView() {
                         <div className="pb-4">
                             <div className="flex justify-between items-center">
                                 <h1 className="text-3xl font-bold">{introData.currentSection}</h1>
-                                <NavLink to={campaignId ? `/InCampaign/${campaignId}/${introData.urlName}/New` : '#'}>
+                                <NavLink to={campaign?.id ? `/InCampaign/${campaign.id}/${introData.urlName}/New` : '#'}>
                                     <button className="bg-orange-900 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
                                         <p>Edit</p>
                                     </button>
@@ -77,7 +44,7 @@ export default function GeneralView() {
                                                 <div className="mb-2"><span className="font-bold">Name:</span> {campaign.name}</div>
                                                 <div className="mb-2"><span className="font-bold">Description:</span> {campaign.description}</div>
                                                 <div className="mb-2"><span className="font-bold">Dungeon Master:</span> {campaign.owner?.name}</div>
-                                                <div className="mb-2"><span className="font-bold">Created:</span> {campaign.createdAt ? new Date(campaign.createdAt).toLocaleString() : ''}</div>
+                                                <div className="mb-2"><span className="font-bold">Join Code:</span> {campaign.joinCode}</div>
                                             </>
                                         )}
                                     </div>
