@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import ResourcesSidebar from "../components/Resources/ResourcesSidebar";
 import ResourceItem from "../components/Resources/ResourceItem";
 import { resourceService } from "../../services/resourceService";
@@ -6,6 +6,12 @@ import { resourceService } from "../../services/resourceService";
 function Resources() {
   const sections = ["Backgrounds", "Classes", "Feats", "Races", "Spells"];
   const [activeSection, setActiveSection] = useState<string>(sections[0]);
+
+  // Spell-specific UI state
+  const [spellSearch, setSpellSearch] = useState<string>("");
+  const [spellSearchError, setSpellSearchError] = useState<string | null>(null);
+  const [spellSort, setSpellSort] = useState<"alpha" | "school" | "level">("alpha");
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   
   // API data state
   const [resources, setResources] = useState<Record<string, any[]>>({
@@ -33,13 +39,16 @@ function Resources() {
           resourceService.getRaces(),
           resourceService.getSpells(),
         ]);
+
+        const detailedSpells = await resourceService.getResourcesWithDetails("spells", spells || []);
+        const normalizedSpells = (detailedSpells || []).map((s: any) => ({ ...s, _detailed: true }));
         
         setResources({
           backgrounds: backgrounds || [],
           classes: classes || [],
           feats: feats || [],
           races: races || [],
-          spells: spells || [],
+          spells: normalizedSpells,
         });
       } catch (err) {
         console.error('Error fetching resources:', err);
@@ -80,6 +89,21 @@ function Resources() {
     setSelectedSources({ 0: false });
   };
 
+  const handleSpellSearchChange = (value: string) => {
+    setSpellSearch(value);
+    if (!value) {
+      setSpellSearchError(null);
+      return;
+    }
+    try {
+      // Validate regex up front so we can block invalid patterns gracefully
+      new RegExp(value, "i");
+      setSpellSearchError(null);
+    } catch (err) {
+      setSpellSearchError("Invalid regex pattern");
+    }
+  };
+
   // accordion state: only one expanded item key at a time (format: "bookIdx-itemIdx")
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const toggleExpanded = async (key: string) => {
@@ -113,6 +137,58 @@ function Resources() {
         console.error("Error fetching item details:", err);
       }
     }
+  };
+
+  type SpellRow = { item: any; originalIdx: number; groupLabel?: string };
+
+  const normalizeSpellMeta = (spell: any) => {
+    const level = typeof spell?.level === "number" ? spell.level : 99;
+    const school = typeof spell?.school === "string" ? spell.school : spell?.school?.name || "Unknown";
+    const name = spell?.name || "";
+    return { level, school, name };
+  };
+
+  const applySpellTransforms = (items: { item: any; originalIdx: number }[]): SpellRow[] => {
+    let filtered = items;
+
+    if (spellSearch && !spellSearchError) {
+      const regex = new RegExp(spellSearch, "i");
+      filtered = filtered.filter(({ item }) => item?.name && regex.test(item.name));
+    }
+
+    const sorted = [...filtered].sort((a, b) => {
+      const metaA = normalizeSpellMeta(a.item);
+      const metaB = normalizeSpellMeta(b.item);
+
+      if (spellSort === "level") {
+        if (metaA.level !== metaB.level) return metaA.level - metaB.level;
+        return metaA.name.localeCompare(metaB.name);
+      }
+
+      if (spellSort === "school") {
+        if (metaA.school !== metaB.school) return metaA.school.localeCompare(metaB.school);
+        if (metaA.level !== metaB.level) return metaA.level - metaB.level;
+        return metaA.name.localeCompare(metaB.name);
+      }
+
+      // alphabetical default
+      return metaA.name.localeCompare(metaB.name);
+    });
+
+    const withGroups = sorted.map((row) => {
+      if (spellSort === "school") {
+        const meta = normalizeSpellMeta(row.item);
+        return { ...row, groupLabel: meta.school || "Unknown school" };
+      }
+      if (spellSort === "level") {
+        const meta = normalizeSpellMeta(row.item);
+        const levelLabel = meta.level === 0 ? "Level 0 (Cantrips)" : `Level ${meta.level}`;
+        return { ...row, groupLabel: levelLabel };
+      }
+      return row;
+    });
+
+    return withGroups;
   };
 
   function formatSkillProficiencies(sp: any) {
@@ -153,12 +229,13 @@ function Resources() {
 
   function renderSection(name: string) {
     const key = name.toLowerCase();
-    const groups: { src: any; items: any[] }[] = [];
+    const groups: { src: any; items: { item: any; originalIdx: number; groupLabel?: string }[] }[] = [];
 
     sources.forEach((src: any, idx: number) => {
       if (!src) return;
       if (!selectedSources[idx]) return;
-      const items = Array.isArray(src[key]) ? src[key] : [];
+      const itemsWithIndex = Array.isArray(src[key]) ? src[key].map((item: any, originalIdx: number) => ({ item, originalIdx })) : [];
+      const items = key === "spells" ? applySpellTransforms(itemsWithIndex) : itemsWithIndex;
       groups.push({ src, items });
     });
 
@@ -187,18 +264,24 @@ function Resources() {
               <div className="text-sm text-gray-400">No items in this source.</div>
             ) : (
               <ul className="space-y-2">
-                {g.items.map((it: any, i: number) => (
-                  <ResourceItem
-                    key={i}
-                    bookIdx={gi}
-                    itemIdx={i}
-                    item={it}
-                    sectionKey={key}
-                    expandedKey={expandedKey}
-                    onToggle={toggleExpanded}
-                    formatSkillProficiencies={formatSkillProficiencies}
-                    formatLanguageProficiencies={formatLanguageProficiencies}
-                  />
+                {g.items.map(({ item, originalIdx, groupLabel }, rowIdx) => (
+                  <Fragment key={`row-${gi}-${originalIdx}-${item.index || item.name || "item"}`}>
+                    {groupLabel && (rowIdx === 0 || groupLabel !== g.items[rowIdx - 1].groupLabel) && (
+                      <li className="px-2 py-1 text-xs font-semibold text-orange-200 border-l-2 border-orange-500 bg-orange-900/30 rounded">
+                        {groupLabel}
+                      </li>
+                    )}
+                    <ResourceItem
+                      bookIdx={gi}
+                      itemIdx={originalIdx}
+                      item={item}
+                      sectionKey={key}
+                      expandedKey={expandedKey}
+                      onToggle={toggleExpanded}
+                      formatSkillProficiencies={formatSkillProficiencies}
+                      formatLanguageProficiencies={formatLanguageProficiencies}
+                    />
+                  </Fragment>
                 ))}
               </ul>
             )}
@@ -233,6 +316,72 @@ function Resources() {
             <div className="pt-6 px-6">
               <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold mb-4">{activeSection}</h1>
+                {activeSection.toLowerCase() === "spells" && (
+                  <div className="flex flex-wrap gap-4 mb-4 items-end">
+                    <div className="flex flex-col">
+                      <label className="text-xs text-gray-300 mb-1">Search</label>
+                      <input
+                        type="text"
+                        value={spellSearch}
+                        onChange={(e) => handleSpellSearchChange(e.target.value)}
+                        placeholder="e.g. fireball"
+                        className="bg-orange-900/30 border border-orange-700/70 rounded px-3 py-2 text-sm text-white placeholder:text-orange-200/60 focus:outline-none focus:border-orange-400"
+                      />
+                      {spellSearchError && <span className="text-xs text-red-300 mt-1">{spellSearchError}</span>}
+                    </div>
+                    <div className="flex flex-col relative">
+                      <label className="text-xs text-gray-300 mb-1">Sort by</label>
+                      <button
+                        onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                        className="bg-orange-900/30 border border-orange-700/70 rounded px-3 py-2 text-sm text-white text-left flex justify-between items-center hover:bg-orange-600/10"
+                      >
+                        <span>
+                          {spellSort === "alpha" && "Alphabetical"}
+                          {spellSort === "school" && "School of Magic"}
+                          {spellSort === "level" && "Spell Level"}
+                        </span>
+                        <span className="text-xs">▾</span>
+                      </button>
+                      {sortDropdownOpen && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-orange-900/40 border border-orange-700/70 rounded shadow-lg z-10 overflow-hidden">
+                          <button
+                            onClick={() => {
+                              setSpellSort("alpha");
+                              setSortDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 text-sm hover:bg-orange-600/40 transition-colors ${
+                              spellSort === "alpha" ? "bg-orange-700/50 border-l-2 border-orange-400" : ""
+                            }`}
+                          >
+                            Alphabetical
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSpellSort("school");
+                              setSortDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 text-sm hover:bg-orange-600/40 transition-colors ${
+                              spellSort === "school" ? "bg-orange-700/50 border-l-2 border-orange-400" : ""
+                            }`}
+                          >
+                            School of Magic
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSpellSort("level");
+                              setSortDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 text-sm hover:bg-orange-600/40 transition-colors ${
+                              spellSort === "level" ? "bg-orange-700/50 border-l-2 border-orange-400" : ""
+                            }`}
+                          >
+                            Spell Level
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
                 {renderSection(activeSection)}
               </div>
             </div>
