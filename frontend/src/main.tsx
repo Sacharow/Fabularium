@@ -16,6 +16,12 @@ import CharacterStandaloneView from "./assets/pages/CharacterStandaloneView";
 import Resources from "./assets/pages/Resources";
 import Profile from "./assets/pages/Profile";
 
+// Info pages
+import About from "./assets/pages/info/About";
+import Contact from "./assets/pages/info/Contact";
+import Policy from "./assets/pages/info/Policy";
+import Terms from "./assets/pages/info/Terms";
+
 import InCampaignCharacter from "./assets/pages/InCampaign/Sections/Character";
 import InCampaignLocation from "./assets/pages/InCampaign/Sections/Location";
 import InCampaignMap from "./assets/pages/InCampaign/Sections/Map";
@@ -58,6 +64,12 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+
+        {/* Info Pages */}
+        <Route path="/About" element={<About />} />
+        <Route path="/Contact" element={<Contact />} />
+        <Route path="/Privacy" element={<Policy />} />
+        <Route path="/Terms" element={<Terms />} />
 
         <Route
           path="/InCampaign/:campaignId/Characters/:characterId"
