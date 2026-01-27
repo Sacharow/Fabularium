@@ -13,7 +13,7 @@ This service provides methods to fetch D&D 5e data from the public API:
 - `getRaces()` - Fetch all races
 - `getSpells()` - Fetch all spells
 - `getBackgrounds()` - Fetch all backgrounds
-- `getFeats()` - Fetch all features/feats
+- `getFeats()` - Fetch all feats
 - Individual detail fetchers for each resource type
 - Generic `getResourceDetail()` method for flexibility
 

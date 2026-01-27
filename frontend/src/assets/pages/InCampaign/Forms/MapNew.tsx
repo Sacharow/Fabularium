@@ -11,59 +11,53 @@ export default function MapNew() {
     const [description, setDescription] = useState<string>("");
     // Sidebar tab selection: 'all' shows all sections, otherwise only selected
     const [selectedView, setSelectedView] = useState<string>('all');
+    const [fileData, setFileData] = useState<string | null>(null);
+    const [fileName, setFileName] = useState<string | null>(null);
 
-    const saveMap = () => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        setFileName(f.name);
+        const reader = new FileReader();
+        reader.onload = () => {
+            setFileData(String(reader.result));
+        };
+        reader.readAsDataURL(f);
+    };
+
+    const saveMap = async () => {
 
         if (name.trim() === "") {
             alert("Map name cannot be empty.");
             return;
         }
         else {
-            const STORAGE_KEY = "fabularium.campaigns.map_section"
-            function rand<T>(arr: T[]) {
-                return arr[Math.floor(Math.random() * arr.length)]
-            }
-
-            function generateColor() {
-                const colors = [
-                    "bg-red-400",
-                    "bg-blue-400",
-                    "bg-emerald-400",
-                    "bg-violet-400",
-                    "bg-yellow-400",
-                    "bg-slate-400",
-                    "bg-pink-400",
-                    "bg-amber-400",
-                    "bg-cyan-400",
-                    "bg-lime-400"
-                ]
-                return rand(colors)
-            }
-
-            const id = Date.now()
             const campaignId = params.campaignId ?? null
 
-            const mapData = {
-                id,
-                campaignId,
+            const payload = {
                 name,
-                color: generateColor(),
                 description,
+                file: fileData ?? ''
             };
 
             try {
-                const raw = sessionStorage.getItem(STORAGE_KEY)
-                const parsed = raw ? JSON.parse(raw) : []
-                const list = Array.isArray(parsed) ? parsed : []
-                list.push(mapData)
-                sessionStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-                // Notify other components in-window that maps changed
+                const res = await fetch(`http://localhost:3000/api/campaigns/${campaignId}/maps`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) {
+                    const txt = await res.text();
+                    throw new Error(`Failed to create map: ${res.status} ${txt}`);
+                }
+                const created = await res.json();
                 try { window.dispatchEvent(new Event('fabularium.maps.updated')) } catch (e) { /* ignore */ }
-                // navigate to the created map's page
-                if (campaignId) navigate(`/InCampaign/${campaignId}/Maps/${id}`)
+                if (campaignId) navigate(`/InCampaign/${campaignId}/Maps/${created.id}`)
                 else navigate(-1)
             } catch (e) {
-                console.error('Failed to save location to sessionStorage', e)
+                console.error('Failed to create map', e)
+                alert('Failed to create map.');
             }
         }
     }
@@ -159,8 +153,20 @@ export default function MapNew() {
                                     <p className={subTitleGameplayInformation}>Map's Image</p>
                                     <div className="bg-orange-700/30 rounded-md p-4 flex flex-col items-center">    
                                         <div className="border-2 border-orange-700 border-dashed w-3/5 h-48 flex flex-col justify-center hover:border-orange-500">
-                                            <p className="text-gray-400 text-center p-2">Click <span className="text-white font-bold hover:underline cursor-pointer">here</span> to upload image</p>
+                                            {fileData ? (
+                                                <img src={fileData} alt={fileName ?? 'map'} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="flex flex-col items-center justify-center h-full w-full">
+                                                    <p className="text-gray-400 text-center p-2">Click the button to upload image</p>
+                                                    <label className="mt-2">
+                                                        <input type="file" accept="image/*" onChange={handleFileChange} />
+                                                    </label>
+                                                </div>
+                                            )}
                                         </div>
+                                        {fileData && (
+                                            <div className="mt-2 text-sm text-gray-300">Selected: {fileName}</div>
+                                        )}
                                     </div>
                                 </div>
                             )}

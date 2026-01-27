@@ -9,94 +9,23 @@ type Campaign = {
   color: string
 }
 
-const STORAGE_KEY = "fabularium.campaigns"
-
-function rand<T>(arr: T[]) {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
-
-function generateName() {
-  const adjectives = [
-    "Shadows",
-    "Echoes",
-    "Thorn",
-    "Winds",
-    "Crown",
-    "Nightfall",
-    "Ember",
-    "Iron",
-    "Wild",
-    "Hollow",
-  ]
-  const places = [
-    "Emberfall",
-    "Iron Sea",
-    "Wildmarch",
-    "Hollowspire",
-    "the Forgotten",
-    "Greymoor",
-    "Duskwood",
-    "Ravenhold",
-    "Erebor",
-  ]
-  return `${rand(adjectives)} of ${rand(places)}`
-}
-
-function generateColor() {
-  const colors = [
-    "bg-red-400",
-    "bg-blue-400",
-    "bg-emerald-400",
-    "bg-violet-400",
-    "bg-yellow-400",
-    "bg-slate-400",
-    "bg-pink-400",
-    "bg-amber-400",
-    "bg-cyan-400",
-    "bg-lime-400"
-  ]
-  return rand(colors)
-}
-
-function loadFromSession(): Campaign[] {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed
-  } catch (e) {
-    return []
-  }
-}
-
-function saveToSession(list: Campaign[]) {
-  try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-  } catch (e) {
-    // ignore
-  }
-}
-
 function Campaigns() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>(() => loadFromSession())
+  const [campaigns, setCampaigns] = useState<Campaign[]>([])
 
   useEffect(() => {
-    saveToSession(campaigns)
-  }, [campaigns])
-
-  function handleAdd() {
-    setCampaigns((prev) => {
-      const next: Campaign = {
-        id: Date.now(),
-        user_ids: [],
-        name: generateName(),
-        color: generateColor(),
-      }
-      const updated = [...prev, next]
-      return updated
-    })
-  }
+    // Fetch campaigns from backend
+    fetch("http://localhost:3000/api/campaigns", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        // Ustaw domyślny kolor jeśli nie ma
+        const campaignsWithColor = data.map((c: Campaign) => ({
+          ...c,
+          color: c.color || "bg-orange-500",
+        }))
+        setCampaigns(campaignsWithColor)
+      })
+      .catch(() => setCampaigns([]))
+  }, [])
 
   return (
     <div className="pt-6 px-6">
@@ -109,7 +38,7 @@ function Campaigns() {
           ))}
 
           {/* 'Add' tile is always last */}
-          <AddCampaignTile onClick={handleAdd} />
+          <AddCampaignTile />
         </div>
       </div>
     </div>

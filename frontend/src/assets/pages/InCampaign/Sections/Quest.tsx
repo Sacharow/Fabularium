@@ -6,88 +6,76 @@ const sectionData = {
 }
 
 type ItemSection = {
-  id: number
-  campaignId?: string | number
+  id: string
+  campaignId?: string
   name: string
   description?: string
   locations: string[]
-  locationId?: number[]
+  locationId?: string[]
   npcs: string[]
-  npcId?: number[]
+  npcId?: string[]
   rewards: string[]
 }
 
-const STORAGE_KEY = "fabularium.campaigns.quest_section"
-
-function loadFromSession(): ItemSection[] {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    // Normalize entries to ensure older/missing fields don't cause runtime errors
-    return parsed.map((p: any) => {
-      const name = p.name ?? p.title ?? String(p.id ?? '')
-      const description = p.description ?? p.desc ?? ''
-      const campaignId = p.campaignId ?? p.campaign ?? null
-
-      // Normalize locations (accept different shapes)
-      let locations: string[] = []
-      if (Array.isArray(p.locations)) locations = p.locations
-      else if (Array.isArray(p.location)) locations = p.location
-      else if (typeof p.locations === 'string') locations = [p.locations]
-      else if (typeof p.location === 'string') locations = [p.location]
-
-      // Normalize npcs
-      let npcs: string[] = []
-      if (Array.isArray(p.npcs)) npcs = p.npcs
-      else if (Array.isArray(p.npc)) npcs = p.npc
-      else if (typeof p.npcs === 'string') npcs = [p.npcs]
-      else if (typeof p.npc === 'string') npcs = [p.npc]
-
-      // Normalize rewards
-      let rewards: string[] = []
-      if (Array.isArray(p.rewards)) rewards = p.rewards
-      else if (Array.isArray(p.reward)) rewards = p.reward
-      else if (typeof p.rewards === 'string') rewards = [p.rewards]
-      else if (typeof p.reward === 'string') rewards = [p.reward]
-
-      return {
-        id: Number(p.id ?? Date.now()),
-        campaignId,
-        name,
-        description,
-        locations,
-        locationId: Array.isArray(p.locationId) ? p.locationId : (p.locationId ? [p.locationId] : []),
-        npcs,
-        npcId: Array.isArray(p.npcId) ? p.npcId : (p.npcId ? [p.npcId] : []),
-        rewards
-      } as ItemSection
-    })
-  } catch {
-    return []
-  }
-}
-
-
-function saveToSession(items: ItemSection[]) {
-  try {
-    const str = JSON.stringify(items)
-    sessionStorage.setItem(STORAGE_KEY, str)
-  } catch {
-    // ignore
-  }
-}
-
 export default function QuestPage() {
-  const { questId } = useParams<{ questId?: string; campaignId?: string }>()
+  const { questId, campaignId } = useParams<{ questId?: string; campaignId?: string }>()
   const navigate = useNavigate()
-  const [quests] = useState<ItemSection[]>(() => loadFromSession())
-  useEffect(() => {
-    saveToSession(quests)
-  }, [quests])
+  const [quests, setQuests] = useState<ItemSection[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const quest = quests.find((i) => i.id === Number(questId))
+  useEffect(() => {
+    const cid = campaignId
+    if (!cid) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    fetch(`http://localhost:3000/api/campaigns/${cid}`, { credentials: 'include' })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('Failed to fetch campaign')
+        return res.json()
+      })
+      .then((data) => {
+        const ms = Array.isArray(data.missions) ? data.missions.map((m: any) => {
+          // name/title
+          const name = m.title ?? m.name ?? ''
+          const description = m.description ?? ''
+
+          // locations: try to resolve related location name(s)
+          let locations: string[] = []
+          if (m.location && typeof m.location === 'object') locations = [m.location.name ?? String(m.location.id ?? '')]
+          else if (Array.isArray(m.locations)) locations = m.locations.map((l: any) => (typeof l === 'string' ? l : (l?.name ?? String(l?.id ?? ''))))
+
+          // npcs: try to resolve names
+          let npcs: string[] = []
+          if (Array.isArray(m.npcs)) npcs = m.npcs.map((n: any) => (typeof n === 'string' ? n : (n?.name ?? String(n?.id ?? ''))))
+
+          // rewards: accept array of strings
+          const rewards: string[] = Array.isArray(m.rewards) ? m.rewards.map((r: any) => String(r)) : []
+
+          return {
+            id: String(m.id),
+            campaignId: cid,
+            name,
+            description,
+            locations,
+            locationId: m.locationId ? [String(m.locationId)] : (Array.isArray(m.locationId) ? m.locationId.map(String) : []),
+            npcs,
+            npcId: Array.isArray(m.npcId) ? m.npcId.map(String) : (m.npcId ? [String(m.npcId)] : []),
+            rewards
+          } as ItemSection
+        }) : []
+        setQuests(ms)
+      })
+      .catch((e) => {
+        console.error('Failed to load missions', e)
+      })
+      .finally(() => setLoading(false))
+  }, [campaignId])
+
+  if (loading) return <div className="p-6">Loading...</div>
+
+  const quest = quests.find((i) => String(i.id) === String(questId))
 
   if (!quest) {
     return (

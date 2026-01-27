@@ -6,7 +6,7 @@ const sectionData = {
 }
 
 type ItemSection = {
-  id: number
+  id: string
   campaignId?: string | number
   name: string
   color: string
@@ -17,50 +17,53 @@ type ItemSection = {
   questId?: number[]
 }
 
-const STORAGE_KEY = "fabularium.campaigns.location_section"
-
-function loadFromSession(): ItemSection[] {
+// Fetch locations from backend instead of sessionStorage
+async function fetchLocations(campaignId: string | undefined): Promise<ItemSection[]> {
+  if (!campaignId) return []
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    // Ensure older entries have consistent shape
-    return parsed.map((p: any) => ({
-      id: Number(p.id ?? Date.now()),
-      campaignId: p.campaignId ?? null,
+    const res = await fetch(`http://localhost:3000/api/campaigns/${campaignId}/locations`, { credentials: 'include' })
+    if (!res.ok) return []
+    const data = await res.json()
+    if (!Array.isArray(data)) return []
+    return data.map((p: any) => ({
+      id: String(p.id ?? Date.now()),
+      campaignId: p.campaignId ?? campaignId,
       name: p.name ?? p.title ?? String(p.id ?? ''),
       color: p.color ?? 'bg-slate-400',
       description: p.description ?? p.desc ?? '',
-      quests: Array.isArray(p.quests) ? p.quests : (Array.isArray(p.quest) ? p.quest : []),
-      questId: Array.isArray(p.questId) ? p.questId : (p.questId ? [p.questId] : []),
-      npcs: Array.isArray(p.npcs) ? p.npcs : (Array.isArray(p.npc) ? p.npc : []),
-      npcId: Array.isArray(p.npcId) ? p.npcId : (p.npcId ? [p.npcId] : [])
+      // map missions returned from backend to quests list (use title)
+      quests: Array.isArray(p.missions) ? p.missions.map((m: any) => m.title ?? m.name ?? String(m.id ?? '')) : (Array.isArray(p.quests) ? p.quests : (Array.isArray(p.quest) ? p.quest : [])),
+      questId: Array.isArray(p.missions) ? p.missions.map((m: any) => String(m.id)) : (Array.isArray(p.questId) ? p.questId.map(String) : (p.questId ? [String(p.questId)] : [])),
+      // map NPC objects to names
+      npcs: Array.isArray(p.npcs) ? p.npcs.map((n: any) => (typeof n === 'string' ? n : (n?.name ?? String(n?.id ?? '')))) : (Array.isArray(p.npc) ? p.npc : []),
+      npcId: Array.isArray(p.npcId) ? p.npcId.map(String) : (p.npcId ? [String(p.npcId)] : [])
     }))
-  } catch {
+  } catch (e) {
     return []
-  }
-}
-
-
-function saveToSession(items: ItemSection[]) {
-  try {
-    const str = JSON.stringify(items)
-    sessionStorage.setItem(STORAGE_KEY, str)
-  } catch {
-    // ignore
   }
 }
 
 export default function LocationPage() {
   const { locationId } = useParams<{ locationId?: string; campaignId?: string }>()
   const navigate = useNavigate()
-  const [locations] = useState<ItemSection[]>(() => loadFromSession())
+  const [locations, setLocations] = useState<ItemSection[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
   useEffect(() => {
-    saveToSession(locations)
-  }, [locations])
+    const campaignId = (window.location.pathname.split('/')[2]) || null
+    if (!campaignId) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    fetchLocations(campaignId ?? undefined)
+      .then(setLocations)
+      .catch(() => setLocations([]))
+      .finally(() => setLoading(false))
+  }, [])
 
-  const loc = locations.find((i) => i.id === Number(locationId))
+  if (loading) return <div className="p-6">Loading...</div>
+
+  const loc = locations.find((i) => String(i.id) === String(locationId))
 
   if (!loc) {
     return (

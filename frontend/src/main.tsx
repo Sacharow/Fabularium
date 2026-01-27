@@ -1,15 +1,20 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
 
 import Header from "./assets/components/Header";
 import Home from "./assets/pages/Home";
 import Login from "./assets/pages/Login";
+import Register from "./assets/pages/Register";
 import Campaigns from "./assets/pages/Campaigns";
+import CreateCampaign from "./assets/pages/CreateCampaign";
 import Characters from "./assets/pages/Characters";
+import CharacterNewStandalone from "./assets/pages/CharacterNewStandalone";
+import CharacterStandaloneView from "./assets/pages/CharacterStandaloneView";
 import Resources from "./assets/pages/Resources";
+import Profile from "./assets/pages/Profile";
 
 import InCampaignCharacter from "./assets/pages/InCampaign/Sections/Character";
 import InCampaignLocation from "./assets/pages/InCampaign/Sections/Location";
@@ -34,42 +39,109 @@ import NoteView from "./assets/pages/InCampaign/Views/NoteView";
 import PlayerView from "./assets/pages/InCampaign/Views/PlayerView";
 import QuestView from "./assets/pages/InCampaign/Views/QuestView";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <AuthProvider>
-    <BrowserRouter>
-      <Header />
+function AppRoutes() {
+  const location = useLocation();
+  const hideHeader = location.pathname === "/";
+
+  return (
+    <>
+      {!hideHeader && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/campaigns" element={<Campaigns />} />
+        <Route path="/campaigns/new" element={<CreateCampaign />} />
         <Route path="/characters" element={<Characters />} />
+        <Route path="/characters/new" element={<CharacterNewStandalone />} />
+        <Route path="/characters/:characterId" element={<CharacterStandaloneView />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
 
-        <Route path="/InCampaign/:campaignId/Characters/:characterId" element={<InCampaignCharacter />} />
-        <Route path="/InCampaign/:campaignId/Locations/:locationId" element={<InCampaignLocation />} />
-        <Route path="/InCampaign/:campaignId/Maps/:mapId" element={<InCampaignMap />} />
-        <Route path="/InCampaign/:campaignId/Npcs/:npcId" element={<InCampaignNpc />} />
-        <Route path="/InCampaign/:campaignId/Notes/:noteId" element={<InCampaignNote />} />
-        <Route path="/InCampaign/:campaignId/Quests/:questId" element={<InCampaignQuest />} />
+        <Route
+          path="/InCampaign/:campaignId/Characters/:characterId"
+          element={<InCampaignCharacter />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Locations/:locationId"
+          element={<InCampaignLocation />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Maps/:mapId"
+          element={<InCampaignMap />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Npcs/:npcId"
+          element={<InCampaignNpc />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Notes/:noteId"
+          element={<InCampaignNote />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Quests/:questId"
+          element={<InCampaignQuest />}
+        />
 
-        <Route path="/InCampaign/:campaignId/MapView/New" element={<MapNew />} />
-        <Route path="/InCampaign/:campaignId/LocationView/New" element={<LocationNew />} />
-        <Route path="/InCampaign/:campaignId/CharacterView/New" element={<CharacterNew />} />
-        <Route path="/InCampaign/:campaignId/NpcView/New" element={<NpcNew />} />
-        <Route path="/InCampaign/:campaignId/NoteView/New" element={<NoteNew />} />
-        <Route path="/InCampaign/:campaignId/QuestView/New" element={<QuestNew />} />
+        <Route
+          path="/InCampaign/:campaignId/MapView/New"
+          element={<MapNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/LocationView/New"
+          element={<LocationNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/CharacterView/New"
+          element={<CharacterNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/NpcView/New"
+          element={<NpcNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/NoteView/New"
+          element={<NoteNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/QuestView/New"
+          element={<QuestNew />}
+        />
 
-        <Route path="/InCampaign/:campaignId/CharacterView" element={<CharacterView />} />
-        <Route path="/InCampaign/:campaignId/GeneralView" element={<GeneralView />} />
-        <Route path="/InCampaign/:campaignId/LocationView" element={<LocationView />} />
+        <Route
+          path="/InCampaign/:campaignId/CharacterView"
+          element={<CharacterView />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/GeneralView"
+          element={<GeneralView />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/LocationView"
+          element={<LocationView />}
+        />
         <Route path="/InCampaign/:campaignId/MapView" element={<MapView />} />
         <Route path="/InCampaign/:campaignId/NpcView" element={<NpcView />} />
         <Route path="/InCampaign/:campaignId/NoteView" element={<NoteView />} />
-        <Route path="/InCampaign/:campaignId/PlayerView" element={<PlayerView />} />
-        <Route path="/InCampaign/:campaignId/QuestView" element={<QuestView />} />
+        <Route
+          path="/InCampaign/:campaignId/PlayerView"
+          element={<PlayerView />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/QuestView"
+          element={<QuestView />}
+        />
       </Routes>
-    </BrowserRouter>
+    </>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
     </AuthProvider>
-  </StrictMode>
+  </StrictMode>,
 );

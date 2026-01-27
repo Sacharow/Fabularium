@@ -1,36 +1,75 @@
 @import "tailwindcss";
 
 :root {
-    color: rgba(255, 255, 255, 0.87);
-    font-size: larger;
+  color: rgba(255, 255, 255, 0.87);
+  font-size: larger;
 }
 
 body {
-    background-color: #1d160f;
-    color: #fff;
-    position: relative;
+  background-color: #1d160f;
+  color: #fff;
+  position: relative;
 }
 
 body::before {
-    content: '';
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><path d='M0 20 Q10 10 20 20 T40 20' stroke='rgba(255,255,255,0.05)' fill='none' stroke-width='2'/></svg>");
-    background-size: 40px 40px;
-    transform: rotate(45deg);
-    z-index: -1;
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><path d='M0 20 Q10 10 20 20 T40 20' stroke='rgba(255,255,255,0.05)' fill='none' stroke-width='2'/></svg>");
+  background-size: 40px 40px;
+  transform: rotate(45deg);
+  z-index: -1;
 }
 
 /* Hide native number input spinner arrows (WebKit & Firefox) */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 input[type="number"] {
-    -moz-appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* Custom Scrollbar Styling - Orange Theme */
+/* For Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1d160f;
+  border-radius: 10px;
+  border: 1px solid #7c2d12;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ea580c 0%, #c2410c 50%, #9a3412 100%);
+  border-radius: 10px;
+  border: 2px solid #1d160f;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+  border-color: #7c2d12;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #fb923c 0%, #f97316 50%, #ea580c 100%);
+}
+
+::-webkit-scrollbar-corner {
+  background: #1d160f;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ea580c #1d160f;
 }

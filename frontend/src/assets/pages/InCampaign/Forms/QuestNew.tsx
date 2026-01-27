@@ -1,6 +1,6 @@
 import { useNavigate, useParams, NavLink } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { addQuestReferenceToLocation, addQuestReferenceToNpc } from '../../../helper/storageRelations';
+// relations now stored in backend; no storageRelations usage here
 
 export default function QuestNew() {
     // Navigation
@@ -10,102 +10,82 @@ export default function QuestNew() {
     // Basic info
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    // selected values
-    const [locations, setLocations] = useState<string[]>([]);
-    const [locationsIds, setLocationsIds] = useState<string>("");
-    const [npcs, setNpcs] = useState<string[]>([]);
-    const [npcsIds, setNpcsIds] = useState<string>("");
-    // available choices loaded from storage
-    const [availableLocations, setAvailableLocations] = useState<string[]>([]);
-    const [availableNpcs, setAvailableNpcs] = useState<string[]>([]);
+    // selected values (ids)
+    const [locationsIds, setLocationsIds] = useState<string[]>([]);
+    const [npcsIds, setNpcsIds] = useState<string[]>([]);
+    // available choices loaded from backend
+    const [availableLocations, setAvailableLocations] = useState<{id:string;name:string}[]>([]);
+    const [availableNpcs, setAvailableNpcs] = useState<{id:string;name:string}[]>([]);
     const [rewards, setRewards] = useState<string[]>([]);
 
     // Sidebar tab selection: 'all' shows all sections, otherwise only selected
     const [selectedView, setSelectedView] = useState<string>('all');
 
     const saveQuest = () => {
-
         if (name.trim() === "") {
             alert("Quest title cannot be empty.");
             return;
         }
-        else {
-            const STORAGE_KEY = "fabularium.campaigns.quest_section"
-
-            const id = Date.now()
-            const campaignId = params.campaignId ?? null
-
-            const QuestData = {
-                id,
-                campaignId,
-                name,
-                description,
-                locations,
-                locationId: locationsIds,
-                npcs,
-                npcId: npcsIds,
-                rewards
-            };
-
-            try {
-                const raw = sessionStorage.getItem(STORAGE_KEY)
-                const parsed = raw ? JSON.parse(raw) : []
-                const list = Array.isArray(parsed) ? parsed : []
-                list.push(QuestData)
-                sessionStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-                // Notify other components in-window that quests changed
-                try { window.dispatchEvent(new Event('fabularium.quests.updated')) } catch (e) { /* ignore */ }
-                    // Update related locations and NPCs so references stay in sync
-                    try {
-                        if (Array.isArray(locations) && locations.length) {
-                            locations.forEach((locName) => addQuestReferenceToLocation(locName, QuestData.name))
-                        }
-                        if (Array.isArray(npcs) && npcs.length) {
-                            npcs.forEach((npcName) => addQuestReferenceToNpc(npcName, QuestData.name))
-                        }
-                    } catch (e) {
-                        console.error('Failed to update location/npc references', e)
-                    }
-                // navigate to the created Quest's page
-                if (campaignId) navigate(`/InCampaign/${campaignId}/Quests/${id}`)
-                else navigate(-1)
-            } catch (e) {
-                console.error('Failed to save Quest to sessionStorage', e)
-            }
+        const campaignId = params.campaignId ?? null;
+        if (!campaignId) {
+            alert('Campaign id missing');
+            return;
         }
+        if (!locationsIds || locationsIds.length === 0) {
+            alert('Select at least one location for the quest');
+            return;
+        }
+
+        fetch(`http://localhost:3000/api/campaigns/${campaignId}/missions`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: name, description, locationId: locationsIds[0], status: 'pending' })
+        })
+            .then(async (res) => {
+                if (!res.ok) {
+                    const txt = await res.text();
+                    throw new Error(txt || 'Failed to create quest');
+                }
+                return res.json();
+            })
+            .then((created) => {
+                if (campaignId) navigate(`/InCampaign/${campaignId}/Quests/${created.id}`)
+                else navigate(-1)
+            })
+            .catch((e) => {
+                console.error('Failed to create quest', e);
+                alert('Failed to create quest');
+            });
     }
 
-    // Load NPCs and Locations from sessionStorage (or listen for updates)
+    // Load NPCs and Locations from backend
     useEffect(() => {
-        function loadLists() {
-            try {
-                const locRaw = sessionStorage.getItem("fabularium.campaigns.location_section");
-                const locParsed = locRaw ? JSON.parse(locRaw) : [];
-                const locNames = Array.isArray(locParsed) ? locParsed.map((l: any) => l.name ?? l.title ?? String(l.id ?? l)) : [];
-                setAvailableLocations(locNames);
+        const campaignId = params.campaignId ?? null;
+        if (!campaignId) return;
 
-                const npcRaw = sessionStorage.getItem("fabularium.campaigns.npc_section");
-                const npcParsed = npcRaw ? JSON.parse(npcRaw) : [];
-                const npcNames = Array.isArray(npcParsed) ? npcParsed.map((n: any) => n.name ?? n.title ?? String(n.id ?? n)) : [];
-                setAvailableNpcs(npcNames);
-            } catch (e) {
-                console.error('Failed to load NPCs/Locations from sessionStorage', e);
-            }
-        }
+        fetch(`http://localhost:3000/api/campaigns/${campaignId}/locations`, { credentials: 'include' })
+            .then(async (res) => {
+                if (!res.ok) throw new Error('Failed to fetch locations');
+                return res.json();
+            })
+            .then((data) => {
+                const locs = Array.isArray(data) ? data.map((l: any) => ({ id: l.id, name: l.name ?? String(l.id) })) : [];
+                setAvailableLocations(locs);
+            })
+            .catch((e) => console.error('Failed to load locations', e));
 
-        loadLists();
-
-        const onLocationsUpdated = () => loadLists();
-        const onNpcsUpdated = () => loadLists();
-
-        window.addEventListener('fabularium.locations.updated', onLocationsUpdated as EventListener);
-        window.addEventListener('fabularium.npcs.updated', onNpcsUpdated as EventListener);
-
-        return () => {
-            window.removeEventListener('fabularium.locations.updated', onLocationsUpdated as EventListener);
-            window.removeEventListener('fabularium.npcs.updated', onNpcsUpdated as EventListener);
-        };
-    }, []);
+        fetch(`http://localhost:3000/api/campaigns/${campaignId}/npcs`, { credentials: 'include' })
+            .then(async (res) => {
+                if (!res.ok) throw new Error('Failed to fetch npcs');
+                return res.json();
+            })
+            .then((data) => {
+                const npcs = Array.isArray(data) ? data.map((n: any) => ({ id: n.id, name: n.name ?? String(n.id) })) : [];
+                setAvailableNpcs(npcs);
+            })
+            .catch((e) => console.error('Failed to load npcs', e));
+    }, [params.campaignId]);
 
     const createReward = () => {
         const itemName = prompt("Enter reward item name:");
@@ -121,25 +101,21 @@ export default function QuestNew() {
     const addLocation = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const val = e.target.value;
         if (!val) return;
-        setLocations(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
-        setLocationsIds("");
+        setLocationsIds(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
     }
 
     const removeLocation = (index: number) => {
-        setLocations(prev => prev.filter((_, i) => i !== index));
-        setLocationsIds("");
+        setLocationsIds(prev => prev.filter((_, i) => i !== index));
     }
 
     const addNpc = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const val = e.target.value;
         if (!val) return;
-        setNpcs(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
-        setNpcsIds("");
+        setNpcsIds(prev => Array.isArray(prev) ? (prev.includes(val) ? prev : [...prev, val]) : [val]);
     }
 
     const removeNpc = (index: number) => {
-        setNpcs(prev => prev.filter((_, i) => i !== index));
-        setNpcsIds("");
+        setNpcsIds(prev => prev.filter((_, i) => i !== index));
     }
 
     // UI helper classes
@@ -249,15 +225,19 @@ export default function QuestNew() {
                                         >
                                             <option value="">-- Select Location --</option>
                                             {availableLocations.map(l => (
-                                                <option key={l} value={l}>{l}</option>
+                                                <option key={l.id} value={l.id}>{l.name}</option>
                                             ))}
                                         </select>
-                                        {locations.map((item, index) => (
-                                            <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
-                                                <p>{item}</p>
-                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeLocation(index)}>X</button>
-                                            </div>
-                                        ))}
+                                        {locationsIds.map((locId, index) => {
+                                            const loc = availableLocations.find(l => l.id === locId);
+                                            const name = loc ? loc.name : locId;
+                                            return (
+                                                <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
+                                                    <p>{name}</p>
+                                                    <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeLocation(index)}>X</button>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             )}
@@ -273,15 +253,19 @@ export default function QuestNew() {
                                         >
                                             <option value="">-- Select NPC --</option>
                                             {availableNpcs.map(n => (
-                                                <option key={n} value={n}>{n}</option>
+                                                <option key={n.id} value={n.id}>{n.name}</option>
                                             ))}
                                         </select>
-                                        {npcs.map((item, index) => (
-                                            <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
-                                                <p>{item}</p>
-                                                <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeNpc(index)}>X</button>
-                                            </div>
-                                        ))}
+                                        {npcsIds.map((npcId, index) => {
+                                            const npc = availableNpcs.find(n => n.id === npcId);
+                                            const name = npc ? npc.name : npcId;
+                                            return (
+                                                <div key={index} className="flex justify-between items-center border-b-2 border-l-2 border-r-2 border-orange-700 p-1">
+                                                    <p>{name}</p>
+                                                    <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-2 rounded cursor-pointer" onClick={() => removeNpc(index)}>X</button>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             )}

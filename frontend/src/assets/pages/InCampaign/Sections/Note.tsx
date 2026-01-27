@@ -6,44 +6,43 @@ const sectionData = {
 }
 
 type ItemSection = {
-  id: number
-  campaignId?: string | number
+  id: string
+  campaignId?: string
   name: string
   description?: string
 }
 
-const STORAGE_KEY = "fabularium.campaigns.note_section"
-function loadFromSession(): ItemSection[] {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed
-  } catch {
-    return []
-  }
-}
-
-
-function saveToSession(items: ItemSection[]) {
-  try {
-    const str = JSON.stringify(items)
-    sessionStorage.setItem(STORAGE_KEY, str)
-  } catch {
-    // ignore
-  }
-}
-
 export default function NotePage() {
-  const { noteId } = useParams<{ noteId?: string; campaignId?: string }>()
+  const { noteId, campaignId } = useParams<{ noteId?: string; campaignId?: string }>()
   const navigate = useNavigate()
-  const [notes] = useState<ItemSection[]>(() => loadFromSession())
-  useEffect(() => {
-    saveToSession(notes)
-  }, [notes])
+  const [notes, setNotes] = useState<ItemSection[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const note = notes.find((i) => i.id === Number(noteId))
+  useEffect(() => {
+    const cid = campaignId
+    if (!cid) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    fetch(`http://localhost:3000/api/campaigns/${cid}`, { credentials: 'include' })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('Failed to fetch campaign')
+        return res.json()
+      })
+      .then((data) => {
+        const ns = Array.isArray(data.notes) ? data.notes.map((n: any) => ({ id: String(n.id), campaignId: cid, name: n.name ?? '', description: n.description ?? '' })) : []
+        setNotes(ns)
+      })
+      .catch((e) => {
+        console.error('Failed to load notes', e)
+      })
+      .finally(() => setLoading(false))
+  }, [campaignId])
+
+  if (loading) return <div className="p-6">Loading...</div>
+
+  const note = notes.find((i) => String(i.id) === String(noteId))
 
   if (!note) {
     return (
