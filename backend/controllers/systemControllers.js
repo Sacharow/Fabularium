@@ -81,6 +81,7 @@ const classSchema = z.object({
     name: z.string().min(1),
     hitDie: z.number().int(),
     spellcasting: z.boolean().default(false),
+    savingThrows: z.array(), 
     description: z.string().optional()
 });
 
@@ -135,6 +136,7 @@ const updateClass = async (req, res) => {
         });
         return res.status(200).json(classData);
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: "Error updating class", error: err });
     }
 };

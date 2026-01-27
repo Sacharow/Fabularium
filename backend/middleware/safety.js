@@ -56,7 +56,7 @@ const checkAdmin = async (req, res, next) => {
 
 const auth = (req, res, next) => {
     try {
-        const token = req.cookies.access_token;
+        const token = req.cookies.refresh_token;
 
         if (!token) {
             return res.status(401).json({ message: "Not logged in" });
