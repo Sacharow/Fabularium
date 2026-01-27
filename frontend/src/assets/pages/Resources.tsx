@@ -11,6 +11,17 @@ function Resources() {
   const [spellSearch, setSpellSearch] = useState<string>("");
   const [spellSearchError, setSpellSearchError] = useState<string | null>(null);
   const [spellSort, setSpellSort] = useState<"alpha" | "school" | "level">("alpha");
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  
+  const toggleGroupCollapse = (groupLabel: string) => {
+    const newCollapsed = new Set(collapsedGroups);
+    if (newCollapsed.has(groupLabel)) {
+      newCollapsed.delete(groupLabel);
+    } else {
+      newCollapsed.add(groupLabel);
+    }
+    setCollapsedGroups(newCollapsed);
+  };
   
   // API data state
   const [resources, setResources] = useState<Record<string, any[]>>({
@@ -263,25 +274,35 @@ function Resources() {
               <div className="text-sm text-gray-400">No items in this source.</div>
             ) : (
               <ul className="space-y-2">
-                {g.items.map(({ item, originalIdx, groupLabel }, rowIdx) => (
-                  <Fragment key={`row-${gi}-${originalIdx}-${item.index || item.name || "item"}`}>
-                    {groupLabel && (rowIdx === 0 || groupLabel !== g.items[rowIdx - 1].groupLabel) && (
-                      <li className="px-2 py-1 text-xs font-semibold text-orange-200 border-l-2 border-orange-500 bg-orange-900/30 rounded">
-                        {groupLabel}
-                      </li>
-                    )}
-                    <ResourceItem
-                      bookIdx={gi}
-                      itemIdx={originalIdx}
-                      item={item}
-                      sectionKey={key}
-                      expandedKey={expandedKey}
-                      onToggle={toggleExpanded}
-                      formatSkillProficiencies={formatSkillProficiencies}
-                      formatLanguageProficiencies={formatLanguageProficiencies}
-                    />
-                  </Fragment>
-                ))}
+                {g.items.map(({ item, originalIdx, groupLabel }, rowIdx) => {
+                  const isNewGroup = groupLabel && (rowIdx === 0 || groupLabel !== g.items[rowIdx - 1].groupLabel);
+                  const isCollapsed = groupLabel && collapsedGroups.has(groupLabel);
+                  return (
+                    <Fragment key={`row-${gi}-${originalIdx}-${item.index || item.name || "item"}`}>
+                      {isNewGroup && (
+                        <li
+                          onClick={() => groupLabel && toggleGroupCollapse(groupLabel)}
+                          className="px-2 py-1 text-xs font-semibold text-orange-200 border-l-2 border-orange-500 bg-orange-900/30 rounded cursor-pointer hover:bg-orange-900/50 flex items-center gap-1"
+                        >
+                          <span>{isCollapsed ? ">" : "v"}</span>
+                          <span>{groupLabel}</span>
+                        </li>
+                      )}
+                      {!isCollapsed && (
+                        <ResourceItem
+                          bookIdx={gi}
+                          itemIdx={originalIdx}
+                          item={item}
+                          sectionKey={key}
+                          expandedKey={expandedKey}
+                          onToggle={toggleExpanded}
+                          formatSkillProficiencies={formatSkillProficiencies}
+                          formatLanguageProficiencies={formatLanguageProficiencies}
+                        />
+                      )}
+                    </Fragment>
+                  );
+                })}
               </ul>
             )}
           </section>
