@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { GoogleIcon } from "../components/ui/GoogleIcon";
-import { FacebookIcon } from "../components/ui/FacebookIcon";
+// import { GoogleIcon } from "../components/ui/GoogleIcon";
+// import { FacebookIcon } from "../components/ui/FacebookIcon";
 import CustomCheckbox from "../components/ui/CustomCheckbox";
 
 export default function Login() {
@@ -27,15 +27,15 @@ export default function Login() {
       console.error("Login failed", err);
     }
   };
-
+  /*
   const thirdParty = [
     { icon: GoogleIcon, name: "Google" },
     { icon: FacebookIcon, name: "Facebook" },
   ];
-
+  */
   const inputButton = `border border-orange-900 rounded py-3 px-4 mb-4 text-base bg-black/70 text-white placeholder-gray-400`;
   const loginButton = `cursor-pointer w-full bg-yellow-300 text-black font-bold py-3 px-4 rounded hover:scale-105 hover:bg-yellow-400 text-base disabled:opacity-50`;
-  const thirdPartyButton = `flex items-center gap-2 text-sm px-4 py-2 rounded cursor-pointer hover:scale-105 bg-orange-900/40 text-white border border-orange-800`;
+  // const thirdPartyButton = `flex items-center gap-2 text-sm px-4 py-2 rounded cursor-pointer hover:scale-105 bg-orange-900/40 text-white border border-orange-800`;
 
   return (
     <div className="flex items-center justify-center py-16 to-black px-4">
@@ -106,7 +106,7 @@ export default function Login() {
                 </button>
               </div>
             </form>
-
+            {/*
             <div className="w-full flex gap-3 justify-center pt-6">
               {thirdParty.map((Item, index) => {
                 const Icon = Item.icon;
@@ -122,6 +122,7 @@ export default function Login() {
                 );
               })}
             </div>
+            */}
           </div>
         </div>
       </div>
