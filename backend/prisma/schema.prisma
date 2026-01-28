@@ -436,6 +436,10 @@ model Mission {
 
   campaignId  String
   campaign    Campaign @relation(fields: [campaignId], references: [id])
+
+  npcId      String?
+
+  missionNpcs MissionNpc[]
 }
 
 model Location {
@@ -460,6 +464,17 @@ model NPC {
   campaign    Campaign @relation(fields: [campaignId], references: [id])
 
   locations   Location[]
+
+  missionNpcs MissionNpc[]
+}
+
+model MissionNpc {
+  MissionId String
+  mission   Mission @relation(fields: [MissionId], references: [id])
+  npcId     String
+  npc       NPC     @relation(fields: [npcId], references: [id])
+
+  @@id([MissionId, npcId])
 }
 
 model Monster {

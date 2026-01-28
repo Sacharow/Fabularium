@@ -20,7 +20,20 @@ const {
 	getNPCById,
 	updateNPC,
 	deleteNPC,
-	listCampaignNPCs
+	listCampaignNPCs,
+	createLocation,
+	listCampaignLocations,
+    getAllMissionNpcs,
+    getMissionNpcById,
+    createMissionNpc,
+    updateMissionNpc,
+    deleteMissionNpc,
+	createMap,
+	listCampaignMaps,
+	getMapById,
+	createMission,
+	createNote,
+	updateMission
 } = require("../controllers/campaignControllers");
 
 const { auth } = require("../middleware/safety");
@@ -40,45 +53,30 @@ router.post("/:id/contributors", auth, addContributor);
 router.delete("/:id/contributors", auth, removeContributor);
 
 router.get("/:id/characters", auth, listCampaignCharacters);
-// Location routes
-router.post("/:id/locations", auth, (req, res, next) => {
-	// forward to controller createLocation
-	return require('../controllers/campaignControllers').createLocation(req, res, next);
-});
-router.get("/:id/locations", auth, (req, res, next) => {
-	return require('../controllers/campaignControllers').listCampaignLocations(req, res, next);
-});
+router.post("/:id/locations", auth, createLocation);
+router.get("/:id/locations", auth, listCampaignLocations);
 
-// Map routes
-router.get('/:id/maps', auth, (req, res, next) => {
-	return require('../controllers/campaignControllers').listCampaignMaps(req, res, next);
-});
-router.post('/:id/maps', auth, (req, res, next) => {
-	return require('../controllers/campaignControllers').createMap(req, res, next);
-});
-router.get('/:id/maps/:mapId', auth, (req, res, next) => {
-	return require('../controllers/campaignControllers').getMapById(req, res, next);
-});
+router.get('/:id/maps', auth, listCampaignMaps);
+router.post('/:id/maps', auth, createMap);
+router.get('/:id/maps/:mapId', auth, getMapById);
 
-// Missions (quests) and notes
-router.post('/:id/missions', auth, (req, res, next) => {
-	return require('../controllers/campaignControllers').createMission(req, res, next);
-});
-// update mission (e.g. set locationId)
-router.put('/:id/missions/:missionId', auth, (req, res, next) => {
-    return require('../controllers/campaignControllers').updateMission(req, res, next);
-});
-router.post('/:id/notes', auth, (req, res, next) => {
-	return require('../controllers/campaignControllers').createNote(req, res, next);
-});
+router.post('/:id/missions', auth, createMission);
+router.put('/:id/missions/:missionId', auth, updateMission)
 
-// NPC routes
+router.post('/:id/notes', auth, createNote)
+
 router.post("/:id/npcs", auth, addNPC);
 router.get("/npcs", getNPCs);
 router.get("/:id/npcs/:npcId", getNPCById);
 router.put("/:id/npcs/:npcId", auth, updateNPC);
 router.delete("/:id/npcs/:npcId", auth, deleteNPC);
 router.get("/:id/npcs", listCampaignNPCs);
+
+router.get('/mission-npcs', getAllMissionNpcs);
+router.post('/mission-npcs', auth, createMissionNpc);
+router.get('/mission-npcs/:MissionId/:npcId', getMissionNpcById);
+router.put('/mission-npcs/:MissionId/:npcId', auth, updateMissionNpc);
+router.delete('/mission-npcs/:MissionId/:npcId', auth, deleteMissionNpc);
 
 module.exports = router;
 
