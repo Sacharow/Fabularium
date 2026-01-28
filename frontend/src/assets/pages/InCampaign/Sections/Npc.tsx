@@ -31,6 +31,7 @@ type NpcSection = {
   hitPointsMax?: number;
   armorClass?: number;
   passivePerception?: number;
+  locations?: Array<{ id: string; name: string }>;
 };
 
 export default function NpcPage() {
@@ -42,6 +43,7 @@ export default function NpcPage() {
   const [npc, setNpc] = useState<NpcSection | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [missions, setMissions] = useState<any[]>([]);
 
   useEffect(() => {
     if (!campaignId || !npcId) return;
@@ -65,6 +67,22 @@ export default function NpcPage() {
       .finally(() => setLoading(false));
   }, [campaignId, npcId]);
 
+  // fetch campaign missions so we can show quests linked to this NPC
+  useEffect(() => {
+    if (!campaignId) return;
+    fetch(`http://localhost:3000/api/campaigns/${campaignId}`, {
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to fetch campaign");
+        return res.json();
+      })
+      .then((data) => {
+        setMissions(Array.isArray(data.missions) ? data.missions : []);
+      })
+      .catch(() => setMissions([]));
+  }, [campaignId]);
+
   if (loading) return <div className="p-6">Loading...</div>;
   if (error || !npc) {
     return (
@@ -83,7 +101,7 @@ export default function NpcPage() {
   };
 
   return (
-    <div className="-6">
+    <div className="p-6">
       <div className="pb-6">
         <div className="max-w-7xl mx-auto">
           <p className="text-orange-200 text-sm font-medium">
@@ -110,7 +128,9 @@ export default function NpcPage() {
         {/* Sidebar */}
         <aside className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-orange-600 shadow-xl h-fit">
           <div className="flex items-center space-x-4 mb-4">
-            <div className={`w-16 h-16 rounded-lg ${npc.color} shadow-lg`} />
+            <div
+              className={`w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600 to-purple-950 shadow-lg`}
+            />
             <div>
               <h2 className="text-xl font-bold text-white">{npc.name}</h2>
               <p className="text-sm text-orange-200 font-semibold">
@@ -335,6 +355,99 @@ export default function NpcPage() {
                   No equipment listed.
                 </div>
               )}
+            </div>
+          </div>
+          {/* Linked Locations & Quests */}
+          <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-orange-600 shadow-xl">
+            <h4 className="text-lg font-semibold text-orange-100 mb-4 flex items-center gap-2">
+              <span className="text-xl">🔗</span> Linked Locations & Quests
+            </h4>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <div className="text-sm text-orange-200 font-semibold mb-2">
+                  Locations
+                </div>
+                {npc.locations && npc.locations.length > 0 ? (
+                  <ul className="space-y-2">
+                    {npc.locations.map((loc: any) => (
+                      <NavLink
+                        key={loc.id}
+                        to={`/InCampaign/${npc?.campaignId}/Locations/${loc.id}`}
+                      >
+                        <li className="bg-orange-700/50 px-4 py-2 rounded-lg text-orange-50 border border-orange-500 hover:bg-orange-700 transition cursor-pointer">
+                          🏰 {loc.name}
+                        </li>
+                      </NavLink>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="text-sm text-orange-200 italic">
+                    No linked locations
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div className="text-sm text-orange-200 font-semibold mb-2">
+                  Quests
+                </div>
+                {missions && missions.length > 0 ? (
+                  (() => {
+                    const npcLocIds = (npc.locations || []).map((l: any) =>
+                      String(l.id),
+                    );
+                    const related = missions.filter((m: any) => {
+                      // mission linked by location
+                      if (
+                        m.locationId &&
+                        npcLocIds.includes(String(m.locationId))
+                      )
+                        return true;
+                      // mission might contain npcId or npcId array
+                      if (
+                        m.npcId &&
+                        (Array.isArray(m.npcId)
+                          ? m.npcId.map(String).includes(String(npc.id))
+                          : String(m.npcId) === String(npc.id))
+                      )
+                        return true;
+                      // mission might contain nested npc objects
+                      if (
+                        Array.isArray(m.npcs) &&
+                        m.npcs.some(
+                          (n: any) => String(n.id || n) === String(npc.id),
+                        )
+                      )
+                        return true;
+                      return false;
+                    });
+                    if (related.length === 0)
+                      return (
+                        <div className="text-sm text-orange-200 italic">
+                          No linked quests
+                        </div>
+                      );
+                    return (
+                      <ul className="space-y-2">
+                        {related.map((q: any) => (
+                          <NavLink
+                            key={q.id}
+                            to={`/InCampaign/${npc?.campaignId}/Quests/${q.id}`}
+                          >
+                            <li className="bg-orange-700/50 px-4 py-2 rounded-lg text-orange-50 border border-orange-500 hover:bg-orange-700 transition cursor-pointer">
+                              ⚡ {q.title ?? q.name}
+                            </li>
+                          </NavLink>
+                        ))}
+                      </ul>
+                    );
+                  })()
+                ) : (
+                  <div className="text-sm text-orange-200 italic">
+                    No linked quests
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </main>

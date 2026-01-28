@@ -67,7 +67,7 @@ export default function GeneralEdit() {
         return res.json();
       })
       .then(() => {
-        navigate(`/InCampaign/${campaignId}`);
+        navigate(`/InCampaign/${campaignId}/${introData.urlName}`);
       })
       .catch((e) => {
         console.error("Failed to update campaign", e);

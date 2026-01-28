@@ -177,7 +177,7 @@ export default function LocationPage() {
           {/* NPCs Card */}
           <div className="bg-gradient-to-br from-orange-800 to-orange-700 rounded-xl p-6 border border-orange-600 shadow-xl hover:shadow-2xl transition">
             <h3 className="text-lg font-semibold text-orange-100 mb-4 flex items-center gap-2">
-              <span className="text-2xl">👤</span> NPCs (
+              <span className="text-2xl">👤</span> Characters (
               {(loc.npcs ?? []).length})
             </h3>
             {(loc.npcs ?? []).length === 0 ? (
@@ -188,6 +188,7 @@ export default function LocationPage() {
               <ul className="space-y-2">
                 {(loc.npcs ?? []).map((npc, index) => (
                   <NavLink
+                    className="flex flex-col gap-y-2"
                     key={index}
                     to={`/InCampaign/${loc?.campaignId}/Npcs/${loc.npcId?.[index] ?? ""}`}
                   >
@@ -214,6 +215,7 @@ export default function LocationPage() {
               <ul className="space-y-2">
                 {(loc.quests ?? []).map((quest, index) => (
                   <NavLink
+                    className="flex flex-col gap-y-2"
                     key={index}
                     to={`/InCampaign/${loc?.campaignId}/Quests/${loc.questId?.[index] ?? ""}`}
                   >

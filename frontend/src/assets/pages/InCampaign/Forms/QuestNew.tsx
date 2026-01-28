@@ -35,10 +35,7 @@ export default function QuestNew() {
       alert("Campaign id missing");
       return;
     }
-    if (!locationsIds || locationsIds.length === 0) {
-      alert("Select at least one location for the quest");
-      return;
-    }
+    // location is optional now; allow quests without location
 
     fetch(`http://localhost:3000/api/campaigns/${campaignId}/missions`, {
       method: "POST",
@@ -47,7 +44,9 @@ export default function QuestNew() {
       body: JSON.stringify({
         title: name,
         description,
-        locationId: locationsIds[0],
+        ...(locationsIds && locationsIds.length > 0
+          ? { locationId: locationsIds[0] }
+          : {}),
         status: "pending",
       }),
     })

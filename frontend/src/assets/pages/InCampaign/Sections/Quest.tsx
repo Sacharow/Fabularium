@@ -179,7 +179,7 @@ export default function QuestPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Characters Card */}
           <div className="bg-gradient-to-br from-orange-800 to-orange-700 rounded-xl p-6 border border-orange-600 shadow-xl hover:shadow-2xl transition">
             <h3 className="text-lg font-semibold text-orange-100 mb-4 flex items-center gap-2">
@@ -192,6 +192,7 @@ export default function QuestPage() {
               <ul className="space-y-2">
                 {quest.npcs.map((npc, index) => (
                   <NavLink
+                    className="flex flex-col gap-y-2"
                     key={index}
                     to={`/InCampaign/${quest?.campaignId}/Npcs/${quest.npcId?.[index] ?? ""}`}
                   >
@@ -203,7 +204,6 @@ export default function QuestPage() {
               </ul>
             )}
           </div>
-
           {/* Locations Card */}
           <div className="bg-gradient-to-br from-orange-800 to-orange-700 rounded-xl p-6 border border-orange-600 shadow-xl hover:shadow-2xl transition">
             <h3 className="text-lg font-semibold text-orange-100 mb-4 flex items-center gap-2">
@@ -216,6 +216,7 @@ export default function QuestPage() {
               <ul className="space-y-2">
                 {quest.locations.map((location, index) => (
                   <NavLink
+                    className="flex flex-col gap-y-2"
                     key={index}
                     to={`/InCampaign/${quest?.campaignId}/Locations/${quest.locationId?.[index] ?? ""}`}
                   >
@@ -223,28 +224,6 @@ export default function QuestPage() {
                       🏰 {location}
                     </li>
                   </NavLink>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Rewards Card */}
-          <div className="bg-gradient-to-br from-orange-800 to-orange-700 rounded-xl p-6 border border-orange-600 shadow-xl hover:shadow-2xl transition">
-            <h3 className="text-lg font-semibold text-orange-100 mb-4 flex items-center gap-2">
-              <span className="text-2xl">💎</span> Rewards (
-              {quest.rewards.length})
-            </h3>
-            {quest.rewards.length === 0 ? (
-              <p className="text-orange-200 italic">No rewards specified</p>
-            ) : (
-              <ul className="space-y-2">
-                {quest.rewards.map((reward, index) => (
-                  <li
-                    key={index}
-                    className="bg-orange-700/50 px-4 py-2 rounded-lg text-orange-50 border border-orange-500 hover:bg-orange-700 transition"
-                  >
-                    ⭐ {reward}
-                  </li>
                 ))}
               </ul>
             )}
