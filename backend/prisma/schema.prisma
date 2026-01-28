@@ -431,8 +431,8 @@ model Mission {
   description String
   status      MissionStatus
 
-  locationId  String
-  location    Location @relation(fields: [locationId], references: [id])
+  locationId  String?
+  location    Location? @relation(fields: [locationId], references: [id])
 
   campaignId  String
   campaign    Campaign @relation(fields: [campaignId], references: [id])

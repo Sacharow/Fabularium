@@ -57,7 +57,7 @@ const missionSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
   status: z.enum(["pending", "in_progress", "completed"]).optional(),
-  locationId: z.string(),
+  locationId: z.string().optional(),
 });
 
 const updateMissionSchema = z.object({
@@ -785,8 +785,7 @@ const createMission = async (req, res) => {
       data.title.trim().length === 0
     )
       return res.status(400).json({ message: "title is required" });
-    if (!data.locationId)
-      return res.status(400).json({ message: "locationId is required" });
+    // locationId is optional now — quests may not be tied to a location
 
     const campaign = await prisma.campaign.findUnique({
       where: { id: campaignId },
@@ -806,7 +805,8 @@ const createMission = async (req, res) => {
         title: data.title,
         description: data.description ?? "",
         status: data.status ?? "pending",
-        locationId: data.locationId,
+        // only set locationId when provided
+        ...(data.locationId ? { locationId: data.locationId } : {}),
         campaignId: campaignId,
       },
     });
