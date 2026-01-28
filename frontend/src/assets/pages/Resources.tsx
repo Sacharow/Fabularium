@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import ResourcesSidebar from "../components/Resources/ResourcesSidebar";
 import ResourceItem from "../components/Resources/ResourceItem";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 import { resourceService } from "../../services/resourceService";
 
 function Resources() {
@@ -315,6 +316,7 @@ function Resources() {
 
   return (
     <div className="pt-6">
+      <ScrollToTopButton />
       <div className="w-full">
         <div className="grid grid-cols-8 gap-6">
           <div className="relative col-span-2">
