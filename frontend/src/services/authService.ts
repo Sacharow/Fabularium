@@ -1,46 +1,50 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = "http://localhost:3000";
 
 export const authService = {
-  async login(credentials: { name?: string; email?: string; password: string }) {
+  async login(credentials: {
+    name?: string;
+    email?: string;
+    password: string;
+  }) {
     const response = await fetch(`${API_URL}/api/users/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(credentials)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(credentials),
     });
-    
-    if (!response.ok) throw new Error('Login failed');
+
+    if (!response.ok) throw new Error("Login failed");
     return response.json();
   },
 
   async register(data: { name: string; email: string; password: string }) {
     const response = await fetch(`${API_URL}/api/users/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
-    
-    if (!response.ok) throw new Error('Registration failed');
+
+    if (!response.ok) throw new Error("Registration failed");
     return response.json();
   },
 
   async logout() {
     await fetch(`${API_URL}/api/users/logout`, {
-      method: 'POST',
-      credentials: 'include'
+      method: "POST",
+      credentials: "include",
     });
   },
 
   async me() {
     const response = await fetch(`${API_URL}/api/users/me`, {
-      method: 'GET',
-      credentials: 'include'
+      method: "GET",
+      credentials: "include",
     });
 
     if (!response.ok) {
-      throw new Error('Unauthenticated');
+      throw new Error("Unauthenticated");
     }
 
     return response.json();
-  }
+  },
 };

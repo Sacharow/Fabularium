@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom"
 
 type CampaignCardProps = {
   name: string
-  id: number
+  id: number | string
   color: string
 }
 

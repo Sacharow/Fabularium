@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { characterService } from "../../services/characterService";
 
 const INITIAL_STATS = [
@@ -58,7 +58,8 @@ const INITIAL_SKILL_PROF: Record<string, number> = {
   Persuasion: 0,
 };
 
-export default function CharacterNewStandalone() {
+export default function CharacterEditStandalone() {
+  const { characterId } = useParams();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -83,13 +84,102 @@ export default function CharacterNewStandalone() {
   const [size, setSize] = useState("");
   const [speed, setSpeed] = useState("");
   const [raceDetails, setRaceDetails] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Recalculate skill values when stats or skillProf or profBonus change
+  useEffect(() => {
+    characterService.getClasses().then(setClasses);
+    characterService.getRaces().then(setRaces);
+    fetch("/api/subraces", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setSubraces)
+      .catch(() => setSubraces([]));
+  }, []);
+
+  useEffect(() => {
+    if (!characterId) return;
+    setLoading(true);
+    characterService
+      .getCharacterById(characterId)
+      .then((data) => {
+        setName(data.name || "");
+        setDescription(data.description || "");
+        setClassId(data.classId || "");
+        setRaceId(data.raceId || "");
+        setSubraceId(data.subraceId || "");
+        setSubclassId(data.subclassId || "");
+        setLevel(data.level || 1);
+        setAlignment(data.alignment || "");
+        setBackground(data.background || "");
+        setBonds(data.bonds || "");
+        setFlaws(data.flaws || "");
+        setIdeals(data.ideals || "");
+        setPersonalityTraits(data.personalityTraits || "");
+        setSize(data.size || "");
+        setSpeed(data.speed || "");
+        setStats([
+          {
+            name: "Strength",
+            value: data.stats?.str ?? 10,
+            modifier: Math.floor(((data.stats?.str ?? 10) - 10) / 2),
+            skills: { Athletics: 0 },
+          },
+          {
+            name: "Dexterity",
+            value: data.stats?.dex ?? 10,
+            modifier: Math.floor(((data.stats?.dex ?? 10) - 10) / 2),
+            skills: { Acrobatics: 0, "Sleight of Hand": 0, Stealth: 0 },
+          },
+          {
+            name: "Constitution",
+            value: data.stats?.con ?? 10,
+            modifier: Math.floor(((data.stats?.con ?? 10) - 10) / 2),
+          },
+          {
+            name: "Intelligence",
+            value: data.stats?.int ?? 10,
+            modifier: Math.floor(((data.stats?.int ?? 10) - 10) / 2),
+            skills: {
+              Arcana: 0,
+              History: 0,
+              Investigation: 0,
+              Nature: 0,
+              Religion: 0,
+            },
+          },
+          {
+            name: "Wisdom",
+            value: data.stats?.wis ?? 10,
+            modifier: Math.floor(((data.stats?.wis ?? 10) - 10) / 2),
+            skills: {
+              "Animal Handling": 0,
+              Insight: 0,
+              Medicine: 0,
+              Perception: 0,
+              Survival: 0,
+            },
+          },
+          {
+            name: "Charisma",
+            value: data.stats?.cha ?? 10,
+            modifier: Math.floor(((data.stats?.cha ?? 10) - 10) / 2),
+            skills: {
+              Deception: 0,
+              Intimidation: 0,
+              Performance: 0,
+              Persuasion: 0,
+            },
+          },
+        ]);
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [characterId]);
+
   useEffect(() => {
     setStats((prevStats) =>
       prevStats.map((stat) => {
         if (!stat.skills) return stat;
-        // zachowaj oryginalny shape skills
         const updatedSkills = Object.fromEntries(
           Object.entries(stat.skills).map(([skill, _]) => [
             skill,
@@ -100,15 +190,6 @@ export default function CharacterNewStandalone() {
       }),
     );
   }, [skillProf, stats.map((s) => s.modifier).join(), profBonus]);
-
-  useEffect(() => {
-    characterService.getClasses().then(setClasses);
-    characterService.getRaces().then(setRaces);
-    fetch("/api/subraces", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : []))
-      .then(setSubraces)
-      .catch(() => setSubraces([]));
-  }, []);
 
   useEffect(() => {
     if (!raceId) {
@@ -130,7 +211,6 @@ export default function CharacterNewStandalone() {
     if (!name.trim()) return alert("Name required");
     if (!classId) return alert("Class required");
     if (!raceId) return alert("Race required");
-    // Validate stats and level
     const outOfRangeStat = stats.find((s) => s.value < 1 || s.value > 30);
     if (outOfRangeStat) {
       return alert("Statystyki muszą być w przedziale 1-30");
@@ -165,17 +245,20 @@ export default function CharacterNewStandalone() {
       speed: speed || undefined,
     };
     try {
-      const saved = await characterService.createCharacter(characterData);
-      navigate(`/characters/${saved.id}`);
+      await characterService.editCharacter(characterId!, characterData);
+      navigate(`/characters/${characterId}`);
     } catch (e) {
       alert("Failed to save character");
     }
   };
 
+  if (loading) return <div className="p-6">Loading...</div>;
+  if (error) return <div className="p-6 text-red-600">{error}</div>;
+
   return (
     <div className="max-w-3xl mx-auto py-10">
       <h1 className="text-4xl font-bold mb-8 text-orange-900">
-        Create New Character
+        Edit Character
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
@@ -454,7 +537,7 @@ export default function CharacterNewStandalone() {
           className="bg-orange-900 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded text-lg cursor-pointer"
           onClick={saveCharacter}
         >
-          Save Character
+          Save Changes
         </button>
       </div>
     </div>

@@ -1,11 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import ResourcesSidebar from "../components/Resources/ResourcesSidebar";
 import ResourceItem from "../components/Resources/ResourceItem";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 import { resourceService } from "../../services/resourceService";
 
 function Resources() {
   const sections = ["Backgrounds", "Classes", "Feats", "Races", "Spells"];
   const [activeSection, setActiveSection] = useState<string>(sections[0]);
+
+  // Spell-specific UI state
+  const [spellSearch, setSpellSearch] = useState<string>("");
+  const [spellSearchError, setSpellSearchError] = useState<string | null>(null);
+  const [spellSort, setSpellSort] = useState<"alpha" | "school" | "level">("alpha");
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  
+  const toggleGroupCollapse = (groupLabel: string) => {
+    const newCollapsed = new Set(collapsedGroups);
+    if (newCollapsed.has(groupLabel)) {
+      newCollapsed.delete(groupLabel);
+    } else {
+      newCollapsed.add(groupLabel);
+    }
+    setCollapsedGroups(newCollapsed);
+  };
   
   // API data state
   const [resources, setResources] = useState<Record<string, any[]>>({
@@ -33,13 +50,17 @@ function Resources() {
           resourceService.getRaces(),
           resourceService.getSpells(),
         ]);
+
+        // Only pre-fetch spell details upfront for better performance on spells section
+        const detailedSpells = await resourceService.getResourcesWithDetails("spells", spells || []);
+        const normalizedSpells = (detailedSpells || []).map((s: any) => ({ ...s, _detailed: true }));
         
         setResources({
           backgrounds: backgrounds || [],
           classes: classes || [],
           feats: feats || [],
           races: races || [],
-          spells: spells || [],
+          spells: normalizedSpells,
         });
       } catch (err) {
         console.error('Error fetching resources:', err);
@@ -80,6 +101,21 @@ function Resources() {
     setSelectedSources({ 0: false });
   };
 
+  const handleSpellSearchChange = (value: string) => {
+    setSpellSearch(value);
+    if (!value) {
+      setSpellSearchError(null);
+      return;
+    }
+    try {
+      // Validate regex up front so we can block invalid patterns gracefully
+      new RegExp(value, "i");
+      setSpellSearchError(null);
+    } catch (err) {
+      setSpellSearchError("Invalid regex pattern");
+    }
+  };
+
   // accordion state: only one expanded item key at a time (format: "bookIdx-itemIdx")
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const toggleExpanded = async (key: string) => {
@@ -90,12 +126,28 @@ function Resources() {
 
     setExpandedKey(key);
 
+    // Scroll the newly opened item into view after a short delay to allow rendering
+    setTimeout(() => {
+      const element = document.querySelector(`[data-accordion-key="${key}"]`);
+      if (!element) return;
+
+      const yOffset = -170; // negative value means scrolling further down)
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: y,
+        behavior: "smooth"
+      });
+    }, 100);
+
     // Parse key to get item index (format: "gi-i")
     // Note: gi is currently always 0 because we only have one source "D&D 5e SRD"
     const [, i] = key.split("-").map(Number);
     const section = activeSection.toLowerCase();
     const item = resources[section][i];
 
+    // Only fetch details if not already fetched
     if (item && !item._detailed && item.index) {
       try {
         const details = await resourceService.getResourceDetail(section, item.index);
@@ -113,6 +165,58 @@ function Resources() {
         console.error("Error fetching item details:", err);
       }
     }
+  };
+
+  type SpellRow = { item: any; originalIdx: number; groupLabel?: string };
+
+  const normalizeSpellMeta = (spell: any) => {
+    const level = typeof spell?.level === "number" ? spell.level : 99;
+    const school = typeof spell?.school === "string" ? spell.school : spell?.school?.name || "Unknown";
+    const name = spell?.name || "";
+    return { level, school, name };
+  };
+
+  const applySpellTransforms = (items: { item: any; originalIdx: number }[]): SpellRow[] => {
+    let filtered = items;
+
+    if (spellSearch && !spellSearchError) {
+      const regex = new RegExp(spellSearch, "i");
+      filtered = filtered.filter(({ item }) => item?.name && regex.test(item.name));
+    }
+
+    const sorted = [...filtered].sort((a, b) => {
+      const metaA = normalizeSpellMeta(a.item);
+      const metaB = normalizeSpellMeta(b.item);
+
+      if (spellSort === "level") {
+        if (metaA.level !== metaB.level) return metaA.level - metaB.level;
+        return metaA.name.localeCompare(metaB.name);
+      }
+
+      if (spellSort === "school") {
+        if (metaA.school !== metaB.school) return metaA.school.localeCompare(metaB.school);
+        if (metaA.level !== metaB.level) return metaA.level - metaB.level;
+        return metaA.name.localeCompare(metaB.name);
+      }
+
+      // alphabetical default
+      return metaA.name.localeCompare(metaB.name);
+    });
+
+    const withGroups = sorted.map((row) => {
+      if (spellSort === "school") {
+        const meta = normalizeSpellMeta(row.item);
+        return { ...row, groupLabel: meta.school || "Unknown school" };
+      }
+      if (spellSort === "level") {
+        const meta = normalizeSpellMeta(row.item);
+        const levelLabel = meta.level === 0 ? "Level 0 (Cantrips)" : `Level ${meta.level}`;
+        return { ...row, groupLabel: levelLabel };
+      }
+      return row;
+    });
+
+    return withGroups;
   };
 
   function formatSkillProficiencies(sp: any) {
@@ -153,12 +257,13 @@ function Resources() {
 
   function renderSection(name: string) {
     const key = name.toLowerCase();
-    const groups: { src: any; items: any[] }[] = [];
+    const groups: { src: any; items: { item: any; originalIdx: number; groupLabel?: string }[] }[] = [];
 
     sources.forEach((src: any, idx: number) => {
       if (!src) return;
       if (!selectedSources[idx]) return;
-      const items = Array.isArray(src[key]) ? src[key] : [];
+      const itemsWithIndex = Array.isArray(src[key]) ? src[key].map((item: any, originalIdx: number) => ({ item, originalIdx })) : [];
+      const items = key === "spells" ? applySpellTransforms(itemsWithIndex) : itemsWithIndex;
       groups.push({ src, items });
     });
 
@@ -187,19 +292,35 @@ function Resources() {
               <div className="text-sm text-gray-400">No items in this source.</div>
             ) : (
               <ul className="space-y-2">
-                {g.items.map((it: any, i: number) => (
-                  <ResourceItem
-                    key={i}
-                    bookIdx={gi}
-                    itemIdx={i}
-                    item={it}
-                    sectionKey={key}
-                    expandedKey={expandedKey}
-                    onToggle={toggleExpanded}
-                    formatSkillProficiencies={formatSkillProficiencies}
-                    formatLanguageProficiencies={formatLanguageProficiencies}
-                  />
-                ))}
+                {g.items.map(({ item, originalIdx, groupLabel }, rowIdx) => {
+                  const isNewGroup = groupLabel && (rowIdx === 0 || groupLabel !== g.items[rowIdx - 1].groupLabel);
+                  const isCollapsed = groupLabel && collapsedGroups.has(groupLabel);
+                  return (
+                    <Fragment key={`row-${gi}-${originalIdx}-${item.index || item.name || "item"}`}>
+                      {isNewGroup && (
+                        <li
+                          onClick={() => groupLabel && toggleGroupCollapse(groupLabel)}
+                          className="px-2 py-1 text-xs font-semibold text-orange-200 border-l-2 border-orange-500 bg-orange-900/30 rounded cursor-pointer hover:bg-orange-900/50 flex items-center gap-1"
+                        >
+                          <span>{isCollapsed ? ">" : "v"}</span>
+                          <span>{groupLabel}</span>
+                        </li>
+                      )}
+                      {!isCollapsed && (
+                        <ResourceItem
+                          bookIdx={gi}
+                          itemIdx={originalIdx}
+                          item={item}
+                          sectionKey={key}
+                          expandedKey={expandedKey}
+                          onToggle={toggleExpanded}
+                          formatSkillProficiencies={formatSkillProficiencies}
+                          formatLanguageProficiencies={formatLanguageProficiencies}
+                        />
+                      )}
+                    </Fragment>
+                  );
+                })}
               </ul>
             )}
           </section>
@@ -210,10 +331,11 @@ function Resources() {
 
   return (
     <div className="pt-6">
+      <ScrollToTopButton />
       <div className="w-full">
         <div className="grid grid-cols-8 gap-6">
           <div className="relative col-span-2">
-            <div className="fixed top-0 left-0 h-screen w-1/5 px-4 pt-16 border-r border-orange-700 bg-orange-500/10">
+            <div className="fixed top-4 left-0 h-screen w-1/5 px-4 pt-16 border-r border-orange-700 bg-orange-500/10">
               <h1 className="font-bold text-2xl">Category</h1>
               <div className="flex flex-col pt-6 gap-y-2">
                 <ResourcesSidebar
@@ -238,7 +360,52 @@ function Resources() {
             </div>
           </div>
 
-          <div className="col-span-2"></div>
+          <div className="col-span-2">
+            {activeSection.toLowerCase() === "spells" && (
+              <div className="fixed right-6 top-24 w-64 px-4 py-6 space-y-4">
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-300 mb-1">Search</label>
+                  <input
+                    type="text"
+                    value={spellSearch}
+                    onChange={(e) => handleSpellSearchChange(e.target.value)}
+                    placeholder="e.g. fireball"
+                    className="bg-orange-900/30 border border-orange-700/70 rounded px-3 py-2 text-sm text-white placeholder:text-orange-200/60 focus:outline-none focus:border-orange-400"
+                  />
+                  {spellSearchError && <span className="text-xs text-red-300 mt-1">{spellSearchError}</span>}
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-300 mb-2">Sort by</label>
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => setSpellSort("alpha")}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+                        spellSort === "alpha" ? "bg-orange-700/50 border border-orange-400" : "bg-orange-900/30 border border-orange-700/70 hover:bg-orange-600/10"
+                      }`}
+                    >
+                      Alphabetical
+                    </button>
+                    <button
+                      onClick={() => setSpellSort("school")}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+                        spellSort === "school" ? "bg-orange-700/50 border border-orange-400" : "bg-orange-900/30 border border-orange-700/70 hover:bg-orange-600/10"
+                      }`}
+                    >
+                      School of Magic
+                    </button>
+                    <button
+                      onClick={() => setSpellSort("level")}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+                        spellSort === "level" ? "bg-orange-700/50 border border-orange-400" : "bg-orange-900/30 border border-orange-700/70 hover:bg-orange-600/10"
+                      }`}
+                    >
+                      Spell Level
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

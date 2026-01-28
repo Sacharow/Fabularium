@@ -15,6 +15,13 @@ import CharacterNewStandalone from "./assets/pages/CharacterNewStandalone";
 import CharacterStandaloneView from "./assets/pages/CharacterStandaloneView";
 import Resources from "./assets/pages/Resources";
 import Profile from "./assets/pages/Profile";
+import CharacterEditStandalone from "./assets/pages/CharacterEditStandalone";
+
+// Info pages
+import About from "./assets/pages/info/About";
+import Contact from "./assets/pages/info/Contact";
+import Policy from "./assets/pages/info/Policy";
+import Terms from "./assets/pages/info/Terms";
 
 import InCampaignCharacter from "./assets/pages/InCampaign/Sections/Character";
 import InCampaignLocation from "./assets/pages/InCampaign/Sections/Location";
@@ -24,11 +31,17 @@ import InCampaignNote from "./assets/pages/InCampaign/Sections/Note";
 import InCampaignQuest from "./assets/pages/InCampaign/Sections/Quest";
 
 import MapNew from "./assets/pages/InCampaign/Forms/MapNew";
+import MapEdit from "./assets/pages/InCampaign/Forms/MapEdit";
 import LocationNew from "./assets/pages/InCampaign/Forms/LocationNew";
+import LocationEdit from "./assets/pages/InCampaign/Forms/LocationEdit";
 import CharacterNew from "./assets/pages/InCampaign/Forms/CharacterNew";
 import NpcNew from "./assets/pages/InCampaign/Forms/NpcNew";
+import NpcEdit from "./assets/pages/InCampaign/Forms/NpcEdit";
 import NoteNew from "./assets/pages/InCampaign/Forms/NoteNew";
+import NoteEdit from "./assets/pages/InCampaign/Forms/NoteEdit";
 import QuestNew from "./assets/pages/InCampaign/Forms/QuestNew";
+import QuestEdit from "./assets/pages/InCampaign/Forms/QuestEdit";
+import GeneralEdit from "./assets/pages/InCampaign/Forms/GeneralEdit";
 
 import CharacterView from "./assets/pages/InCampaign/Views/CharacterView";
 import GeneralView from "./assets/pages/InCampaign/Views/GeneralView";
@@ -38,6 +51,7 @@ import NpcView from "./assets/pages/InCampaign/Views/NpcView";
 import NoteView from "./assets/pages/InCampaign/Views/NoteView";
 import PlayerView from "./assets/pages/InCampaign/Views/PlayerView";
 import QuestView from "./assets/pages/InCampaign/Views/QuestView";
+import InCampaignLayout from "./assets/pages/InCampaign/InCampaignLayout";
 
 function AppRoutes() {
   const location = useLocation();
@@ -52,11 +66,24 @@ function AppRoutes() {
         <Route path="/campaigns/new" element={<CreateCampaign />} />
         <Route path="/characters" element={<Characters />} />
         <Route path="/characters/new" element={<CharacterNewStandalone />} />
-        <Route path="/characters/:characterId" element={<CharacterStandaloneView />} />
+        <Route
+          path="/characters/:characterId"
+          element={<CharacterStandaloneView />}
+        />
+        <Route
+          path="/characters/:characterId/edit"
+          element={<CharacterEditStandalone />}
+        />
         <Route path="/resources" element={<Resources />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+
+        {/* Info Pages */}
+        <Route path="/About" element={<About />} />
+        <Route path="/Contact" element={<Contact />} />
+        <Route path="/Privacy" element={<Policy />} />
+        <Route path="/Terms" element={<Terms />} />
 
         <Route
           path="/InCampaign/:campaignId/Characters/:characterId"
@@ -88,8 +115,16 @@ function AppRoutes() {
           element={<MapNew />}
         />
         <Route
+          path="/InCampaign/:campaignId/Maps/:mapId/Edit"
+          element={<MapEdit />}
+        />
+        <Route
           path="/InCampaign/:campaignId/LocationView/New"
           element={<LocationNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Locations/:locationId/Edit"
+          element={<LocationEdit />}
         />
         <Route
           path="/InCampaign/:campaignId/CharacterView/New"
@@ -100,37 +135,40 @@ function AppRoutes() {
           element={<NpcNew />}
         />
         <Route
+          path="/InCampaign/:campaignId/Npcs/:npcId/Edit"
+          element={<NpcEdit />}
+        />
+        <Route
           path="/InCampaign/:campaignId/NoteView/New"
           element={<NoteNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Notes/:noteId/Edit"
+          element={<NoteEdit />}
         />
         <Route
           path="/InCampaign/:campaignId/QuestView/New"
           element={<QuestNew />}
         />
+        <Route
+          path="/InCampaign/:campaignId/Quests/:questId/Edit"
+          element={<QuestEdit />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/General/Edit"
+          element={<GeneralEdit />}
+        />
 
-        <Route
-          path="/InCampaign/:campaignId/CharacterView"
-          element={<CharacterView />}
-        />
-        <Route
-          path="/InCampaign/:campaignId/GeneralView"
-          element={<GeneralView />}
-        />
-        <Route
-          path="/InCampaign/:campaignId/LocationView"
-          element={<LocationView />}
-        />
-        <Route path="/InCampaign/:campaignId/MapView" element={<MapView />} />
-        <Route path="/InCampaign/:campaignId/NpcView" element={<NpcView />} />
-        <Route path="/InCampaign/:campaignId/NoteView" element={<NoteView />} />
-        <Route
-          path="/InCampaign/:campaignId/PlayerView"
-          element={<PlayerView />}
-        />
-        <Route
-          path="/InCampaign/:campaignId/QuestView"
-          element={<QuestView />}
-        />
+        <Route path="/InCampaign/:campaignId" element={<InCampaignLayout />}>
+          <Route path="CharacterView" element={<CharacterView />} />
+          <Route path="GeneralView" element={<GeneralView />} />
+          <Route path="LocationView" element={<LocationView />} />
+          <Route path="MapView" element={<MapView />} />
+          <Route path="NpcView" element={<NpcView />} />
+          <Route path="NoteView" element={<NoteView />} />
+          <Route path="PlayerView" element={<PlayerView />} />
+          <Route path="QuestView" element={<QuestView />} />
+        </Route>
       </Routes>
     </>
   );

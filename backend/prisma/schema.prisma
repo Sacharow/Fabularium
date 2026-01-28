@@ -113,7 +113,7 @@ model Character {
 
 model CharacterStats {
   characterId String  @id
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   str Int @default(10)
   dex Int @default(10)
@@ -126,7 +126,7 @@ model CharacterStats {
 
 model CharacterSaves {
   characterId String  @id
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   strProficient Boolean @default(false)
   dexProficient Boolean @default(false)
@@ -140,7 +140,7 @@ model CharacterSaves {
 model CharacterSkill {
   id          String   @id @default(uuid())
   characterId String
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   name        String
   proficient  Boolean  @default(false)
@@ -151,7 +151,7 @@ model CharacterSkill {
 model CharacterProficiency {
   id          String   @id @default(uuid())
   characterId String
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   type        String
   name        String
@@ -160,7 +160,7 @@ model CharacterProficiency {
 
 model CharacterCombatStats {
   characterId     String @id
-  character       Character @relation(fields: [characterId], references: [id])
+  character       Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   hp              Int    @default(0)
   hpMax           Int    @default(0)
@@ -192,7 +192,7 @@ model Item {
 model InventoryItem {
   id          String   @id @default(uuid())
   characterId String
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   itemId      String
   item        Item     @relation(fields: [itemId], references: [id])
@@ -224,7 +224,7 @@ model Spell {
 model CharacterKnownSpell {
   id          String   @id @default(uuid())
   characterId String
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   spellId     String
   spell       Spell     @relation(fields: [spellId], references: [id])
@@ -235,7 +235,7 @@ model CharacterKnownSpell {
 model CharacterPreparedSpell {
   id          String   @id @default(uuid())
   characterId String
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   spellId     String
   spell       Spell     @relation(fields: [spellId], references: [id])
@@ -247,7 +247,7 @@ model CharacterPreparedSpell {
 model CharacterSpellSlot {
   id          String   @id @default(uuid())
   characterId String
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   spellLevel  Int    
   maxSlots    Int    @default(0)
@@ -268,7 +268,7 @@ model Feature {
 model CharacterFeature {
   id          String   @id @default(uuid())
   characterId String
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   featureId   String
   feature     Feature   @relation(fields: [featureId], references: [id])
@@ -353,7 +353,7 @@ model ClassProgression {
 
 model CharacterCurrency {
   characterId String @id
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   gp Int @default(0)
   sp Int @default(0)
@@ -372,7 +372,7 @@ model Feat {
 model CharacterEventLog {
   id          String @id @default(uuid())
   characterId String
-  character   Character @relation(fields: [characterId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
   type        String
   payload     Json?
   createdAt   DateTime @default(now())

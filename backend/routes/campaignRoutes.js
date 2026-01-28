@@ -72,9 +72,10 @@ router.put("/:id/npcs/:npcId", auth, updateNPC);
 router.delete("/:id/npcs/:npcId", auth, deleteNPC);
 router.get("/:id/npcs", listCampaignNPCs);
 
+// MissionNpc routes
 router.get('/mission-npcs', getAllMissionNpcs);
-router.post('/mission-npcs', auth, createMissionNpc);
 router.get('/mission-npcs/:MissionId/:npcId', getMissionNpcById);
+router.post('/mission-npcs', auth, createMissionNpc);
 router.put('/mission-npcs/:MissionId/:npcId', auth, updateMissionNpc);
 router.delete('/mission-npcs/:MissionId/:npcId', auth, deleteMissionNpc);
 
