@@ -50,6 +50,7 @@ function Resources() {
           resourceService.getSpells(),
         ]);
 
+        // Only pre-fetch spell details upfront for better performance on spells section
         const detailedSpells = await resourceService.getResourcesWithDetails("spells", spells || []);
         const normalizedSpells = (detailedSpells || []).map((s: any) => ({ ...s, _detailed: true }));
         
@@ -130,6 +131,7 @@ function Resources() {
     const section = activeSection.toLowerCase();
     const item = resources[section][i];
 
+    // Only fetch details if not already fetched
     if (item && !item._detailed && item.index) {
       try {
         const details = await resourceService.getResourceDetail(section, item.index);
