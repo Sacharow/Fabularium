@@ -14,6 +14,14 @@ export default function NpcEdit() {
     Array<{ id: string; name: string }>
   >([]);
   const [quests, setQuests] = useState<Array<{ id: string; name: string }>>([]);
+  const [availableLocations, setAvailableLocations] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [availableQuests, setAvailableQuests] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [selectedLocationId, setSelectedLocationId] = useState<string>("");
+  const [selectedQuestId, setSelectedQuestId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   // Load NPC data
@@ -39,6 +47,33 @@ export default function NpcEdit() {
         setDescription(data.description ?? "");
         setLocations(data.locations ?? []);
         setQuests(data.quests ?? []);
+
+        // Load campaign data to get available Locations and Quests
+        return fetch(`http://localhost:3000/api/campaigns/${campaignId}`, {
+          credentials: "include",
+        });
+      })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to fetch campaign");
+        return res.json();
+      })
+      .then((campaign) => {
+        const locList = Array.isArray(campaign.locations)
+          ? campaign.locations.map((l: { id: string; name: string }) => ({
+              id: l.id,
+              name: l.name ?? String(l.id),
+            }))
+          : [];
+        setAvailableLocations(locList);
+
+        const questList = Array.isArray(campaign.missions)
+          ? campaign.missions.map((q: { id: string; title: string }) => ({
+              id: q.id,
+              name: q.title ?? String(q.id),
+            }))
+          : [];
+        setAvailableQuests(questList);
+
         setLoading(false);
       })
       .catch((e) => {
@@ -193,27 +228,68 @@ export default function NpcEdit() {
 
             {/* Locations Section */}
             <div className="mt-8">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-white">Locations</h2>
-                <NavLink
-                  to={`/InCampaign/${campaignId}/LocationNew`}
-                  className="bg-orange-700 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded cursor-pointer transition"
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold text-white mb-4">
+                  Locations
+                </h2>
+                <select
+                  value={selectedLocationId}
+                  onChange={(e) => {
+                    const locationId = e.target.value;
+                    if (locationId) {
+                      const locToAdd = availableLocations.find(
+                        (l) => l.id === locationId,
+                      );
+                      if (
+                        locToAdd &&
+                        !locations.some((l) => l.id === locToAdd.id)
+                      ) {
+                        setLocations([...locations, locToAdd]);
+                        setSelectedLocationId("");
+                      }
+                    }
+                  }}
+                  className={inputGameplayInformation}
                 >
-                  Add Location
-                </NavLink>
+                  <option value="">Select Location to add...</option>
+                  {availableLocations
+                    .filter(
+                      (location) =>
+                        !locations.some((l) => l.id === location.id),
+                    )
+                    .map((location) => (
+                      <option key={location.id} value={location.id}>
+                        {location.name}
+                      </option>
+                    ))}
+                </select>
               </div>
               {locations.length === 0 ? (
                 <p className="text-orange-300">No locations for this NPC.</p>
               ) : (
                 <div className="space-y-2">
                   {locations.map((location) => (
-                    <NavLink
+                    <div
                       key={location.id}
-                      to={`/InCampaign/${campaignId}/Locations/${location.id}`}
-                      className="block bg-orange-800/50 p-3 rounded hover:bg-orange-700/50 transition text-orange-100 hover:text-white"
+                      className="flex justify-between items-center bg-orange-800/50 p-3 rounded"
                     >
-                      {location.name}
-                    </NavLink>
+                      <NavLink
+                        to={`/InCampaign/${campaignId}/Locations/${location.id}`}
+                        className="text-orange-100 hover:text-white flex-1"
+                      >
+                        {location.name}
+                      </NavLink>
+                      <button
+                        onClick={() =>
+                          setLocations(
+                            locations.filter((l) => l.id !== location.id),
+                          )
+                        }
+                        className="text-red-400 hover:text-red-300 ml-2"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -221,27 +297,61 @@ export default function NpcEdit() {
 
             {/* Quests/Missions Section */}
             <div className="mt-8">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-white">Quests</h2>
-                <NavLink
-                  to={`/InCampaign/${campaignId}/QuestNew`}
-                  className="bg-orange-700 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded cursor-pointer transition"
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold text-white mb-4">Quests</h2>
+                <select
+                  value={selectedQuestId}
+                  onChange={(e) => {
+                    const questId = e.target.value;
+                    if (questId) {
+                      const questToAdd = availableQuests.find(
+                        (q) => q.id === questId,
+                      );
+                      if (
+                        questToAdd &&
+                        !quests.some((q) => q.id === questToAdd.id)
+                      ) {
+                        setQuests([...quests, questToAdd]);
+                        setSelectedQuestId("");
+                      }
+                    }
+                  }}
+                  className={inputGameplayInformation}
                 >
-                  Add Quest
-                </NavLink>
+                  <option value="">Select Quest to add...</option>
+                  {availableQuests
+                    .filter((quest) => !quests.some((q) => q.id === quest.id))
+                    .map((quest) => (
+                      <option key={quest.id} value={quest.id}>
+                        {quest.name}
+                      </option>
+                    ))}
+                </select>
               </div>
               {quests.length === 0 ? (
                 <p className="text-orange-300">No quests for this NPC.</p>
               ) : (
                 <div className="space-y-2">
                   {quests.map((quest) => (
-                    <NavLink
+                    <div
                       key={quest.id}
-                      to={`/InCampaign/${campaignId}/Quests/${quest.id}`}
-                      className="block bg-orange-800/50 p-3 rounded hover:bg-orange-700/50 transition text-orange-100 hover:text-white"
+                      className="flex justify-between items-center bg-orange-800/50 p-3 rounded"
                     >
-                      {quest.name}
-                    </NavLink>
+                      <NavLink
+                        to={`/InCampaign/${campaignId}/Quests/${quest.id}`}
+                        className="text-orange-100 hover:text-white flex-1"
+                      >
+                        {quest.name}
+                      </NavLink>
+                      <button
+                        onClick={() =>
+                          setQuests(quests.filter((q) => q.id !== quest.id))
+                        }
+                        className="text-red-400 hover:text-red-300 ml-2"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
