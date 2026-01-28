@@ -82,7 +82,6 @@ model Character {
   xp           Int       @default(0)
   background   String?
   alignment    String?
-  size         Size? 
   inspiration  Boolean   @default(false)
 
   createdAt    DateTime  @default(now())
@@ -170,6 +169,7 @@ model CharacterCombatStats {
   hitDiceType     Int?
   hitDiceCurrent  Int?
   hitDiceTotal    Int?
+  size      Size?
   deathSavesSuccess Int @default(0)
   deathSavesFail    Int @default(0)
   passivePerception Int?
@@ -281,8 +281,8 @@ model Race {
   id        String @id @default(uuid())
   name      String @unique
   description String?
-  subRaces  SubRace[]
   size      Size?
+  subRaces  SubRace[]
   speed     Int?
   languages String?
   raceAbilities RaceAbility[]
@@ -303,7 +303,7 @@ model RaceAbility {
   id      String @id @default(uuid())
   raceId  String
   race    Race   @relation(fields: [raceId], references: [id])
-    name    String   @unique
+  name    String   @unique
   description String?
 }
 
