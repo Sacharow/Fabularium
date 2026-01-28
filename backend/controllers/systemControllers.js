@@ -724,6 +724,81 @@ const deleteFeat = async (req, res) => {
     }
 };
 
+const missionNpcSchema = z.object({
+    MissionId: z.string().min(1),
+    npcId: z.string().min(1)
+});
+
+const getAllMissionNpcs = async (req, res) => {
+    try {
+        const missionNpcs = await prisma.missionNpc.findMany({
+            include: { mission: true, npc: true }
+        });
+        return res.status(200).json(missionNpcs);
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching mission NPCs", error: err });
+    }
+};
+
+const getMissionNpcById = async (req, res) => {
+    try {
+        const { MissionId, npcId } = req.params;
+        const missionNpc = await prisma.missionNpc.findUnique({
+            where: { MissionId_npcId: { MissionId, npcId } },
+            include: { mission: true, npc: true }
+        });
+        if (!missionNpc) {
+            return res.status(404).json({ message: "MissionNpc not found" });
+        }
+        return res.status(200).json(missionNpc);
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching mission NPC", error: err });
+    }
+};
+
+const createMissionNpc = async (req, res) => {
+    try {
+        const data = missionNpcSchema.safeParse(req.body);
+        if (!data.success) {
+            return res.status(400).json({ message: "Validation failed", errors: data.error });
+        }
+        const missionNpc = await prisma.missionNpc.create({ data: data.data });
+        return res.status(201).json(missionNpc);
+    } catch (err) {
+        return res.status(500).json({ message: "Error creating mission NPC", error: err });
+    }
+};
+
+const updateMissionNpc = async (req, res) => {
+    try {
+        const { MissionId, npcId } = req.params;
+        const data = missionNpcSchema.partial().safeParse(req.body);
+        if (!data.success) {
+            return res.status(400).json({ message: "Validation failed", errors: data.error });
+        }
+        const missionNpc = await prisma.missionNpc.update({
+            where: { MissionId_npcId: { MissionId, npcId } },
+            data: data.data
+        });
+        return res.status(200).json(missionNpc);
+    } catch (err) {
+        return res.status(500).json({ message: "Error updating mission NPC", error: err });
+    }
+};
+
+const deleteMissionNpc = async (req, res) => {
+    try {
+        const { MissionId, npcId } = req.params;
+        await prisma.missionNpc.delete({
+            where: { MissionId_npcId: { MissionId, npcId } }
+        });
+        return res.status(200).json({ message: "MissionNpc deleted" });
+    } catch (err) {
+        return res.status(500).json({ message: "Error deleting mission NPC", error: err });
+    }
+};
+
+
 module.exports = {
 
     getAllRaces,
@@ -785,5 +860,11 @@ module.exports = {
     getFeatById,
     createFeat,
     updateFeat,
-    deleteFeat
+    deleteFeat,
+
+    getAllMissionNpcs,
+    getMissionNpcById,
+    createMissionNpc,
+    updateMissionNpc,
+    deleteMissionNpc
 };
