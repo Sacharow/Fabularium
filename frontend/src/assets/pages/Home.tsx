@@ -1,43 +1,55 @@
 import { useNavigate } from "react-router-dom";
 import D20 from "../components/ui/D20"
 import Footer from "../components/Footer";
+import Header from "../components/Header";
+import { useAuth } from "../../context/AuthContext";
 
 function Home() {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      
       {/* Hero Section */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 pt-4">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 pt-12">
         <D20 className="w-24 h-24 mb-6" />
-        <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 text-center">
-          Welcome to Fabularium
-        </h1>
-        <p className="text-xl md:text-2xl text-slate-300 mb-4 text-center max-w-2xl">
-          Your gateway to epic adventures and legendary tales.
-        </p>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full md:w-auto justify-center mb-12">
-          <button
-            onClick={() => navigate("/login")}
-            className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-lg transition duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
-          >
-            Login
-          </button>
-          <button
-            onClick={() => navigate("/register")}
-            className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg transition duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
-          >
-            Register
-          </button>
-          <button
-            onClick={() => navigate("/resources")}
-            className="mx-8 col-span-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg rounded-lg transition duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
-          >
-            Resources
-          </button>
-        </div>
+        {isAuthenticated && user ? (
+          <>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 text-center">
+              Welcome back, {user.name}!
+            </h1>
+            <p className="text-xl md:text-2xl text-slate-300 mb-12 text-center max-w-2xl">
+              Ready to continue your epic adventures? Dive into your campaigns or explore new resources.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 text-center">
+              Welcome to Fabularium
+            </h1>
+            <p className="text-xl md:text-2xl text-slate-300 mb-6 text-center max-w-2xl">
+              Your gateway to epic adventures and legendary tales.
+            </p>
+            <p className="text-lg text-slate-400 mb-12 text-center max-w-xl">
+              <span 
+                onClick={() => navigate("/register")}
+                className="text-orange-400 hover:text-orange-300 cursor-pointer font-semibold transition-colors"
+              >
+                Register
+              </span>
+              {" or "}
+              <span 
+                onClick={() => navigate("/login")}
+                className="text-orange-400 hover:text-orange-300 cursor-pointer font-semibold transition-colors"
+              >
+                log in
+              </span>
+              {" to start your journey."}
+            </p>
+          </>
+        )}
       </div>
 
       {/* Information Blocks Section */}

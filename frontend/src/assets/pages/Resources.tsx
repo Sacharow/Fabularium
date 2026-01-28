@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import ResourcesSidebar from "../components/Resources/ResourcesSidebar";
 import ResourceItem from "../components/Resources/ResourceItem";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 import { resourceService } from "../../services/resourceService";
 
 function Resources() {
@@ -50,6 +51,7 @@ function Resources() {
           resourceService.getSpells(),
         ]);
 
+        // Only pre-fetch spell details upfront for better performance on spells section
         const detailedSpells = await resourceService.getResourcesWithDetails("spells", spells || []);
         const normalizedSpells = (detailedSpells || []).map((s: any) => ({ ...s, _detailed: true }));
         
@@ -124,12 +126,28 @@ function Resources() {
 
     setExpandedKey(key);
 
+    // Scroll the newly opened item into view after a short delay to allow rendering
+    setTimeout(() => {
+      const element = document.querySelector(`[data-accordion-key="${key}"]`);
+      if (!element) return;
+
+      const yOffset = -170; // negative value means scrolling further down)
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: y,
+        behavior: "smooth"
+      });
+    }, 100);
+
     // Parse key to get item index (format: "gi-i")
     // Note: gi is currently always 0 because we only have one source "D&D 5e SRD"
     const [, i] = key.split("-").map(Number);
     const section = activeSection.toLowerCase();
     const item = resources[section][i];
 
+    // Only fetch details if not already fetched
     if (item && !item._detailed && item.index) {
       try {
         const details = await resourceService.getResourceDetail(section, item.index);
@@ -313,6 +331,7 @@ function Resources() {
 
   return (
     <div className="pt-6">
+      <ScrollToTopButton />
       <div className="w-full">
         <div className="grid grid-cols-8 gap-6">
           <div className="relative col-span-2">

@@ -43,7 +43,7 @@ function Header() {
   ]);
 
   const leftClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-row gap-2 justify-center items-center transition-all duration-200 hover:text-yellow-300 ${isActive ? "text-yellow-300" : "text-white"}`;
+    `flex flex-row gap-2 justify-center items-center transition-all duration-200 hover:text-yellow-300 ${isActive ? "text-white" : "text-white"}`;
 
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
     `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-orange-700 hover:text-yellow-300 ${isActive ? "bg-orange-700 text-yellow-300" : "text-white"}`;

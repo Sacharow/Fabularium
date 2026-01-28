@@ -345,12 +345,26 @@ export const resourceService = {
     baseList: any[]
   ): Promise<any[]> {
     try {
-      const detailedResources = await Promise.all(
-        baseList.map(async (item) => {
-          const detail = await this.getResourceDetail(section, item.index);
-          return detail || item;
-        })
-      );
+      // Batch requests in groups to avoid overwhelming the API
+      const batchSize = 5;
+      const detailedResources: any[] = [];
+      
+      for (let i = 0; i < baseList.length; i += batchSize) {
+        const batch = baseList.slice(i, i + batchSize);
+        const batchResults = await Promise.all(
+          batch.map(async (item) => {
+            const detail = await this.getResourceDetail(section, item.index);
+            return detail || item;
+          })
+        );
+        detailedResources.push(...batchResults);
+        
+        // Small delay between batches to prevent API throttling
+        if (i + batchSize < baseList.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+      
       return detailedResources;
     } catch (error) {
       console.error(`Error fetching resources with details for ${section}:`, error);
