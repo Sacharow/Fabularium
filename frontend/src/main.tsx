@@ -15,6 +15,7 @@ import CharacterNewStandalone from "./assets/pages/CharacterNewStandalone";
 import CharacterStandaloneView from "./assets/pages/CharacterStandaloneView";
 import Resources from "./assets/pages/Resources";
 import Profile from "./assets/pages/Profile";
+import CharacterEditStandalone from "./assets/pages/CharacterEditStandalone";
 
 // Info pages
 import About from "./assets/pages/info/About";
@@ -30,11 +31,17 @@ import InCampaignNote from "./assets/pages/InCampaign/Sections/Note";
 import InCampaignQuest from "./assets/pages/InCampaign/Sections/Quest";
 
 import MapNew from "./assets/pages/InCampaign/Forms/MapNew";
+import MapEdit from "./assets/pages/InCampaign/Forms/MapEdit";
 import LocationNew from "./assets/pages/InCampaign/Forms/LocationNew";
+import LocationEdit from "./assets/pages/InCampaign/Forms/LocationEdit";
 import CharacterNew from "./assets/pages/InCampaign/Forms/CharacterNew";
 import NpcNew from "./assets/pages/InCampaign/Forms/NpcNew";
+import NpcEdit from "./assets/pages/InCampaign/Forms/NpcEdit";
 import NoteNew from "./assets/pages/InCampaign/Forms/NoteNew";
+import NoteEdit from "./assets/pages/InCampaign/Forms/NoteEdit";
 import QuestNew from "./assets/pages/InCampaign/Forms/QuestNew";
+import QuestEdit from "./assets/pages/InCampaign/Forms/QuestEdit";
+import GeneralEdit from "./assets/pages/InCampaign/Forms/GeneralEdit";
 
 import CharacterView from "./assets/pages/InCampaign/Views/CharacterView";
 import GeneralView from "./assets/pages/InCampaign/Views/GeneralView";
@@ -59,7 +66,14 @@ function AppRoutes() {
         <Route path="/campaigns/new" element={<CreateCampaign />} />
         <Route path="/characters" element={<Characters />} />
         <Route path="/characters/new" element={<CharacterNewStandalone />} />
-        <Route path="/characters/:characterId" element={<CharacterStandaloneView />} />
+        <Route
+          path="/characters/:characterId"
+          element={<CharacterStandaloneView />}
+        />
+        <Route
+          path="/characters/:characterId/edit"
+          element={<CharacterEditStandalone />}
+        />
         <Route path="/resources" element={<Resources />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -101,8 +115,16 @@ function AppRoutes() {
           element={<MapNew />}
         />
         <Route
+          path="/InCampaign/:campaignId/Maps/:mapId/Edit"
+          element={<MapEdit />}
+        />
+        <Route
           path="/InCampaign/:campaignId/LocationView/New"
           element={<LocationNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Locations/:locationId/Edit"
+          element={<LocationEdit />}
         />
         <Route
           path="/InCampaign/:campaignId/CharacterView/New"
@@ -113,12 +135,28 @@ function AppRoutes() {
           element={<NpcNew />}
         />
         <Route
+          path="/InCampaign/:campaignId/Npcs/:npcId/Edit"
+          element={<NpcEdit />}
+        />
+        <Route
           path="/InCampaign/:campaignId/NoteView/New"
           element={<NoteNew />}
         />
         <Route
+          path="/InCampaign/:campaignId/Notes/:noteId/Edit"
+          element={<NoteEdit />}
+        />
+        <Route
           path="/InCampaign/:campaignId/QuestView/New"
           element={<QuestNew />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/Quests/:questId/Edit"
+          element={<QuestEdit />}
+        />
+        <Route
+          path="/InCampaign/:campaignId/General/Edit"
+          element={<GeneralEdit />}
         />
 
         <Route path="/InCampaign/:campaignId" element={<InCampaignLayout />}>

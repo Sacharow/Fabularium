@@ -27,22 +27,6 @@ function Characters() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleEdit = (id: string) => {
-    navigate(`/characters/${id}/edit`);
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Na pewno usunąć postać?")) return;
-    try {
-      await characterService.deleteCharacter(id);
-      setCharacters((prev) => prev.filter((c) => c.id !== id));
-    } catch {
-      alert("Błąd przy usuwaniu postaci");
-      console.log(error);
-      setCharacters((prev) => prev.filter((c) => c.id !== id));
-    }
-  };
-
   return (
     <div className="max-w-3xl mx-auto py-10">
       <div className="flex justify-between items-center mb-8">
@@ -60,36 +44,21 @@ function Characters() {
         {characters.map((char) => (
           <div
             key={char.id}
-            className="bg-orange-900 rounded-lg p-4 flex flex-col items-center justify-center shadow min-h-[220px] text-center"
+            className="bg-orange-900 rounded-lg p-4 flex flex-col items-center justify-center shadow min-h-[220px] text-center hover:bg-orange-800 transition-all duration-200 group hover:scale-110 hover:ring-4 hover:ring-orange-400/60 cursor-pointer"
           >
             <div
-              className={`w-16 h-16 rounded-full mb-2 flex items-center justify-center ${char.color}`}
-            />
+              className={`w-20 h-20 rounded-full mb-2 flex items-center justify-center bg-orange-700`}
+              title="Zobacz postać"
+              onClick={() => navigate(`/characters/${char.id}`)}
+            >
+              <span className="text-3xl text-white group-hover:drop-shadow-lg">
+                🎲
+              </span>
+            </div>
             <div className="font-bold text-lg mb-1">{char.name}</div>
             <div className="text-orange-300 text-sm mb-2">
               {char.class?.name || char.characterClass || "—"} •{" "}
               {char.race?.name || char.characterRace || "—"}
-            </div>
-            <div className="flex gap-2 mt-2 justify-center">
-              <button
-                className="bg-orange-700 hover:bg-orange-600 text-white text-xs py-1 px-3 rounded cursor-pointer"
-                onClick={() => navigate(`/characters/${char.id}`)}
-              >
-                View
-              </button>
-              <button
-                className="bg-orange-600 hover:bg-orange-800 text-white text-xs py-1 px-3 rounded cursor-pointer"
-                onClick={() => handleEdit(char.id)}
-              >
-                Edit
-              </button>
-              <button
-                className="bg-red-700 hover:bg-red-900 text-white text-xs py-1 px-3 rounded cursor-pointer"
-                onClick={() => handleDelete(char.id)}
-                title="Usuń postać"
-              >
-                ×
-              </button>
             </div>
           </div>
         ))}

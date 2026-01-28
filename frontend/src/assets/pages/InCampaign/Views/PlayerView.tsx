@@ -73,49 +73,79 @@ export default function PlayerView() {
                     </span>
                   </div>
                 )}
-                <h2 className="text-xl font-semibold mb-2">
+                <h2 className="text-xl font-semibold mb-4">
                   Gracze w kampanii
                 </h2>
                 <div className="flex flex-col gap-4 mb-8">
+                  {/* Owner sekcja */}
                   {owner && (
-                    <div className="flex items-center w-full rounded-lg overflow-hidden shadow bg-orange-800">
-                      <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-700 flex items-center justify-center text-white font-bold text-xl"></div>
-                      <div className="flex-1 flex items-center justify-between px-4 py-2">
-                        <div>
-                          <span className="text-lg font-bold text-white">
-                            {owner.name}
-                          </span>
-                          <span className="ml-2 text-xs font-normal text-orange-200">
-                            (Właściciel)
-                          </span>
+                    <div>
+                      <h3 className="text-sm font-semibold text-orange-300 mb-2">
+                        WŁAŚCICIEL
+                      </h3>
+                      <div className="flex items-center w-full rounded-lg overflow-hidden shadow bg-orange-800">
+                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-700 flex items-center justify-center text-white font-bold text-xl">
+                          👑
+                        </div>
+                        <div className="flex-1 flex items-center justify-between px-4 py-2">
+                          <div>
+                            <span className="text-lg font-bold text-white">
+                              {owner.name}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   )}
-                  {items.map(
-                    (i: { id: string; name: string; color: string }) => (
-                      <div
-                        key={i.id}
-                        className="flex items-center w-full rounded-lg overflow-hidden shadow bg-orange-800"
-                      >
-                        <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-700 flex items-center justify-center text-white font-bold text-xl"></div>
-                        <div className="flex-1 flex items-center justify-between px-4 py-2">
-                          <span className="text-lg font-medium text-white">
-                            {i.name}
-                          </span>
-                          {user?.id === campaign?.owner?.id && (
-                            <button
-                              className="ml-4 bg-red-700 hover:bg-red-900 text-white rounded w-8 h-8 flex items-center justify-center font-bold text-lg"
-                              style={{ borderRadius: 4 }}
-                              title="Usuń gracza"
-                              // onClick={() => handleRemove(i.id)}
-                            >
-                              ×
-                            </button>
+
+                  {/* Contributors sekcja */}
+                  {items.length > 0 &&
+                    items.some((i) => i.id !== campaign?.owner?.id) && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-orange-300 mb-2">
+                          GRACZE
+                        </h3>
+                        {items
+                          .filter((i) => i.id !== campaign?.owner?.id)
+                          .map(
+                            (i: {
+                              id: string;
+                              name: string;
+                              color: string;
+                            }) => (
+                              <div
+                                key={i.id}
+                                className="flex items-center w-full rounded-lg overflow-hidden shadow bg-orange-800 mb-2"
+                              >
+                                <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-700 flex items-center justify-center text-white font-bold text-xl">
+                                  ⚔️
+                                </div>
+                                <div className="flex-1 flex items-center justify-between px-4 py-2">
+                                  <span className="text-lg font-medium text-white">
+                                    {i.name}
+                                  </span>
+                                  {user?.id === campaign?.owner?.id && (
+                                    <button
+                                      className="ml-4 bg-red-900 hover:bg-red-700 text-white rounded w-8 h-8 flex items-center justify-center font-bold text-lg cursor-pointer"
+                                      style={{ borderRadius: 4 }}
+                                      title="Usuń gracza"
+                                      // onClick={() => handleRemove(i.id)}
+                                    >
+                                      ×
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            ),
                           )}
-                        </div>
                       </div>
-                    ),
+                    )}
+
+                  {/* Brak graczy */}
+                  {items.length === 0 && !owner && (
+                    <div className="text-center text-gray-400 py-8">
+                      Brak graczy w kampanii
+                    </div>
                   )}
                 </div>
               </div>
