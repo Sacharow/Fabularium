@@ -38,7 +38,7 @@ export default function ResourceItem({ bookIdx, itemIdx, item, sectionKey, expan
   const expanded = expandedKey === key;
 
   return (
-    <li className="pl-1 pr-1">
+    <li className="pl-1 pr-1" data-accordion-key={key}>
       <button
         type="button"
         onClick={() => onToggle(key)}

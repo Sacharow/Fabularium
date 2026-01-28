@@ -126,6 +126,21 @@ function Resources() {
 
     setExpandedKey(key);
 
+    // Scroll the newly opened item into view after a short delay to allow rendering
+    setTimeout(() => {
+      const element = document.querySelector(`[data-accordion-key="${key}"]`);
+      if (!element) return;
+
+      const yOffset = -170; // negative value means scrolling further down)
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: y,
+        behavior: "smooth"
+      });
+    }, 100);
+
     // Parse key to get item index (format: "gi-i")
     // Note: gi is currently always 0 because we only have one source "D&D 5e SRD"
     const [, i] = key.split("-").map(Number);
