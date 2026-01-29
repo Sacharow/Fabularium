@@ -30,7 +30,7 @@ function Footer() {
         </NavLink>
       </div>
       <p className="text-sm text-orange-600 hover:text-orange-400">
-        @2026 Fabularium. No Rights reserved.
+        @2026 Fabularium. All Rights reserved.
       </p>
     </div>
   );
