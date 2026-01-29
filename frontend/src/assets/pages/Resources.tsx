@@ -51,16 +51,12 @@ function Resources() {
           resourceService.getSpells(),
         ]);
 
-        // Only pre-fetch spell details upfront for better performance on spells section
-        const detailedSpells = await resourceService.getResourcesWithDetails("spells", spells || []);
-        const normalizedSpells = (detailedSpells || []).map((s: any) => ({ ...s, _detailed: true }));
-        
         setResources({
           backgrounds: backgrounds || [],
           classes: classes || [],
           feats: feats || [],
           races: races || [],
-          spells: normalizedSpells,
+          spells: spells || [],
         });
       } catch (err) {
         console.error('Error fetching resources:', err);
@@ -72,6 +68,29 @@ function Resources() {
     
     fetchResources();
   }, []);
+
+  // Background pre-fetch for spell details to enable proper sorting/grouping
+  useEffect(() => {
+    if (loading || resources.spells.length === 0 || resources.spells[0]._detailed) return;
+
+    const prefetchSpells = async () => {
+      try {
+        const detailedSpells = await resourceService.getResourcesWithDetails("spells", resources.spells);
+        const normalizedSpells = (detailedSpells || []).map((s: any) => ({ ...s, _detailed: true }));
+        
+        setResources(prev => ({
+          ...prev,
+          spells: normalizedSpells
+        }));
+      } catch (err) {
+        console.error('Error pre-fetching spell details:', err);
+      }
+    };
+
+    // Only start pre-fetching after a short delay to prioritize initial render
+    const timer = setTimeout(prefetchSpells, 1000);
+    return () => clearTimeout(timer);
+  }, [loading, resources.spells]);
 
   // For API data, we'll treat the entire collection as one "source"
   const sources = [{
