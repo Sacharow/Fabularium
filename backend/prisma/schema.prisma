@@ -437,8 +437,6 @@ model Mission {
   campaignId  String
   campaign    Campaign @relation(fields: [campaignId], references: [id])
 
-  npcId      String?
-
   missionNpcs MissionNpc[]
 }
 
