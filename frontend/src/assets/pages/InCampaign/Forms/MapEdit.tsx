@@ -5,6 +5,7 @@ export default function MapEdit() {
   // Navigation
   const navigate = useNavigate();
   const params = useParams<{ campaignId?: string; mapId?: string }>();
+  const { campaignId } = params;
 
   // Basic info
   const [name, setName] = useState<string>("");
@@ -129,7 +130,6 @@ export default function MapEdit() {
 
   const inputGameplayInformation = `bg-orange-900/80 w-full rounded-md border border-orange-700 text-orange-50 px-3 py-2`;
   const subTitleGameplayInformation = `text-orange-200 py-2 font-semibold`;
-  const { campaignId } = useParams<{ campaignId?: string }>();
 
   const introData = {
     currentSection: "Map Section",

@@ -15,11 +15,13 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-950 via-orange-900 to-black text-white px-4 py-16">
+    <div className="py-24">
       <div className="max-w-3xl mx-auto bg-orange-950/70 border border-orange-800 rounded-2xl shadow-2xl p-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <p className="text-sm text-yellow-300/80 uppercase tracking-widest">Profile</p>
+            <p className="text-sm text-yellow-300/80 uppercase tracking-widest">
+              Profile
+            </p>
             <h1 className="text-3xl font-bold">Your Account</h1>
           </div>
           <button
@@ -33,7 +35,9 @@ export default function Profile() {
         <div className="bg-black/40 border border-orange-800/60 rounded-xl p-6 space-y-4">
           <div>
             <h2 className="text-xl font-semibold mb-2">Account</h2>
-            <p className="text-sm text-gray-300">{user ? "Signed in" : "Checking session..."}</p>
+            <p className="text-sm text-gray-300">
+              {user ? "Signed in" : "Checking session..."}
+            </p>
           </div>
 
           {user && (
@@ -44,16 +48,22 @@ export default function Profile() {
               </div>
               <div className="p-4 rounded-lg bg-orange-900/40 border border-orange-800/60">
                 <p className="text-gray-400">Email</p>
-                <p className="text-white font-semibold text-lg break-all">{user.email}</p>
+                <p className="text-white font-semibold text-lg break-all">
+                  {user.email}
+                </p>
               </div>
               <div className="p-4 rounded-lg bg-orange-900/40 border border-orange-800/60">
                 <p className="text-gray-400">Role</p>
-                <p className="text-white font-semibold text-lg uppercase">{user.role}</p>
+                <p className="text-white font-semibold text-lg uppercase">
+                  {user.role}
+                </p>
               </div>
               <div className="p-4 rounded-lg bg-orange-900/40 border border-orange-800/60">
                 <p className="text-gray-400">Created</p>
                 <p className="text-white font-semibold text-lg">
-                  {user.createdAt ? new Date(user.createdAt).toLocaleString() : "-"}
+                  {user.createdAt
+                    ? new Date(user.createdAt).toLocaleString()
+                    : "-"}
                 </p>
               </div>
             </div>
