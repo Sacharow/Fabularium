@@ -383,6 +383,7 @@ model Campaign {
   name   String
   description String
   joinCode String
+  photo String?
 
   owner   Users   @relation(name: "CampaignOwner", fields: [ownerId], references: [id])
   ownerId String
