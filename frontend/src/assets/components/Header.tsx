@@ -31,16 +31,9 @@ function Header() {
   const centerMenuItems = resolvedMenuItems.slice(1, 5);
   const rightMenuItems = resolvedMenuItems.slice(5);
 
-  const [exampleNotifications, setExampleNotifications] = useState<string[]>([
-    "Your scribe called you!",
-    "Another dragon ravages the kingdom!",
-    "Gather a Party! Its dangerous to go alone!",
-    "Pull the chicken out of the freezer!",
-    "Does your SWORD needs a good sharpening, my Lord~?",
-    "Hot Maidens in your local area!",
-    "Click here to claim your free MAGIC ORB!",
-    "Your subscription for Spellslots Premium is expiring soon!",
-  ]);
+  const [exampleNotifications, setExampleNotifications] = useState<string[]>(
+    [],
+  );
 
   const leftClass = ({ isActive }: { isActive: boolean }) =>
     `flex flex-row gap-2 justify-center items-center transition-all duration-200 hover:text-yellow-300 ${isActive ? "text-white" : "text-white"}`;
@@ -151,7 +144,8 @@ function Header() {
                 {item.name === "Profile" && user ? (
                   <span className="font-medium">{user.name}</span>
                 ) : (
-                <span className="font-medium">{item.name}</span>)}
+                  <span className="font-medium">{item.name}</span>
+                )}
               </NavLink>
             ))}
           </div>
