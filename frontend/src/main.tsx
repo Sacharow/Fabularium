@@ -53,7 +53,14 @@ import PlayerView from "./assets/pages/InCampaign/Views/PlayerView";
 import QuestView from "./assets/pages/InCampaign/Views/QuestView";
 import InCampaignLayout from "./assets/pages/InCampaign/InCampaignLayout";
 
-import Hub from "./assets/views/hub";
+// General Pages
+import Hub from "./assets/views/Hub";
+import CharactersNew from "./assets/views/Characters";
+
+// Auth Pages
+import SignIn from "./assets/views/auth/SignIn";
+import SignUp from "./assets/views/auth/SignUp";
+import ResetPassword from "./assets/views/auth/ResetPassword";
 
 function AppRoutes() {
   const location = useLocation();
@@ -64,6 +71,11 @@ function AppRoutes() {
       {!hideHeader && <Header />}
       <Routes>
         <Route path="/hub" element={<Hub />} />
+        <Route path="/charactersNew" element={<CharactersNew />} />
+
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route path="/" element={<Home />} />
         <Route path="/campaigns" element={<Campaigns />} />

@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Quintessential";
+  src: url("/fonts/Quintessential-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   color: rgba(255, 255, 255, 0.87);
   font-size: larger;
+  font-family: "Quintessential", serif;
 }
 
 body {
@@ -77,10 +92,7 @@ input[type="number"] {
 /* Epic Button Styles */
 .epic-button {
   font-size: 1.875rem;
-  border: 1px solid #fcd34d;
-  background-color: #c75c0a;
   height: 4rem;
-  padding: 2rem;
   font-weight: 700;
   color: #ff6a00;
   text-shadow: 2px 4px 3px #3d1903;
@@ -94,6 +106,4 @@ input[type="number"] {
 
 .epic-button:hover {
   color: #ffffff;
-  background-color: #d97706;
-  box-shadow: 0 25px 50px -12px rgba(139, 89, 3, 1);
 }
