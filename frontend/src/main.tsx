@@ -53,6 +53,8 @@ import PlayerView from "./assets/pages/InCampaign/Views/PlayerView";
 import QuestView from "./assets/pages/InCampaign/Views/QuestView";
 import InCampaignLayout from "./assets/pages/InCampaign/InCampaignLayout";
 
+import Hub from "./assets/views/hub";
+
 function AppRoutes() {
   const location = useLocation();
   const hideHeader = location.pathname === "/";
@@ -61,6 +63,8 @@ function AppRoutes() {
     <>
       {!hideHeader && <Header />}
       <Routes>
+        <Route path="/hub" element={<Hub />} />
+
         <Route path="/" element={<Home />} />
         <Route path="/campaigns" element={<Campaigns />} />
         <Route path="/campaigns/new" element={<CreateCampaign />} />
