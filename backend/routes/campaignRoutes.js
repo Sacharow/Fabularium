@@ -23,6 +23,9 @@ const {
   listCampaignNPCs,
   createLocation,
   listCampaignLocations,
+  getLocation,
+  updateLocation,
+  deleteLocation,
   getAllMissionNpcs,
   getMissionNpcById,
   createMissionNpc,
@@ -36,6 +39,9 @@ const {
   createMission,
   createNote,
   updateMission,
+  deleteMission,
+  updateNote,
+  deleteNote,
 } = require("../controllers/campaignControllers");
 
 const { auth } = require("../middleware/safety");
@@ -56,6 +62,9 @@ router.delete("/:id/contributors", auth, removeContributor);
 router.get("/:id/characters", auth, listCampaignCharacters);
 router.post("/:id/locations", auth, createLocation);
 router.get("/:id/locations", auth, listCampaignLocations);
+router.get("/:id/locations/:locationId", auth, getLocation);
+router.put("/:id/locations/:locationId", auth, updateLocation);
+router.delete("/:id/locations/:locationId", auth, deleteLocation);
 
 router.get("/:id/maps", auth, listCampaignMaps);
 router.post("/:id/maps", auth, createMap);
@@ -65,8 +74,11 @@ router.delete("/:id/maps/:mapId", auth, deleteMap);
 
 router.post("/:id/missions", auth, createMission);
 router.put("/:id/missions/:missionId", auth, updateMission);
+router.delete("/:id/missions/:missionId", auth, deleteMission);
 
 router.post("/:id/notes", auth, createNote);
+router.put("/:id/notes/:noteId", auth, updateNote);
+router.delete("/:id/notes/:noteId", auth, deleteNote);
 
 router.post("/:id/npcs", auth, addNPC);
 router.get("/npcs", getNPCs);

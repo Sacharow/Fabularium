@@ -1,6 +1,5 @@
 "use strict";
 
-const prisma = require("../config/database");
 const z = require("zod");
 const campaignService = require("../services/campaignService");
 const {
@@ -11,11 +10,8 @@ const {
   contributorSchema,
   npcSchema,
   updateNPCSchema,
-  locationSchema,
   updateLocationSchema,
-  missionSchema,
   updateMissionSchema,
-  noteSchema,
   updateNoteSchema,
   updateMapSchema,
   mapSchema,
@@ -719,6 +715,7 @@ const deleteMission = async (req, res) => {
   }
 };
 
+
 const createNote = async (req, res) => {
   try {
     const data = req.body;
@@ -841,6 +838,7 @@ const deleteNote = async (req, res) => {
   }
 };
 
+
 const createMap = async (req, res) => {
   try {
     const data = req.body;
@@ -855,10 +853,9 @@ const createMap = async (req, res) => {
         .json({ message: "Validation failed", errors: validated.error });
     }
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
