@@ -433,10 +433,9 @@ const createLocation = async (req, res) => {
     const campaignId = req.params.id || data.campaignId;
     if (!campaignId)
       return res.status(400).json({ message: "campaignId is required" });
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     const userId = req.user?.id;
@@ -447,12 +446,10 @@ const createLocation = async (req, res) => {
       campaign.contributors.some((c) => c.id === userId);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const created = await prisma.location.create({
-      data: {
-        name: data.name,
-        description: data.description ?? "",
-        campaignId: campaignId,
-      },
+    const created = await campaignService.createLocation({
+      name: data.name,
+      description: data.description ?? "",
+      campaignId: campaignId,
     });
     return res.status(201).json(created);
   } catch (err) {
@@ -467,10 +464,7 @@ const listCampaignLocations = async (req, res) => {
     const id = req.params.id;
     if (!z.string().safeParse(id).success)
       return res.status(400).json({ message: "Invalid id" });
-    const locations = await prisma.location.findMany({
-      where: { campaignId: id },
-      include: { npcs: true, missions: true },
-    });
+    const locations = await campaignService.listCampaignLocationsByCampaignId(id);
     return res.status(200).json(locations);
   } catch (err) {
     return res.status(500).json({
@@ -490,10 +484,7 @@ const getLocation = async (req, res) => {
     if (!z.string().safeParse(locationId).success)
       return res.status(400).json({ message: "Invalid location id" });
 
-    const location = await prisma.location.findUnique({
-      where: { id: locationId },
-      include: { npcs: true, missions: true },
-    });
+    const location = await campaignService.getLocationById(locationId);
 
     if (!location || location.campaignId !== campaignId)
       return res
@@ -526,10 +517,9 @@ const updateLocation = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -541,22 +531,16 @@ const updateLocation = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const location = await prisma.location.findUnique({
-      where: { id: locationId },
-    });
+    const location = await campaignService.getLocationByIdBasic(locationId);
     if (!location || location.campaignId !== campaignId)
       return res
         .status(404)
         .json({ message: "Location not found in campaign" });
 
-    const updated = await prisma.location.update({
-      where: { id: locationId },
-      data: {
-        name: parsed.data.name,
-        description: parsed.data.description,
-      },
-      include: { npcs: true, missions: true },
-    });
+    const updated = await campaignService.updateLocationById(
+      locationId,
+      parsed.data,
+    );
     return res.status(200).json(updated);
   } catch (err) {
     if (String(err).includes("Record to update not found"))
@@ -577,10 +561,9 @@ const deleteLocation = async (req, res) => {
     if (!z.string().safeParse(locationId).success)
       return res.status(400).json({ message: "Invalid location id" });
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -592,15 +575,13 @@ const deleteLocation = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const location = await prisma.location.findUnique({
-      where: { id: locationId },
-    });
+    const location = await campaignService.getLocationByIdBasic(locationId);
     if (!location || location.campaignId !== campaignId)
       return res
         .status(404)
         .json({ message: "Location not found in campaign" });
 
-    await prisma.location.delete({ where: { id: locationId } });
+    await campaignService.deleteLocationById(locationId);
     return res.status(204).send();
   } catch (err) {
     if (String(err).includes("Record to delete does not exist"))
@@ -916,13 +897,11 @@ const createMap = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const created = await prisma.map.create({
-      data: {
-        name: validated.data.name,
-        description: validated.data.description ?? "",
-        file: validated.data.file ?? "",
-        campaignId: campaignId,
-      },
+    const created = await campaignService.createMap({
+      name: validated.data.name,
+      description: validated.data.description ?? "",
+      file: validated.data.file ?? "",
+      campaignId: campaignId,
     });
     return res.status(201).json(created);
   } catch (err) {
@@ -937,7 +916,7 @@ const listCampaignMaps = async (req, res) => {
     const id = req.params.id;
     if (!z.string().safeParse(id).success)
       return res.status(400).json({ message: "Invalid id" });
-    const maps = await prisma.map.findMany({ where: { campaignId: id } });
+    const maps = await campaignService.listCampaignMapsByCampaignId(id);
     return res.status(200).json(maps);
   } catch (err) {
     return res
@@ -955,7 +934,7 @@ const getMapById = async (req, res) => {
     if (!z.string().safeParse(mapId).success)
       return res.status(400).json({ message: "Invalid map id" });
 
-    const map = await prisma.map.findUnique({ where: { id: mapId } });
+    const map = await campaignService.getMapById(mapId);
     if (!map || map.campaignId !== campaignId)
       return res.status(404).json({ message: "Map not found in campaign" });
     return res.status(200).json(map);
@@ -984,10 +963,9 @@ const updateMap = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -999,18 +977,11 @@ const updateMap = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const map = await prisma.map.findUnique({ where: { id: mapId } });
+    const map = await campaignService.getMapById(mapId);
     if (!map || map.campaignId !== campaignId)
       return res.status(404).json({ message: "Map not found in campaign" });
 
-    const updated = await prisma.map.update({
-      where: { id: mapId },
-      data: {
-        name: parsed.data.name,
-        description: parsed.data.description,
-        file: parsed.data.file,
-      },
-    });
+    const updated = await campaignService.updateMapById(mapId, parsed.data);
     return res.status(200).json(updated);
   } catch (err) {
     if (String(err).includes("Record to update not found"))
@@ -1031,10 +1002,9 @@ const deleteMap = async (req, res) => {
     if (!z.string().safeParse(mapId).success)
       return res.status(400).json({ message: "Invalid map id" });
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -1046,11 +1016,11 @@ const deleteMap = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const map = await prisma.map.findUnique({ where: { id: mapId } });
+    const map = await campaignService.getMapById(mapId);
     if (!map || map.campaignId !== campaignId)
       return res.status(404).json({ message: "Map not found in campaign" });
 
-    await prisma.map.delete({ where: { id: mapId } });
+    await campaignService.deleteMapById(mapId);
     return res.status(204).send();
   } catch (err) {
     if (String(err).includes("Record to delete does not exist"))

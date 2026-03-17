@@ -134,6 +134,79 @@ const listCharactersByCampaignId = async (id) => {
   });
 };
 
+const getCampaignWithContributorsById = async (id) => {
+  return prisma.campaign.findUnique({
+    where: { id },
+    include: { contributors: true },
+  });
+};
+
+const createLocation = async (data) => {
+  return prisma.location.create({ data });
+};
+
+const listCampaignLocationsByCampaignId = async (campaignId) => {
+  return prisma.location.findMany({
+    where: { campaignId },
+    include: { npcs: true, missions: true },
+  });
+};
+
+const getLocationById = async (id) => {
+  return prisma.location.findUnique({
+    where: { id },
+    include: { npcs: true, missions: true },
+  });
+};
+
+const getLocationByIdBasic = async (id) => {
+  return prisma.location.findUnique({
+    where: { id },
+  });
+};
+
+const updateLocationById = async (id, data) => {
+  return prisma.location.update({
+    where: { id },
+    data: {
+      name: data.name,
+      description: data.description,
+    },
+    include: { npcs: true, missions: true },
+  });
+};
+
+const deleteLocationById = async (id) => {
+  return prisma.location.delete({ where: { id } });
+};
+
+const createMap = async (data) => {
+  return prisma.map.create({ data });
+};
+
+const listCampaignMapsByCampaignId = async (campaignId) => {
+  return prisma.map.findMany({ where: { campaignId } });
+};
+
+const getMapById = async (id) => {
+  return prisma.map.findUnique({ where: { id } });
+};
+
+const updateMapById = async (id, data) => {
+  return prisma.map.update({
+    where: { id },
+    data: {
+      name: data.name,
+      description: data.description,
+      file: data.file,
+    },
+  });
+};
+
+const deleteMapById = async (id) => {
+  return prisma.map.delete({ where: { id } });
+};
+
 const createNPC = async (data) => {
   return prisma.nPC.create({ data });
 };
@@ -241,6 +314,18 @@ module.exports = {
   removeContributorFromCampaign,
   listContributorsByCampaignId,
   listCharactersByCampaignId,
+  getCampaignWithContributorsById,
+  createLocation,
+  listCampaignLocationsByCampaignId,
+  getLocationById,
+  getLocationByIdBasic,
+  updateLocationById,
+  deleteLocationById,
+  createMap,
+  listCampaignMapsByCampaignId,
+  getMapById,
+  updateMapById,
+  deleteMapById,
   createNPC,
   listNPCs,
   getNPCById,
