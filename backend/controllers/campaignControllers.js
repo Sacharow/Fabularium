@@ -288,14 +288,9 @@ const addNPC = async (req, res) => {
       });
     }
 
-    const ownerCheck = await prisma.campaign.findUnique({
-      where: {
-        id: validated.data.campaignId,
-      },
-      select: {
-        ownerId: true,
-      },
-    });
+    const ownerCheck = await campaignService.getCampaignOwnerById(
+      validated.data.campaignId,
+    );
 
     if (!ownerCheck) {
       return res.status(404).json({ message: "Campaign not found" });
@@ -305,7 +300,7 @@ const addNPC = async (req, res) => {
       return res.status(403).json({ message: "Forbidden, not yours campaign" });
     }
 
-    const addedNpc = await prisma.nPC.create({ data: validated.data });
+    const addedNpc = await campaignService.createNPC(validated.data);
     return res.status(201).json(addedNpc);
   } catch (er) {
     return res
@@ -316,12 +311,7 @@ const addNPC = async (req, res) => {
 
 const getNPCs = async (req, res) => {
   try {
-    const npcs = await prisma.nPC.findMany({
-      include: {
-        campaigns: true,
-        locations: true,
-      },
-    });
+    const npcs = await campaignService.listNPCs();
     return res.status(200).json(npcs);
   } catch (err) {
     return res
@@ -340,13 +330,7 @@ const getNPCById = async (req, res) => {
     ) {
       return res.status(400).json({ message: "Invalid id" });
     }
-    const npc = await prisma.nPC.findUnique({
-      where: { id: npcId },
-      include: {
-        campaign: true,
-        locations: true,
-      },
-    });
+    const npc = await campaignService.getNPCById(npcId);
     if (!npc || npc.campaignId !== campaignId) {
       return res.status(404).json({ message: "NPC not found" });
     }
@@ -370,27 +354,17 @@ const updateNPC = async (req, res) => {
         .status(400)
         .json({ message: "Validation failed", errors: parsed.error });
     }
-    const npc = await prisma.nPC.findUnique({
-      where: { id: parsed.data.id },
-      select: { campaignId: true, campaign: { select: { ownerId: true } } },
-    });
+    const npc = await campaignService.getNPCOwnerForUpdateById(parsed.data.id);
     if (!npc) {
       return res.status(404).json({ message: "NPC not found" });
     }
     if (npc.campaign.ownerId !== user.id) {
       return res.status(403).json({ message: "Forbidden" });
     }
-    const updatedNPC = await prisma.nPC.update({
-      where: { id: parsed.data.id },
-      data: {
-        name: parsed.data.name,
-        description: parsed.data.description,
-      },
-      include: {
-        campaign: true,
-        locations: true,
-      },
-    });
+    const updatedNPC = await campaignService.updateNPCById(
+      parsed.data.id,
+      parsed.data,
+    );
     return res.status(200).json(updatedNPC);
   } catch (err) {
     if (String(err).includes("Record to update not found")) {
@@ -409,17 +383,14 @@ const deleteNPC = async (req, res) => {
     if (!z.string().safeParse(id).success) {
       return res.status(400).json({ message: "Invalid id" });
     }
-    const npc = await prisma.nPC.findUnique({
-      where: { id },
-      select: { campaignId: true, campaigns: { select: { ownerId: true } } },
-    });
+    const npc = await campaignService.getNPCOwnerForDeleteById(id);
     if (!npc) {
       return res.status(404).json({ message: "NPC not found" });
     }
     if (npc.campaigns.ownerId !== user.id) {
       return res.status(403).json({ message: "Forbidden" });
     }
-    await prisma.nPC.delete({ where: { id } });
+    await campaignService.deleteNPCById(id);
     return res.status(204).send();
   } catch (err) {
     if (String(err).includes("Record to delete does not exist")) {
@@ -437,12 +408,7 @@ const listCampaignNPCs = async (req, res) => {
     if (!z.string().safeParse(id).success) {
       return res.status(400).json({ message: "Invalid id" });
     }
-    const npcs = await prisma.nPC.findMany({
-      where: { campaignId: id },
-      include: {
-        locations: true,
-      },
-    });
+    const npcs = await campaignService.listCampaignNPCsByCampaignId(id);
     return res.status(200).json(npcs);
   } catch (err) {
     return res
@@ -1096,72 +1062,83 @@ const deleteMap = async (req, res) => {
 };
 
 const getAllMissionNpcs = async (req, res) => {
-    try {
-        const missionNpcs = await prisma.missionNpc.findMany({
-            include: { mission: true, npc: true }
-        });
-        return res.status(200).json(missionNpcs);
-    } catch (err) {
-        return res.status(500).json({ message: "Error fetching mission NPCs", error: err });
-    }
+  try {
+    const missionNpcs = await campaignService.listMissionNpcs();
+    return res.status(200).json(missionNpcs);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Error fetching mission NPCs", error: err });
+  }
 };
 
 const getMissionNpcById = async (req, res) => {
-    try {
-        const { MissionId, npcId } = req.params;
-        const missionNpc = await prisma.missionNpc.findUnique({
-            where: { MissionId_npcId: { MissionId, npcId } },
-            include: { mission: true, npc: true }
-        });
-        if (!missionNpc) {
-            return res.status(404).json({ message: "MissionNpc not found" });
-        }
-        return res.status(200).json(missionNpc);
-    } catch (err) {
-        return res.status(500).json({ message: "Error fetching mission NPC", error: err });
+  try {
+    const { MissionId, npcId } = req.params;
+    const missionNpc = await campaignService.getMissionNpcById(
+      MissionId,
+      npcId,
+    );
+    if (!missionNpc) {
+      return res.status(404).json({ message: "MissionNpc not found" });
     }
+    return res.status(200).json(missionNpc);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Error fetching mission NPC", error: err });
+  }
 };
 
 const createMissionNpc = async (req, res) => {
-    try {
-        const data = missionNpcSchema.safeParse(req.body);
-        if (!data.success) {
-            return res.status(400).json({ message: "Validation failed", errors: data.error });
-        }
-        const missionNpc = await prisma.missionNpc.create({ data: data.data });
-        return res.status(201).json(missionNpc);
-    } catch (err) {
-        return res.status(500).json({ message: "Error creating mission NPC", error: err });
+  try {
+    const data = missionNpcSchema.safeParse(req.body);
+    if (!data.success) {
+      return res
+        .status(400)
+        .json({ message: "Validation failed", errors: data.error });
     }
+    const missionNpc = await campaignService.createMissionNpc(data.data);
+    return res.status(201).json(missionNpc);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Error creating mission NPC", error: err });
+  }
 };
 
 const updateMissionNpc = async (req, res) => {
-    try {
-        const { MissionId, npcId } = req.params;
-        const data = missionNpcSchema.partial().safeParse(req.body);
-        if (!data.success) {
-            return res.status(400).json({ message: "Validation failed", errors: data.error });
-        }
-        const missionNpc = await prisma.missionNpc.update({
-            where: { MissionId_npcId: { MissionId, npcId } },
-            data: data.data
-        });
-        return res.status(200).json(missionNpc);
-    } catch (err) {
-        return res.status(500).json({ message: "Error updating mission NPC", error: err });
+  try {
+    const { MissionId, npcId } = req.params;
+    const data = missionNpcSchema.partial().safeParse(req.body);
+    if (!data.success) {
+      return res
+        .status(400)
+        .json({ message: "Validation failed", errors: data.error });
     }
+    const missionNpc = await campaignService.updateMissionNpcById(
+      MissionId,
+      npcId,
+      data.data,
+    );
+    return res.status(200).json(missionNpc);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Error updating mission NPC", error: err });
+  }
 };
 
 const deleteMissionNpc = async (req, res) => {
-    try {
-        const { MissionId, npcId } = req.params;
-        await prisma.missionNpc.delete({
-            where: { MissionId_npcId: { MissionId, npcId } }
-        });
-        return res.status(200).json({ message: "MissionNpc deleted" });
-    } catch (err) {
-        return res.status(500).json({ message: "Error deleting mission NPC", error: err });
-    }
+  try {
+    const { MissionId, npcId } = req.params;
+    await campaignService.deleteMissionNpcById(MissionId, npcId);
+    return res.status(200).json({ message: "MissionNpc deleted" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Error deleting mission NPC", error: err });
+  }
 };
 
 

@@ -134,6 +134,100 @@ const listCharactersByCampaignId = async (id) => {
   });
 };
 
+const createNPC = async (data) => {
+  return prisma.nPC.create({ data });
+};
+
+const listNPCs = async () => {
+  return prisma.nPC.findMany({
+    include: {
+      campaigns: true,
+      locations: true,
+    },
+  });
+};
+
+const getNPCById = async (id) => {
+  return prisma.nPC.findUnique({
+    where: { id },
+    include: {
+      campaign: true,
+      locations: true,
+    },
+  });
+};
+
+const getNPCOwnerForUpdateById = async (id) => {
+  return prisma.nPC.findUnique({
+    where: { id },
+    select: { campaignId: true, campaign: { select: { ownerId: true } } },
+  });
+};
+
+const updateNPCById = async (id, data) => {
+  return prisma.nPC.update({
+    where: { id },
+    data: {
+      name: data.name,
+      description: data.description,
+    },
+    include: {
+      campaign: true,
+      locations: true,
+    },
+  });
+};
+
+const getNPCOwnerForDeleteById = async (id) => {
+  return prisma.nPC.findUnique({
+    where: { id },
+    select: { campaignId: true, campaigns: { select: { ownerId: true } } },
+  });
+};
+
+const deleteNPCById = async (id) => {
+  return prisma.nPC.delete({ where: { id } });
+};
+
+const listCampaignNPCsByCampaignId = async (campaignId) => {
+  return prisma.nPC.findMany({
+    where: { campaignId },
+    include: {
+      locations: true,
+    },
+  });
+};
+
+const listMissionNpcs = async () => {
+  return prisma.missionNpc.findMany({
+    include: { mission: true, npc: true },
+  });
+};
+
+const getMissionNpcById = async (MissionId, npcId) => {
+  return prisma.missionNpc.findUnique({
+    where: { MissionId_npcId: { MissionId, npcId } },
+    include: { mission: true, npc: true },
+  });
+};
+
+const createMissionNpc = async (data) => {
+  return prisma.missionNpc.create({ data });
+};
+
+const updateMissionNpcById = async (MissionId, npcId, data) => {
+  return prisma.missionNpc.update({
+    where: { MissionId_npcId: { MissionId, npcId } },
+    data,
+  });
+};
+
+const deleteMissionNpcById = async (MissionId, npcId) => {
+  return prisma.missionNpc.delete({
+    where: { MissionId_npcId: { MissionId, npcId } },
+  });
+};
+
 module.exports = {
   createCampaignForOwner,
   listCampaigns,
@@ -147,4 +241,17 @@ module.exports = {
   removeContributorFromCampaign,
   listContributorsByCampaignId,
   listCharactersByCampaignId,
+  createNPC,
+  listNPCs,
+  getNPCById,
+  getNPCOwnerForUpdateById,
+  updateNPCById,
+  getNPCOwnerForDeleteById,
+  deleteNPCById,
+  listCampaignNPCsByCampaignId,
+  listMissionNpcs,
+  getMissionNpcById,
+  createMissionNpc,
+  updateMissionNpcById,
+  deleteMissionNpcById,
 };
