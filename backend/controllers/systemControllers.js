@@ -1,9 +1,7 @@
 'use strict';
 require('dotenv').config();
-const { PrismaClient } = require("../generated/prisma/client");
+const prisma = require("../config/database");
 const z = require("zod");
-
-const prisma = new PrismaClient();
 
 const raceSchema = z.object({
     name: z.string().min(1),

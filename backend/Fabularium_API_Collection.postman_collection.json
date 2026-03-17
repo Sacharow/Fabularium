@@ -7,21 +7,543 @@
 	},
 	"item": [
 		{
-
-			{
-				"info": {
-					"_postman_id": "fabularium-api-collection",
-					"name": "Fabularium API Collection",
-					"description": "Pełna kolekcja Postman dla Fabularium backend. Każdy endpoint, metoda, parametry, body, przykłady, opisy. Autoryzację JWT/cookie uzupełnij samodzielnie.",
-					"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+			"name": "Users",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"testuser\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "register"]
+						},
+						"description": "Register a new user with name, email, and password"
+					},
+					"response": []
 				},
-				"variable": [
-					{ "key": "baseUrl", "value": "http://localhost:3000/api", "type": "string" }
-				],
-				"item": [
-					// ... (tutaj zostanie wygenerowana pełna, szczegółowa kolekcja Postman, zgodnie z kodem backendu)
-				]
-			}
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"testuser\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "login"]
+						},
+						"description": "Login with name (or email) and password. Returns JWT token in httpOnly cookie"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "logout"]
+						},
+						"description": "Logout current user (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						},
+						"description": "Get all users (requires authentication and admin role)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Characters",
+			"item": [
+				{
+					"name": "List My Characters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/characters/mycharactrs",
+							"host": ["{{baseUrl}}"],
+							"path": ["characters", "mycharactrs"]
+						},
+						"description": "Get all characters owned by the authenticated user"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Character",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Thorin Ironforge\",\n  \"background\": \"Soldier\",\n  \"alignment\": \"Lawful Good\",\n  \"level\": 1,\n  \"raceId\": \"dwarf-id\",\n  \"classId\": \"fighter-id\",\n  \"personalityTraits\": \"Brave and loyal\",\n  \"ideals\": \"Honor and duty\",\n  \"bonds\": \"Protect my companions\",\n  \"flaws\": \"Stubborn\",\n  \"stats\": {\n    \"str\": 16,\n    \"dex\": 12,\n    \"con\": 15,\n    \"int\": 10,\n    \"wis\": 13,\n    \"cha\": 8\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/characters",
+							"host": ["{{baseUrl}}"],
+							"path": ["characters"]
+						},
+						"description": "Create a new character"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Character",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Thorin Ironforge II\",\n  \"level\": 2,\n  \"stats\": {\n    \"str\": 17,\n    \"dex\": 12,\n    \"con\": 15,\n    \"int\": 10,\n    \"wis\": 13,\n    \"cha\": 8\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/characters/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["characters", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Character ID"
+								}
+							]
+						},
+						"description": "Update a character (only owner can update)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Character",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/characters/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["characters", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Character ID"
+								}
+							]
+						},
+						"description": "Delete a character (only owner can delete)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System - Races",
+			"item": [
+				{
+					"name": "Get All Races",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/races",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "races"]
+						},
+						"description": "Get all races with abilities and subraces"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Race By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/races/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "races", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get a specific race by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Race (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Dwarf\",\n  \"description\": \"Stout and hardy\",\n  \"size\": \"Medium\",\n  \"speed\": 25,\n  \"languages\": \"Common, Dwarvish\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/races",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "races"]
+						},
+						"description": "Create a new race (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Race (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Mountain Dwarf\",\n  \"speed\": 25\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/races/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "races", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Update a race (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Race (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/races/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "races", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Delete a race (admin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System - Classes",
+			"item": [
+				{
+					"name": "Get All Classes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/classes",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "classes"]
+						},
+						"description": "Get all classes with subclasses and progressions"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Class By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/classes/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "classes", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get a specific class by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Class (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Fighter\",\n  \"hitDie\": 10,\n  \"spellcasting\": false,\n  \"description\": \"Master of martial combat\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/classes",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "classes"]
+						},
+						"description": "Create a new class (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Class (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/classes/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "classes", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Update a class (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Class (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/classes/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "classes", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Delete a class (admin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System - Subclasses",
+			"item": [
+				{
+					"name": "Get All Subclasses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/subclasses",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "subclasses"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Subclass By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/subclasses/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "subclasses", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Subclass (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Champion\",\n  \"classId\": \"fighter-id\",\n  \"description\": \"Master of physical combat\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/subclasses",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "subclasses"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Subclass (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/system/subclasses/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "subclasses", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Subclass (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/subclasses/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "subclasses", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System - Race Abilities",
+			"item": [
+				{
+					"name": "Get All Race Abilities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/race-abilities",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "race-abilities"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Race Ability By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/system/race-abilities/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["system", "race-abilities", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
 					"response": []
 				},
 				{

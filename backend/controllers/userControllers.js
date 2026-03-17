@@ -1,13 +1,12 @@
 "use strict";
 require("dotenv").config();
-const { PrismaClient, Role } = require("../generated/prisma/client");
+const { Role } = require("../generated/prisma/client");
+const prisma = require("../config/database");
 const jwt = require("jsonwebtoken");
 const z = require("zod");
 const crypt = require("bcryptjs");
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
-
-const prisma = new PrismaClient();
 
 const registerSchema = z.object({
   name: z.string().min(1),

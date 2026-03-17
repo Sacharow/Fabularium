@@ -1,7 +1,6 @@
 "use strict";
 
-const { PrismaClient } = require("../generated/prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/database");
 const z = require("zod");
 const crypto = require("crypto");
 

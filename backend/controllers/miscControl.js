@@ -1,6 +1,5 @@
 'use strict';
-const { PrismaClient } = require("../generated/prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/database");
 
 const listClasses = async (req, res) => {
     try {
