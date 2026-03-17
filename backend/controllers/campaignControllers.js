@@ -604,12 +604,11 @@ const createMission = async (req, res) => {
       data.title.trim().length === 0
     )
       return res.status(400).json({ message: "title is required" });
-    // locationId is optional now — quests may not be tied to a location
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     const userId = req.user?.id;
@@ -619,15 +618,12 @@ const createMission = async (req, res) => {
       campaign.contributors.some((c) => c.id === userId);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const created = await prisma.mission.create({
-      data: {
-        title: data.title,
-        description: data.description ?? "",
-        status: data.status ?? "pending",
-        // only set locationId when provided
-        ...(data.locationId ? { locationId: data.locationId } : {}),
-        campaignId: campaignId,
-      },
+    const created = await campaignService.createMission({
+      title: data.title,
+      description: data.description ?? "",
+      status: data.status ?? "pending",
+      ...(data.locationId ? { locationId: data.locationId } : {}),
+      campaignId: campaignId,
     });
     return res.status(201).json(created);
   } catch (err) {
@@ -654,10 +650,9 @@ const updateMission = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     const userId = req.user?.id;
@@ -667,22 +662,14 @@ const updateMission = async (req, res) => {
       campaign.contributors.some((c) => c.id === userId);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const mission = await prisma.mission.findUnique({
-      where: { id: missionId },
-    });
+    const mission = await campaignService.getMissionById(missionId);
     if (!mission || mission.campaignId !== campaignId)
       return res.status(404).json({ message: "Mission not found in campaign" });
 
-    const updated = await prisma.mission.update({
-      where: { id: missionId },
-      data: {
-        title: parsed.data.title,
-        description: parsed.data.description,
-        status: parsed.data.status,
-        locationId: parsed.data.locationId,
-      },
-      include: { location: true },
-    });
+    const updated = await campaignService.updateMissionById(
+      missionId,
+      parsed.data,
+    );
     return res.status(200).json(updated);
   } catch (err) {
     if (String(err).includes("Record to update not found"))
@@ -703,10 +690,9 @@ const deleteMission = async (req, res) => {
     if (!z.string().safeParse(missionId).success)
       return res.status(400).json({ message: "Invalid mission id" });
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -718,13 +704,11 @@ const deleteMission = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const mission = await prisma.mission.findUnique({
-      where: { id: missionId },
-    });
+    const mission = await campaignService.getMissionById(missionId);
     if (!mission || mission.campaignId !== campaignId)
       return res.status(404).json({ message: "Mission not found in campaign" });
 
-    await prisma.mission.delete({ where: { id: missionId } });
+    await campaignService.deleteMissionById(missionId);
     return res.status(204).send();
   } catch (err) {
     if (String(err).includes("Record to delete does not exist"))
@@ -744,10 +728,9 @@ const createNote = async (req, res) => {
     if (!data || typeof data.name !== "string" || data.name.trim().length === 0)
       return res.status(400).json({ message: "name is required" });
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     const user = req.user;
@@ -757,14 +740,12 @@ const createNote = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const created = await prisma.note.create({
-      data: {
-        name: data.name,
-        description: data.description ?? "",
-        author: user.name ?? user.id ?? "unknown",
-        date: new Date(),
-        campaignId: campaignId,
-      },
+    const created = await campaignService.createNote({
+      name: data.name,
+      description: data.description ?? "",
+      author: user.name ?? user.id ?? "unknown",
+      date: new Date(),
+      campaignId: campaignId,
     });
     return res.status(201).json(created);
   } catch (err) {
@@ -792,10 +773,9 @@ const updateNote = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -807,17 +787,11 @@ const updateNote = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const note = await prisma.note.findUnique({ where: { id: noteId } });
+    const note = await campaignService.getNoteById(noteId);
     if (!note || note.campaignId !== campaignId)
       return res.status(404).json({ message: "Note not found in campaign" });
 
-    const updated = await prisma.note.update({
-      where: { id: noteId },
-      data: {
-        name: parsed.data.name,
-        description: parsed.data.description,
-      },
-    });
+    const updated = await campaignService.updateNoteById(noteId, parsed.data);
     return res.status(200).json(updated);
   } catch (err) {
     if (String(err).includes("Record to update not found"))
@@ -838,10 +812,9 @@ const deleteNote = async (req, res) => {
     if (!z.string().safeParse(noteId).success)
       return res.status(400).json({ message: "Invalid note id" });
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { contributors: true },
-    });
+    const campaign = await campaignService.getCampaignWithContributorsById(
+      campaignId,
+    );
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -853,11 +826,11 @@ const deleteNote = async (req, res) => {
       campaign.contributors.some((c) => c.id === user.id);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
-    const note = await prisma.note.findUnique({ where: { id: noteId } });
+    const note = await campaignService.getNoteById(noteId);
     if (!note || note.campaignId !== campaignId)
       return res.status(404).json({ message: "Note not found in campaign" });
 
-    await prisma.note.delete({ where: { id: noteId } });
+    await campaignService.deleteNoteById(noteId);
     return res.status(204).send();
   } catch (err) {
     if (String(err).includes("Record to delete does not exist"))

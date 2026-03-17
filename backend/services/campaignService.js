@@ -207,6 +207,57 @@ const deleteMapById = async (id) => {
   return prisma.map.delete({ where: { id } });
 };
 
+const createMission = async (data) => {
+  return prisma.mission.create({ data });
+};
+
+const getMissionById = async (id) => {
+  return prisma.mission.findUnique({
+    where: { id },
+  });
+};
+
+const updateMissionById = async (id, data) => {
+  return prisma.mission.update({
+    where: { id },
+    data: {
+      title: data.title,
+      description: data.description,
+      status: data.status,
+      locationId: data.locationId,
+    },
+    include: { location: true },
+  });
+};
+
+const deleteMissionById = async (id) => {
+  return prisma.mission.delete({ where: { id } });
+};
+
+const createNote = async (data) => {
+  return prisma.note.create({ data });
+};
+
+const getNoteById = async (id) => {
+  return prisma.note.findUnique({
+    where: { id },
+  });
+};
+
+const updateNoteById = async (id, data) => {
+  return prisma.note.update({
+    where: { id },
+    data: {
+      name: data.name,
+      description: data.description,
+    },
+  });
+};
+
+const deleteNoteById = async (id) => {
+  return prisma.note.delete({ where: { id } });
+};
+
 const createNPC = async (data) => {
   return prisma.nPC.create({ data });
 };
@@ -326,6 +377,14 @@ module.exports = {
   getMapById,
   updateMapById,
   deleteMapById,
+  createMission,
+  getMissionById,
+  updateMissionById,
+  deleteMissionById,
+  createNote,
+  getNoteById,
+  updateNoteById,
+  deleteNoteById,
   createNPC,
   listNPCs,
   getNPCById,
