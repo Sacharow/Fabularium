@@ -2,13 +2,13 @@
 
 const prisma = require("../config/database");
 
-async function listClasses() {
+const listClasses = async () => {
     return prisma.class.findMany({});
-}
+};
 
-async function listRaces() {
+const listRaces = async () => {
     return prisma.race.findMany({});
-}
+};
 
 module.exports = {
     listClasses,

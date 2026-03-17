@@ -2,7 +2,7 @@
 
 const prisma = require("../config/database");
 
-function mapCharacterForeignKeyError(err) {
+const mapCharacterForeignKeyError = (err) => {
     if (err?.code !== "P2003") {
         return null;
     }
@@ -30,15 +30,15 @@ function mapCharacterForeignKeyError(err) {
     }
 
     return { status: 400, message: "Invalid related resource id" };
-}
+};
 
-function throwMappedError(mapped) {
+const throwMappedError = (mapped) => {
     const error = new Error(mapped.message);
     error.status = mapped.status;
     throw error;
-}
+};
 
-async function ensureOwnership(characterId, userId) {
+const ensureOwnership = async (characterId, userId) => {
     const character = await prisma.character.findUnique({
         where: { id: characterId },
         select: { id: true, ownerId: true }
@@ -53,9 +53,9 @@ async function ensureOwnership(characterId, userId) {
     }
 
     return { character };
-}
+};
 
-async function createCharacterForUser(userId, data) {
+const createCharacterForUser = async (userId, data) => {
     try {
         return await prisma.character.create({
             data: {
@@ -83,9 +83,9 @@ async function createCharacterForUser(userId, data) {
         }
         throw err;
     }
-}
+};
 
-async function getOwnedCharacterById(characterId, userId) {
+const getOwnedCharacterById = async (characterId, userId) => {
     const ownership = await ensureOwnership(characterId, userId);
     if (ownership.error) {
         return { error: ownership.error };
@@ -109,9 +109,9 @@ async function getOwnedCharacterById(characterId, userId) {
     });
 
     return { character };
-}
+};
 
-async function listCharactersForUser(userId) {
+const listCharactersForUser = async (userId) => {
     return prisma.character.findMany({
         where: { ownerId: userId },
         select: {
@@ -128,9 +128,9 @@ async function listCharactersForUser(userId) {
             race: { select: { name: true } }
         }
     });
-}
+};
 
-async function updateOwnedCharacter(characterId, userId, data) {
+const updateOwnedCharacter = async (characterId, userId, data) => {
     const ownership = await ensureOwnership(characterId, userId);
     if (ownership.error) {
         return { error: ownership.error };
@@ -174,9 +174,9 @@ async function updateOwnedCharacter(characterId, userId, data) {
     }
 
     return { character };
-}
+};
 
-async function deleteOwnedCharacter(characterId, userId) {
+const deleteOwnedCharacter = async (characterId, userId) => {
     const ownership = await ensureOwnership(characterId, userId);
     if (ownership.error) {
         return { error: ownership.error };
@@ -184,7 +184,7 @@ async function deleteOwnedCharacter(characterId, userId) {
 
     await prisma.character.delete({ where: { id: characterId } });
     return {};
-}
+};
 
 module.exports = {
     createCharacterForUser,
