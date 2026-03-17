@@ -88,22 +88,3 @@ input[type="number"] {
   scrollbar-width: thin;
   scrollbar-color: #ea580c #1d160f;
 }
-
-/* Epic Button Styles */
-.epic-button {
-  font-size: 1.875rem;
-  height: 4rem;
-  font-weight: 700;
-  color: #ff6a00;
-  text-shadow: 2px 4px 3px #3d1903;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.epic-button:hover {
-  color: #ffffff;
-}

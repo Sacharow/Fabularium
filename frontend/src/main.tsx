@@ -62,6 +62,15 @@ import SignIn from "./assets/views/auth/SignIn";
 import SignUp from "./assets/views/auth/SignUp";
 import ResetPassword from "./assets/views/auth/ResetPassword";
 
+// Preview Pages
+import CharacterPreviewNew from "./assets/views/preview/characterPreview";
+
+// Edit Pages
+import CharacterEdit from "./assets/views/forms/edit/characterEdit";
+
+// Add Pages
+import CharacterAdd from "./assets/views/forms/add/characterAdd";
+
 function AppRoutes() {
   const location = useLocation();
   const hideHeader = location.pathname === "/";
@@ -76,6 +85,12 @@ function AppRoutes() {
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        <Route path="/preview/character" element={<CharacterPreviewNew />} />
+
+        <Route path="/edit/character" element={<CharacterEdit />} />
+
+        <Route path="/add/character" element={<CharacterAdd />} />
 
         <Route path="/" element={<Home />} />
         <Route path="/campaigns" element={<Campaigns />} />

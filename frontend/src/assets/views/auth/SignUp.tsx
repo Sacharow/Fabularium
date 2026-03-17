@@ -78,7 +78,7 @@ const SignUp = () => {
           </form>
 
           {/* Temporary Buttons */}
-          <div className="flex flex-row gap-4">
+          <div className="flex flex-row gap-4 bg-black/40 backdrop-blur-md border border-orange-700/30 rounded-lg p-2">
             <NavLink className="w-48 text-center" to="/reset-password">
               <p className="text-orange-300 text-shadow-lg text-shadow-orange-950 hover:text-white transition duration-300 font-bold cursor-pointer">
                 Forgot Password?

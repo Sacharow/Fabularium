@@ -1,5 +1,6 @@
 import Footer from "../components/Footer";
 import { NavLink } from "react-router-dom";
+import D20 from "../components/ui/D20";
 
 function Hub() {
   return (
@@ -17,14 +18,21 @@ function Hub() {
             FABULARIUM
           </h1>
         </div>
+        <div className="flex justify-center items-center bottom-40 left-200 absolute inset-0">
+          <D20 className="w-24 h-24" />
+        </div>
+        <div className="flex justify-center items-center bottom-40 right-200 absolute inset-0">
+          <D20 className="w-24 h-24" />
+        </div>
         <div className="absolute inset-0 top-64 flex justify-center gap-16">
-          <NavLink to="/sign-in" className="epic-button">
+          <NavLink to="/sign-in" className={epicButtonStyle}>
             <p className="text-center">SIGN IN</p>
           </NavLink>
-          <NavLink to="/sign-up" className="epic-button">
+          <NavLink to="/sign-up" className={epicButtonStyle}>
             <p className="text-center">SIGN UP</p>
           </NavLink>
         </div>
+        <hr className="text-orange-500 border-2 absolute inset-0 top-96" />
       </div>
 
       {/* Informational Section */}
@@ -203,6 +211,8 @@ function Hub() {
   );
 }
 
+const epicButtonStyle =
+  "text-5xl h-16 font-bold text-orange-600 text-shadow-lg text-shadow-orange-950 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-300 hover:text-white";
 const featureContainerStyle =
   "grid grid-cols-4 hover:shadow-yellow-300 hover:shadow-xl transition duration-300 rounded-lg min-h-48";
 const featureLeftBoxStyle =

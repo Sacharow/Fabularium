@@ -36,16 +36,16 @@ function Header() {
   );
 
   const leftClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-row gap-2 justify-center items-center transition-all duration-200 hover:text-yellow-300 ${isActive ? "text-white" : "text-white"}`;
+    `flex flex-row gap-2 justify-center items-center transition-all duration-200 hover:text-yellow-300 active:scale-90 ${isActive ? "text-white" : "text-white"}`;
 
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
-    `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-orange-700 hover:text-yellow-300 ${isActive ? "bg-orange-700 text-yellow-300" : "text-white"}`;
+    `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-gradient-to-t from-orange-700 to-orange-500 hover:text-yellow-300 active:scale-90 ${isActive ? "bg-gradient-to-t from-orange-700 to-orange-500 text-yellow-300" : "text-white"}`;
 
   const navItemClassMobile = ({ isActive }: { isActive: boolean }) =>
-    `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-start items-center px-4 py-3 hover:bg-orange-700 hover:text-yellow-300 ${isActive ? "bg-orange-700 text-yellow-300" : "text-white"}`;
+    `cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-start items-center px-4 py-3 hover:bg-gradient-to-t from-orange-700 to-orange-500 hover:text-yellow-300 active:scale-90 ${isActive ? "bg-gradient-to-t from-orange-700 to-orange-500 text-yellow-300" : "text-white"}`;
 
   return (
-    <header className="sticky top-0 w-full z-50 bg-gradient-to-r from-orange-900 via-orange-800 to-orange-900 shadow-lg border-b border-orange-700/50">
+    <header className="sticky top-0 w-full z-1000 bg-gradient-to-b from-orange-900 to-orange-600 shadow-lg border-b border-orange-500">
       <div className="flex flex-row justify-between items-center px-4 py-3 max-w-7xl mx-auto">
         {/* Left Side - Logo/Brand */}
         <div className="flex justify-start gap-4 items-center">
@@ -75,7 +75,7 @@ function Header() {
             {/* Notification Dropdown */}
             <div className="relative">
               <button
-                className={`cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-orange-700 hover:text-yellow-300 ${isNotificationOpen ? "bg-orange-700 text-yellow-300" : "text-white"}`}
+                className={`cursor-pointer transition-all duration-200 flex flex-row gap-2 justify-center items-center px-3 py-2 rounded-lg hover:bg-gradient-to-t hover:from-orange-700 hover:to-orange-500 hover:text-yellow-300 active:scale-90 ${isNotificationOpen ? "bg-gradient-to-t from-orange-700 to-orange-500 text-yellow-300" : "text-white"}`}
                 onClick={() => setNotificationOpen(!isNotificationOpen)}
               >
                 {exampleNotifications.length > 0 ? (
@@ -157,7 +157,7 @@ function Header() {
             {/* Mobile Notifications */}
             <div className="relative">
               <button
-                className={`p-2 rounded-lg transition-all duration-200 ${isNotificationOpen ? "bg-white/20 text-yellow-300" : "text-white hover:bg-white/10"}`}
+                className={`p-2 rounded-lg transition-all duration-200 active:scale-90 ${isNotificationOpen ? "bg-white/20 text-yellow-300" : "text-white hover:bg-white/10"}`}
                 onClick={() => setNotificationOpen(!isNotificationOpen)}
               >
                 {exampleNotifications.length > 0 ? (
@@ -223,7 +223,7 @@ function Header() {
             {/* Hamburger Menu */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-white"
+              className="p-2 rounded-lg hover:bg-white/10 transition-all duration-200 text-white active:scale-90"
             >
               {menuOpen ? (
                 <X className="w-6 h-6" />
