@@ -1,15 +1,19 @@
 'use strict';
 require('dotenv').config();
 const prisma = require("../config/database");
-const z = require("zod");
-
-const raceSchema = z.object({
-    name: z.string().min(1),
-    description: z.string().optional(),
-    size: z.enum(['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan']).optional(),
-    speed: z.number().int().optional(),
-    languages: z.string().optional()
-});
+const {
+    raceSchema,
+    classSchema,
+    subclassSchema,
+    raceAbilitySchema,
+    subraceSchema,
+    subraceAbilitySchema,
+    spellSchema,
+    itemSchema,
+    featureSchema,
+    featSchema,
+    missionNpcSchema
+} = require("../schemas/systemSchemas");
 
 const getAllRaces = async (req, res) => {
     try {
@@ -74,14 +78,6 @@ const deleteRace = async (req, res) => {
         return res.status(500).json({ message: "Error deleting race", error: err });
     }
 };
-
-const classSchema = z.object({
-    name: z.string().min(1),
-    hitDie: z.number().int(),
-    spellcasting: z.boolean().default(false),
-    savingThrows: z.array(), 
-    description: z.string().optional()
-});
 
 const getAllClasses = async (req, res) => {
     try {
@@ -148,12 +144,6 @@ const deleteClass = async (req, res) => {
     }
 };
 
-const subclassSchema = z.object({
-    name: z.string().min(1),
-    classId: z.string(),
-    description: z.string().optional()
-});
-
 const getAllSubclasses = async (req, res) => {
     try {
         const subclasses = await prisma.subclass.findMany({
@@ -218,13 +208,6 @@ const deleteSubclass = async (req, res) => {
     }
 };
 
-const raceAbilitySchema = z.object({
-    name: z.string().min(1),
-    raceId: z.string().uuid(),
-    description: z.string().optional()
-});
-
-
 const getAllRaceAbilities = async (req, res) => {
     try {
         const raceAbilities = await prisma.raceAbility.findMany({
@@ -288,12 +271,6 @@ const deleteRaceAbility = async (req, res) => {
         return res.status(500).json({ message: "Error deleting race ability", error: err });
     }
 };
-
-const subraceSchema = z.object({
-    parentRaceId: z.string().min(1),
-    name: z.string().min(1),
-    description: z.string().optional()
-});
 
 const getAllSubraces = async (req, res) => {
     try {
@@ -366,12 +343,6 @@ const deleteSubrace = async (req, res) => {
         return res.status(500).json({ message: "Error deleting subrace", error: err });
     }
 };
-
-const subraceAbilitySchema = z.object({
-    subRaceId: z.string(),
-    name: z.string().min(1),
-    description: z.string().optional()
-});
 
 const getAllSubraceAbilities = async (req, res) => {
     try {
@@ -446,17 +417,6 @@ const deleteSubraceAbility = async (req, res) => {
     }
 };
 
-const spellSchema = z.object({
-    name: z.string().min(1),
-    level: z.number().int().min(0).max(9),
-    school: z.string().optional(),
-    castingTime: z.string().optional(),
-    range: z.string().optional(),
-    components: z.string().optional(),
-    duration: z.string().optional(),
-    description: z.string().optional()
-});
-
 const getAllSpells = async (req, res) => {
     try {
         const spells = await prisma.spell.findMany();
@@ -517,15 +477,6 @@ const deleteSpell = async (req, res) => {
         return res.status(500).json({ message: "Error deleting spell", error: err });
     }
 };
-
-const itemSchema = z.object({
-    name: z.string().min(1),
-    type: z.string().min(1),
-    description: z.string().optional(),
-    weight: z.number().optional(),
-    value: z.number().int().optional(),
-    properties: z.string().optional()
-});
 
 const getAllItems = async (req, res) => {
     try {
@@ -588,13 +539,6 @@ const deleteItem = async (req, res) => {
     }
 };
 
-const featureSchema = z.object({
-    name: z.string().min(1),
-    description: z.string().optional(),
-    sourceType: z.string().optional(),
-    sourceId: z.string().optional()
-});
-
 const getAllFeatures = async (req, res) => {
     try {
         const features = await prisma.feature.findMany();
@@ -656,11 +600,6 @@ const deleteFeature = async (req, res) => {
     }
 };
 
-const featSchema = z.object({
-    name: z.string().min(1),
-    description: z.string().optional()
-});
-
 const getAllFeats = async (req, res) => {
     try {
         const feats = await prisma.feat.findMany();
@@ -721,11 +660,6 @@ const deleteFeat = async (req, res) => {
         return res.status(500).json({ message: "Error deleting feat", error: err });
     }
 };
-
-const missionNpcSchema = z.object({
-    MissionId: z.string().min(1),
-    npcId: z.string().min(1)
-});
 
 const getAllMissionNpcs = async (req, res) => {
     try {

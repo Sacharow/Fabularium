@@ -4,26 +4,10 @@ const { Role } = require("../generated/prisma/client");
 const prisma = require("../config/database");
 const jwt = require("jsonwebtoken");
 const z = require("zod");
+const { registerSchema, loginSchema } = require("../schemas/userSchemas");
 const crypt = require("bcryptjs");
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
-
-const registerSchema = z.object({
-  name: z.string().min(1),
-  email: z.email({ message: "not valid email" }),
-  password: z.string().min(8),
-});
-
-const loginSchema = z.union([
-  z.object({
-    name: z.string().min(1),
-    password: z.string().min(8),
-  }),
-  z.object({
-    email: z.email({ message: "not valid email" }),
-    password: z.string().min(8),
-  }),
-]);
 
 const createUserClassic = async (req, res) => {
   try {
