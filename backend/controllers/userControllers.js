@@ -1,13 +1,18 @@
 "use strict";
 require("dotenv").config();
 const { Role } = require("../generated/prisma/client");
-const prisma = require("../config/database");
-const jwt = require("jsonwebtoken");
 const z = require("zod");
 const { registerSchema, loginSchema } = require("../schemas/userSchemas");
-const crypt = require("bcryptjs");
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
+const {
+  createClassicUser,
+  authenticateUser,
+  buildAccessTokenFromRefreshPayload,
+  verifyRefreshToken,
+  listAllUsers,
+  getUserById,
+} = require("../services/userService");
 
 const createUserClassic = async (req, res) => {
   try {
@@ -21,12 +26,7 @@ const createUserClassic = async (req, res) => {
           errors: z.treeifyError(data.error),
         });
     }
-    const validated = data.data;
-
-    validated.passwordHashed = await crypt.hash(validated.password, 13);
-    delete validated.password;
-
-    const user = await prisma.users.create({ data: validated });
+    const user = await createClassicUser(data.data);
     return res.status(201).json(user);
   } catch (err) {
     return res
@@ -48,36 +48,12 @@ const login = async (req, res) => {
         });
     }
 
-    const validated = data.data;
-    const user = await prisma.users.findFirst({
-      where: {
-        OR: [{ name: validated.name }, { email: validated.email }],
-      },
-    });
-    if (!user) {
-      return res.status(404).json({ message: "No such user in database" });
+    const authResult = await authenticateUser(data.data);
+    if (authResult.error) {
+      return res.status(authResult.error.status).json({ message: authResult.error.message });
     }
 
-    const ok = await crypt.compare(validated.password, user.passwordHashed);
-
-    if (!ok) {
-      return res.status(401).json({ message: "Invalid password" });
-    }
-
-    const accessToken = jwt.sign(
-      {
-        id: user.id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" },
-    );
-
-    const refreshToken = jwt.sign(
-      { id: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" },
-    );
+    const { accessToken, refreshToken } = authResult;
 
     res.cookie("access_token", accessToken, {
       httpOnly: true,
@@ -96,7 +72,7 @@ const login = async (req, res) => {
       .header("Authorization", accessToken)
       .json({ message: "Logged in" });
 
-    return res.status(200).json({ message: "Logged in", user: safeUser });
+    return;
   } catch (error) {
     console.error(error);
     return res
@@ -137,12 +113,8 @@ const refresh = (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
-    const accessToken = jwt.sign(
-      { id: decoded.id, role: decoded.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" },
-    );
+    const decoded = verifyRefreshToken(refreshToken);
+    const accessToken = buildAccessTokenFromRefreshPayload(decoded);
 
     res.cookie("access_token", accessToken, {
       httpOnly: true,
@@ -161,7 +133,7 @@ const refresh = (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const data = await prisma.users.findMany();
+    const data = await listAllUsers();
     return res.status(200).json(data);
   } catch (err) {
     return res
@@ -176,20 +148,9 @@ const getCurrentUser = async (req, res) => {
       return res.status(401).json({ message: "Not logged in" });
     }
 
-    const user = await prisma.users.findUnique({
-      where: { id: req.user.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    const { error, user } = await getUserById(req.user.id);
+    if (error) {
+      return res.status(error.status).json({ message: error.message });
     }
 
     return res.status(200).json(user);
