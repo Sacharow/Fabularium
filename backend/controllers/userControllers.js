@@ -3,8 +3,6 @@ require("dotenv").config();
 const { Role } = require("../generated/prisma/client");
 const z = require("zod");
 const { registerSchema, loginSchema } = require("../schemas/userSchemas");
-const path = require("path");
-const swaggerUi = require("swagger-ui-express");
 const {
   createClassicUser,
   authenticateUser,
