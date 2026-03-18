@@ -11,7 +11,7 @@ router.get("/me", auth, getCurrentUser);
 router.post("/register", createUserClassic);
 router.post("/login", login);
 router.post("/logout", auth, logout);
-router.post("/refresh", auth, refresh);
+router.post("/refresh", refresh);
 
 
 module.exports = router;

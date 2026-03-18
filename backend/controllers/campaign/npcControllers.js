@@ -78,7 +78,7 @@ const updateNPC = async (req, res) => {
     const user = req.user;
     const parsed = updateNPCSchema.safeParse({
       ...req.body,
-      id: req.params.id,
+      id: req.params.npcId,
     });
     if (!parsed.success) {
       return res
@@ -110,7 +110,7 @@ const updateNPC = async (req, res) => {
 const deleteNPC = async (req, res) => {
   try {
     const user = req.user;
-    const id = req.params.id;
+    const id = req.params.npcId;
     if (!z.string().safeParse(id).success) {
       return res.status(400).json({ message: "Invalid id" });
     }
@@ -220,7 +220,7 @@ const deleteMissionNpc = async (req, res) => {
   try {
     const { MissionId, npcId } = req.params;
     await campaignService.deleteMissionNpcById(MissionId, npcId);
-    return res.status(200).json({ message: "MissionNpc deleted" });
+    return res.status(204).send();
   } catch (err) {
     return res
       .status(500)

@@ -18,12 +18,10 @@ const generateJoinCodeSchema = z.object({
 });
 
 const joinCampaignSchema = z.object({
-  userId: z.string(),
   joinCode: z.string().min(6),
 });
 
 const contributorSchema = z.object({
-  campaignId: z.string(),
   userId: z.string(),
 });
 

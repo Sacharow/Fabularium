@@ -1,6 +1,7 @@
 "use strict";
 
-const cookieSecurity = [{ refreshCookieAuth: [] }];
+const cookieSecurity = [{ accessCookieAuth: [] }];
+const refreshCookieSecurity = [{ refreshCookieAuth: [] }];
 
 const pathParam = (name, description) => ({
   name,
@@ -25,7 +26,7 @@ const openApiSpec = {
     title: "Fabularium API",
     version: "1.0.0",
     description:
-      "Backend API for Fabularium. Authenticated routes use HttpOnly cookies. Main token checked by middleware: refresh_token cookie.",
+      "Backend API for Fabularium. Authenticated routes use HttpOnly cookies. Main token checked by middleware: access_token cookie.",
   },
   servers: [
     {
@@ -44,11 +45,17 @@ const openApiSpec = {
   ],
   components: {
     securitySchemes: {
+      accessCookieAuth: {
+        type: "apiKey",
+        in: "cookie",
+        name: "access_token",
+        description: "HttpOnly cookie used by auth middleware.",
+      },
       refreshCookieAuth: {
         type: "apiKey",
         in: "cookie",
         name: "refresh_token",
-        description: "HttpOnly cookie used by auth middleware.",
+        description: "HttpOnly refresh cookie used by /api/users/refresh endpoint.",
       },
     },
     schemas: {
@@ -169,17 +176,15 @@ const openApiSpec = {
       },
       JoinCampaignInput: {
         type: "object",
-        required: ["userId", "joinCode"],
+        required: ["joinCode"],
         properties: {
-          userId: { type: "string" },
           joinCode: { type: "string", minLength: 6 },
         },
       },
       ContributorInput: {
         type: "object",
-        required: ["campaignId", "userId"],
+        required: ["userId"],
         properties: {
-          campaignId: { type: "string" },
           userId: { type: "string" },
         },
       },
@@ -312,6 +317,24 @@ const openApiSpec = {
         properties: {
           name: { type: "string", minLength: 1 },
           classId: { type: "string" },
+          description: { type: "string" },
+        },
+      },
+      SubraceInput: {
+        type: "object",
+        required: ["name", "parentRaceId"],
+        properties: {
+          name: { type: "string", minLength: 1 },
+          parentRaceId: { type: "string" },
+          description: { type: "string" },
+        },
+      },
+      SubraceAbilityInput: {
+        type: "object",
+        required: ["name", "subRaceId"],
+        properties: {
+          name: { type: "string", minLength: 1 },
+          subRaceId: { type: "string" },
           description: { type: "string" },
         },
       },
@@ -535,7 +558,7 @@ const openApiSpec = {
       post: {
         tags: ["Users"],
         summary: "Refresh access token",
-        security: cookieSecurity,
+        security: refreshCookieSecurity,
         responses: {
           200: {
             description: "Token refreshed",
@@ -1157,7 +1180,9 @@ const systemResources = [
   { resource: "races", schema: "RaceInput", singular: "race" },
   { resource: "classes", schema: "ClassInput", singular: "class" },
   { resource: "subclasses", schema: "SubclassInput", singular: "subclass" },
+  { resource: "subraces", schema: "SubraceInput", singular: "subrace" },
   { resource: "race-abilities", schema: "RaceAbilityInput", singular: "race ability" },
+  { resource: "subrace-abilities", schema: "SubraceAbilityInput", singular: "subrace ability" },
   { resource: "spells", schema: "SpellInput", singular: "spell" },
   { resource: "items", schema: "ItemInput", singular: "item" },
   { resource: "features", schema: "FeatureInput", singular: "feature" },

@@ -60,7 +60,7 @@ const updateRace = async (req, res) => {
 const deleteRace = async (req, res) => {
     try {
         await systemService.deleteRace(req.params.id);
-        return res.status(200).json({ message: "Race deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting race", error: err });
     }
@@ -117,7 +117,7 @@ const updateClass = async (req, res) => {
 const deleteClass = async (req, res) => {
     try {
         await systemService.deleteClass(req.params.id);
-        return res.status(200).json({ message: "Class deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting class", error: err });
     }
@@ -173,7 +173,7 @@ const updateSubclass = async (req, res) => {
 const deleteSubclass = async (req, res) => {
     try {
         await systemService.deleteSubclass(req.params.id);
-        return res.status(200).json({ message: "Subclass deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting subclass", error: err });
     }
@@ -229,7 +229,7 @@ const updateRaceAbility = async (req, res) => {
 const deleteRaceAbility = async (req, res) => {
     try {
         await systemService.deleteRaceAbility(req.params.id);
-        return res.status(200).json({ message: "Race ability deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting race ability", error: err });
     }
@@ -290,7 +290,7 @@ const updateSubrace = async (req, res) => {
 const deleteSubrace = async (req, res) => {
     try {
         await systemService.deleteSubrace(req.params.id);
-        return res.status(200).json({ message: "Subrace deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting subrace", error: err });
     }
@@ -351,7 +351,7 @@ const updateSubraceAbility = async (req, res) => {
 const deleteSubraceAbility = async (req, res) => {
     try {
         await systemService.deleteSubraceAbility(req.params.id);
-        return res.status(200).json({ message: "Subrace ability deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting subrace ability", error: err });
     }
