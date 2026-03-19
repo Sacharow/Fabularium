@@ -1,6 +1,12 @@
 import { NavLink } from "react-router-dom";
+import React from "react";
 
 const SignUp = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission logic here (e.g., API call)
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -17,7 +23,10 @@ const SignUp = () => {
           </h1>
 
           {/* Sign Up Form */}
-          <form className="w-full max-w-2xl bg-black/60 backdrop-blur-sm border border-orange-700/50 rounded-lg p-8 shadow-2xl">
+          <form
+            className="w-full max-w-2xl bg-black/60 backdrop-blur-sm border border-orange-700/50 rounded-lg p-8 shadow-2xl"
+            onSubmit={handleSubmit}
+          >
             <div className="grid grid-cols-2 gap-6">
               {/* Username Input */}
               <div className="flex flex-col gap-y-2">

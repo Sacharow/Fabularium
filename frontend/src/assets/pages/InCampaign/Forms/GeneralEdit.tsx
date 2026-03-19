@@ -67,7 +67,7 @@ export default function GeneralEdit() {
         return res.json();
       })
       .then(() => {
-        navigate(`/InCampaign/${campaignId}/${introData.urlName}`);
+        navigate(`/in-campaign/${campaignId}/${introData.urlName}`);
       })
       .catch((e) => {
         console.error("Failed to update campaign", e);
@@ -82,7 +82,7 @@ export default function GeneralEdit() {
 
   const introData = {
     currentSection: "Campaign Overview",
-    urlName: "GeneralView",
+    urlName: "general-view",
   };
 
   return (
@@ -101,7 +101,7 @@ export default function GeneralEdit() {
                 </NavLink>
                 <span> / </span>
                 <NavLink
-                  to={`/InCampaign/${params.campaignId}/${introData.urlName}`}
+                  to={`/in-campaign/${params.campaignId}/${introData.urlName}`}
                   className="cursor-pointer hover:text-orange-400"
                 >
                   {introData.urlName}

@@ -1,6 +1,12 @@
 import { NavLink } from "react-router-dom";
+import React from "react";
 
 const ResetPassword = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission logic here (e.g., API call)
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -17,7 +23,10 @@ const ResetPassword = () => {
           </h1>
 
           {/* Reset Password Form */}
-          <form className="w-96 bg-black/60 backdrop-blur-sm border border-orange-700/50 rounded-lg p-8 shadow-2xl">
+          <form
+            className="w-96 bg-black/60 backdrop-blur-sm border border-orange-700/50 rounded-lg p-8 shadow-2xl"
+            onSubmit={handleSubmit}
+          >
             <div className="flex flex-col gap-y-6">
               {/* Email Input */}
               <div className="flex flex-col gap-y-2">

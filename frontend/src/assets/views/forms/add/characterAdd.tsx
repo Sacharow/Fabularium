@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { Trash } from "lucide-react";
+import React from "react";
 
 type Stat = {
   name: string;
@@ -220,7 +221,8 @@ export default function CharacterAddForm() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!char) return;
     try {
       const response = await fetch(
@@ -233,7 +235,9 @@ export default function CharacterAddForm() {
         },
       );
       if (response.ok) {
-        alert("Character saved successfully!");
+        navigate(
+          `/in-campaign/${char.campaignId}/character-preview/${char.id}`,
+        );
       }
     } catch (error) {
       console.error("Failed to save character", error);
@@ -285,11 +289,11 @@ export default function CharacterAddForm() {
 
   const introData = {
     currentSection: "Character Section",
-    urlName: "CharacterView",
+    urlName: "character-view",
   };
 
   return (
-    <div className="p-6">
+    <form onSubmit={handleSubmit} className="p-6">
       <div className="pb-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <p className="text-orange-200 text-sm font-medium">
@@ -301,7 +305,7 @@ export default function CharacterAddForm() {
             </NavLink>
             <span className="mx-2">→</span>
             <NavLink
-              to={`/InCampaign/${char.campaignId}/${introData.urlName}`}
+              to={`/in-campaign/${char.campaignId}/${introData.urlName}`}
               className="cursor-pointer hover:text-orange-400 transition"
             >
               {introData.currentSection}
@@ -311,12 +315,13 @@ export default function CharacterAddForm() {
           </p>
           <div className="flex gap-2">
             <button
-              onClick={handleSave}
+              type="submit"
               className="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-600 text-white text-sm py-2 px-4 rounded-lg cursor-pointer transition font-semibold active:scale-90"
             >
               💾 Save
             </button>
             <button
+              type="button"
               onClick={handleReset}
               className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-600 text-white text-sm py-2 px-4 rounded-lg cursor-pointer transition font-semibold active:scale-90"
             >
@@ -958,6 +963,6 @@ export default function CharacterAddForm() {
           </div>
         </main>
       </div>
-    </div>
+    </form>
   );
 }

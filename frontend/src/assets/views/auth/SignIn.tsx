@@ -1,6 +1,12 @@
 import { NavLink } from "react-router-dom";
+import React from "react";
 
 const SignIn = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission logic here (e.g., API call)
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -17,7 +23,10 @@ const SignIn = () => {
           </h1>
 
           {/* Login Form */}
-          <form className="w-96 bg-black/60 backdrop-blur-sm border border-orange-700/50 rounded-lg p-8 shadow-2xl">
+          <form
+            className="w-96 bg-black/60 backdrop-blur-sm border border-orange-700/50 rounded-lg p-8 shadow-2xl"
+            onSubmit={handleSubmit}
+          >
             <div className="flex flex-col gap-y-6">
               {/* Email Input */}
               <div className="flex flex-col gap-y-2">
@@ -35,18 +44,6 @@ const SignIn = () => {
               <div className="flex flex-col gap-y-2">
                 <label className="text-orange-400 font-semibold text-sm uppercase tracking-wide">
                   Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="px-4 py-3 bg-amber-950/40 border border-orange-600/50 rounded-lg text-white placeholder-orange-800/60 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 transition-all"
-                />
-              </div>
-
-              {/* Confirm Password Input */}
-              <div className="flex flex-col gap-y-2">
-                <label className="text-orange-400 font-semibold text-sm uppercase tracking-wide">
-                  Confirm Password
                 </label>
                 <input
                   type="password"

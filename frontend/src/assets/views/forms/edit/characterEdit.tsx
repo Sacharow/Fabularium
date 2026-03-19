@@ -232,7 +232,8 @@ export default function CharacterEditForm() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!char) return;
     try {
       const response = await fetch(
@@ -245,7 +246,9 @@ export default function CharacterEditForm() {
         },
       );
       if (response.ok) {
-        alert("Character saved successfully!");
+        navigate(
+          `/in-campaign/${char.campaignId}/character-preview/${char.id}`,
+        );
       }
     } catch (error) {
       console.error("Failed to save character", error);
@@ -305,11 +308,11 @@ export default function CharacterEditForm() {
 
   const introData = {
     currentSection: "Character Section",
-    urlName: "CharacterView",
+    urlName: "character-view",
   };
 
   return (
-    <div className="p-6">
+    <form onSubmit={handleSubmit} className="p-6">
       <div className="pb-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <p className="text-orange-200 text-sm font-medium">
@@ -321,7 +324,7 @@ export default function CharacterEditForm() {
             </NavLink>
             <span className="mx-2">→</span>
             <NavLink
-              to={`/InCampaign/${char.campaignId}/${introData.urlName}`}
+              to={`/in-campaign/${char.campaignId}/${introData.urlName}`}
               className="cursor-pointer hover:text-orange-400 transition"
             >
               {introData.currentSection}
@@ -331,12 +334,13 @@ export default function CharacterEditForm() {
           </p>
           <div className="flex gap-2">
             <button
-              onClick={handleSave}
+              type="submit"
               className="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-600 text-white text-sm py-2 px-4 rounded-lg cursor-pointer transition font-semibold active:scale-90"
             >
               💾 Save
             </button>
             <button
+              type="button"
               onClick={handleReset}
               className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-600 text-white text-sm py-2 px-4 rounded-lg cursor-pointer transition font-semibold active:scale-90"
             >
@@ -703,7 +707,7 @@ export default function CharacterEditForm() {
                             : "bg-orange-800 text-yellow-300 border border-yellow-500 hover:bg-orange-700"
                         }`}
                       >
-                        {hasProf ? "Prof" : "Prof"}
+                        {hasProf ? "Prof" : "No Prof"}
                       </button>
                     </div>
                   );
@@ -783,7 +787,7 @@ export default function CharacterEditForm() {
                                       skillExpertise: newExpertise,
                                     });
                                   }}
-                                  className={`px-2 py-1 rounded text-xs font-bold active:scale-90 border border-yellow-500 ${
+                                  className={`px-2 py-1 rounded text-xs font-bold active:scale-90 border border-yellow-500 min-w-10 ${
                                     hasProf
                                       ? "bg-orange-600 text-white"
                                       : "bg-orange-800 text-orange-500"
@@ -816,7 +820,7 @@ export default function CharacterEditForm() {
                                       skillProf: newSkillProf,
                                     });
                                   }}
-                                  className={`px-2 py-1 rounded text-xs font-bold active:scale-90 border border-yellow-500 ${
+                                  className={`px-2 py-1 rounded text-xs font-bold active:scale-90 border border-yellow-500 min-w-10 ${
                                     hasExpertise
                                       ? "bg-orange-600 text-white"
                                       : "bg-orange-800 text-orange-500"
@@ -829,9 +833,25 @@ export default function CharacterEditForm() {
                               <input
                                 type="number"
                                 value={skillBonus}
-                                onChange={() => {
-                                  // This would require a more complex state update
-                                  // For now, display only
+                                onChange={(e) => {
+                                  const newValue =
+                                    parseInt(e.target.value) || 0;
+                                  const newStats = char.stats?.map((stat) => {
+                                    if (stat.name === ability) {
+                                      return {
+                                        ...stat,
+                                        skills: {
+                                          ...(stat.skills || {}),
+                                          [skill]: newValue,
+                                        },
+                                      };
+                                    }
+                                    return stat;
+                                  });
+                                  setChar({
+                                    ...char,
+                                    stats: newStats || [],
+                                  });
                                 }}
                                 className="w-12 bg-orange-700 border border-yellow-500 text-orange-100 px-1 py-0 rounded text-center font-bold text-sm focus:outline-none focus:border-yellow-300"
                               />
@@ -978,6 +998,6 @@ export default function CharacterEditForm() {
           </div>
         </main>
       </div>
-    </div>
+    </form>
   );
 }

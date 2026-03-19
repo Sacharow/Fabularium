@@ -199,7 +199,7 @@ export default function CharacterPreviewNew() {
 
   const introData = {
     currentSection: "Character Section",
-    urlName: "CharacterView",
+    urlName: "character-view",
   };
 
   return (
@@ -215,7 +215,7 @@ export default function CharacterPreviewNew() {
             </NavLink>
             <span className="mx-2">→</span>
             <NavLink
-              to={`/InCampaign/${char.campaignId}/${introData.urlName}`}
+              to={`/in-campaign/${char.campaignId}/${introData.urlName}`}
               className="cursor-pointer hover:text-orange-400 transition"
             >
               {introData.currentSection}
