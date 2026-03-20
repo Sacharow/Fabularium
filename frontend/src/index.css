@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Quintessential";
+  src: url("/fonts/Quintessential-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   color: rgba(255, 255, 255, 0.87);
   font-size: larger;
+  font-family: "Quintessential", serif;
 }
 
 body {
