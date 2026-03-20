@@ -367,6 +367,7 @@ export default function CharacterEditForm() {
                     className="w-full h-full object-cover"
                   />
                   <button
+                    type="button"
                     onClick={() => handleInputChange("image", undefined)}
                     className="absolute top-2 right-2 z-50 p-2 border border-yellow-500 bg-orange-900 rounded hover:bg-orange-700 transition duration-200 cursor-pointer active:scale-90"
                   >
@@ -376,6 +377,7 @@ export default function CharacterEditForm() {
               ) : (
                 <>
                   <button
+                    type="button"
                     onClick={() => setShowIconPicker(!showIconPicker)}
                     className="w-full bg-gradient-to-br from-purple-600 to-purple-950 shadow-lg rounded-lg mb-4 flex items-center justify-center text-8xl hover:from-purple-500 hover:to-purple-900 transition cursor-pointer"
                     style={{ aspectRatio: "1 / 1" }}
@@ -388,6 +390,7 @@ export default function CharacterEditForm() {
                         {CHARACTER_ICONS.map((iconOption) => (
                           <button
                             key={iconOption}
+                            type="button"
                             onClick={() => {
                               handleInputChange("icon", iconOption);
                               setShowIconPicker(false);
@@ -683,6 +686,7 @@ export default function CharacterEditForm() {
                         {modifier >= 0 ? `+${modifier}` : `${modifier}`}
                       </div>
                       <button
+                        type="button"
                         onClick={() => {
                           if (hasProf) {
                             setChar({
@@ -733,6 +737,7 @@ export default function CharacterEditForm() {
                 ).map((ability) => (
                   <div key={ability}>
                     <button
+                      type="button"
                       onClick={() => toggleDropdown(ability)}
                       className="w-full bg-orange-800 px-4 py-2 rounded-lg border border-yellow-600 flex justify-between items-center hover:bg-orange-600 transition text-orange-200 font-semibold cursor-pointer"
                     >
@@ -763,6 +768,7 @@ export default function CharacterEditForm() {
                             >
                               <div className="flex items-center gap-2">
                                 <button
+                                  type="button"
                                   onClick={() => {
                                     let newSkillProf = char.skillProf || [];
                                     let newExpertise =
@@ -796,6 +802,7 @@ export default function CharacterEditForm() {
                                   {hasProf ? "◆" : "○"}
                                 </button>
                                 <button
+                                  type="button"
                                   onClick={() => {
                                     let newExpertise =
                                       char.skillExpertise || [];
@@ -903,6 +910,7 @@ export default function CharacterEditForm() {
                           className="flex-1 bg-orange-800 border border-yellow-600 text-orange-300 px-3 py-2 rounded-lg hover:bg-orange-700 focus:outline-none focus:border-yellow-400"
                         />
                         <button
+                          type="button"
                           onClick={() =>
                             removeArrayItem("equipment", originalIdx)
                           }
@@ -913,6 +921,7 @@ export default function CharacterEditForm() {
                       </div>
                     ))}
                 <button
+                  type="button"
                   onClick={() => addArrayItem("equipment", "New Item")}
                   className="w-full bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-600 text-white py-2 rounded-lg cursor-pointer transition font-semibold active:scale-90"
                 >

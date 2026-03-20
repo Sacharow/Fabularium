@@ -348,6 +348,7 @@ export default function CharacterAddForm() {
                     className="w-full h-full object-cover"
                   />
                   <button
+                    type="button"
                     onClick={() => handleInputChange("image", undefined)}
                     className="absolute top-2 right-2 z-50 p-2 border border-yellow-500 bg-orange-900 rounded hover:bg-orange-700 transition duration-200 cursor-pointer active:scale-90"
                   >
@@ -357,6 +358,7 @@ export default function CharacterAddForm() {
               ) : (
                 <>
                   <button
+                    type="button"
                     onClick={() => setShowIconPicker(!showIconPicker)}
                     className="w-full bg-gradient-to-br from-purple-600 to-purple-950 shadow-lg rounded-lg mb-4 flex items-center justify-center text-8xl hover:from-purple-500 hover:to-purple-900 transition cursor-pointer"
                     style={{ aspectRatio: "1 / 1" }}
@@ -369,6 +371,7 @@ export default function CharacterAddForm() {
                         {CHARACTER_ICONS.map((iconOption) => (
                           <button
                             key={iconOption}
+                            type="button"
                             onClick={() => {
                               handleInputChange("icon", iconOption);
                               setShowIconPicker(false);
@@ -688,7 +691,7 @@ export default function CharacterAddForm() {
                             : "bg-orange-800 text-yellow-300 border border-yellow-500 hover:bg-orange-700"
                         }`}
                       >
-                        {hasProf ? "Prof" : "Prof"}
+                        {hasProf ? "Prof" : "No Prof"}
                       </button>
                     </div>
                   );
@@ -714,6 +717,7 @@ export default function CharacterAddForm() {
                 ).map((ability) => (
                   <div key={ability}>
                     <button
+                      type="button"
                       onClick={() => toggleDropdown(ability)}
                       className="w-full bg-orange-800 px-4 py-2 rounded-lg border border-yellow-600 flex justify-between items-center hover:bg-orange-600 transition text-orange-200 font-semibold cursor-pointer"
                     >
@@ -744,6 +748,7 @@ export default function CharacterAddForm() {
                             >
                               <div className="flex items-center gap-2">
                                 <button
+                                  type="button"
                                   onClick={() => {
                                     let newSkillProf = char.skillProf || [];
                                     let newExpertise =
@@ -768,7 +773,7 @@ export default function CharacterAddForm() {
                                       skillExpertise: newExpertise,
                                     });
                                   }}
-                                  className={`px-2 py-1 rounded text-xs font-bold active:scale-90 border border-yellow-500 ${
+                                  className={`px-2 py-1 rounded text-xs font-bold active:scale-90 border border-yellow-500 min-w-10 ${
                                     hasProf
                                       ? "bg-orange-600 text-white"
                                       : "bg-orange-800 text-orange-500"
@@ -777,6 +782,7 @@ export default function CharacterAddForm() {
                                   {hasProf ? "◆" : "○"}
                                 </button>
                                 <button
+                                  type="button"
                                   onClick={() => {
                                     let newExpertise =
                                       char.skillExpertise || [];
@@ -801,7 +807,7 @@ export default function CharacterAddForm() {
                                       skillProf: newSkillProf,
                                     });
                                   }}
-                                  className={`px-2 py-1 rounded text-xs font-bold active:scale-90 border border-yellow-500 ${
+                                  className={`px-2 py-1 rounded text-xs font-bold active:scale-90 border border-yellow-500 min-w-10 ${
                                     hasExpertise
                                       ? "bg-orange-600 text-white"
                                       : "bg-orange-800 text-orange-500"
@@ -814,9 +820,25 @@ export default function CharacterAddForm() {
                               <input
                                 type="number"
                                 value={skillBonus}
-                                onChange={() => {
-                                  // This would require a more complex state update
-                                  // For now, display only
+                                onChange={(e) => {
+                                  const newValue =
+                                    parseInt(e.target.value) || 0;
+                                  const newStats = char.stats?.map((stat) => {
+                                    if (stat.name === ability) {
+                                      return {
+                                        ...stat,
+                                        skills: {
+                                          ...(stat.skills || {}),
+                                          [skill]: newValue,
+                                        },
+                                      };
+                                    }
+                                    return stat;
+                                  });
+                                  setChar({
+                                    ...char,
+                                    stats: newStats || [],
+                                  });
                                 }}
                                 className="w-12 bg-orange-700 border border-yellow-500 text-orange-100 px-1 py-0 rounded text-center font-bold text-sm focus:outline-none focus:border-yellow-300"
                               />
@@ -868,6 +890,7 @@ export default function CharacterAddForm() {
                           className="flex-1 bg-orange-800 border border-yellow-600 text-orange-300 px-3 py-2 rounded-lg hover:bg-orange-700 focus:outline-none focus:border-yellow-400"
                         />
                         <button
+                          type="button"
                           onClick={() =>
                             removeArrayItem("equipment", originalIdx)
                           }
@@ -878,6 +901,7 @@ export default function CharacterAddForm() {
                       </div>
                     ))}
                 <button
+                  type="button"
                   onClick={() => addArrayItem("equipment", "New Item")}
                   className="w-full bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-600 text-white py-2 rounded-lg cursor-pointer transition font-semibold active:scale-90"
                 >
