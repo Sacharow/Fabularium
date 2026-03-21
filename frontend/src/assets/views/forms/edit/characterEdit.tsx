@@ -25,6 +25,7 @@ type CharacterSection = {
   skillProf?: string[];
   skillExpertise?: string[];
   equipment?: string[];
+  features?: string[];
   money?: Record<string, number>;
   background?: string;
   personalityTraits?: string;
@@ -104,6 +105,7 @@ const MOCK_CHARACTER: CharacterSection = {
     "Rope (50ft)",
     "Waterskin",
   ],
+  features: [],
   money: {
     Gold: 250,
     Silver: 45,
@@ -176,6 +178,7 @@ export default function CharacterEditForm() {
   });
   const [showIconPicker, setShowIconPicker] = useState(false);
   const [equipmentSearch, setEquipmentSearch] = useState("");
+  const [featuresSearch, setFeaturesSearch] = useState("");
 
   const toggleDropdown = (ability: string) => {
     setOpenDropdowns((prev) => ({
@@ -926,6 +929,64 @@ export default function CharacterEditForm() {
                   className="w-full bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-600 text-white py-2 rounded-lg cursor-pointer transition font-semibold active:scale-90"
                 >
                   + Add Equipment
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            {/* Features */}
+            <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-yellow-700 shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-lg font-semibold text-orange-400 flex items-center gap-2">
+                  <span className="text-xl">🛠️</span> Features
+                </h4>
+                <input
+                  type="text"
+                  placeholder="Search features..."
+                  value={featuresSearch}
+                  onChange={(e) => setFeaturesSearch(e.target.value)}
+                  className="bg-orange-800 border border-yellow-600 text-orange-200 px-3 py-1 rounded text-sm focus:outline-none focus:border-yellow-400 placeholder-orange-400 w-120"
+                />
+              </div>
+              <div className="space-y-2">
+                {char.features &&
+                  char.features
+                    .map((feat, idx) => ({ feat, originalIdx: idx }))
+                    .filter(({ feat }) =>
+                      feat.toLowerCase().includes(featuresSearch.toLowerCase()),
+                    )
+                    .map(({ feat, originalIdx }) => (
+                      <div key={originalIdx} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={feat}
+                          onChange={(e) =>
+                            handleArrayChange(
+                              "features",
+                              originalIdx,
+                              e.target.value,
+                            )
+                          }
+                          className="flex-1 bg-orange-800 border border-yellow-600 text-orange-300 px-3 py-2 rounded-lg hover:bg-orange-700 focus:outline-none focus:border-yellow-400"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            removeArrayItem("features", originalIdx)
+                          }
+                          className="p-2 border border-yellow-500 bg-orange-900 rounded hover:bg-orange-700 transition duration-200 cursor-pointer active:scale-90"
+                        >
+                          <Trash className="w-5 h-5" />
+                        </button>
+                      </div>
+                    ))}
+                <button
+                  type="button"
+                  onClick={() => addArrayItem("features", "New feat")}
+                  className="w-full bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-600 text-white py-2 rounded-lg cursor-pointer transition font-semibold active:scale-90"
+                >
+                  + Add Feature
                 </button>
               </div>
             </div>
