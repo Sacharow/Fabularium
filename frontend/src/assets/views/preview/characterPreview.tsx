@@ -24,6 +24,7 @@ type CharacterSection = {
   skillProf?: string[];
   skillExpertise?: string[];
   equipment?: string[];
+  features?: string[];
   money?: Record<string, number>;
   background?: string;
   personalityTraits?: string;
@@ -151,6 +152,7 @@ export default function CharacterPreviewNew() {
     CHARISMA: false,
   });
   const [equipmentSearch, setEquipmentSearch] = useState("");
+  const [featuresSearch, setFeaturesSearch] = useState("");
 
   const toggleDropdown = (ability: string) => {
     setOpenDropdowns((prev) => ({
@@ -515,6 +517,44 @@ export default function CharacterPreviewNew() {
               ) : (
                 <div className="text-sm text-orange-400">
                   No equipment listed.
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Features Section */}
+          <div>
+            <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-yellow-700 shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-lg font-semibold text-orange-400 flex items-center gap-2">
+                  <span className="text-xl">🛠️</span> Features
+                </h4>
+                <input
+                  type="text"
+                  placeholder="Search features..."
+                  value={featuresSearch}
+                  onChange={(e) => setFeaturesSearch(e.target.value)}
+                  className="bg-orange-800 border border-yellow-600 text-orange-200 px-3 py-1 rounded text-sm focus:outline-none focus:border-yellow-400 placeholder-orange-400 w-120"
+                />
+              </div>
+              {char.features && char.features.length > 0 ? (
+                <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
+                  {char.features
+                    .filter((it) =>
+                      it.toLowerCase().includes(featuresSearch.toLowerCase()),
+                    )
+                    .map((it, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-orange-800 px-4 py-2 rounded-lg border border-yellow-600 text-orange-300 hover:bg-orange-600 transition"
+                      >
+                        • {it}
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="text-sm text-orange-400">
+                  No features listed.
                 </div>
               )}
             </div>
