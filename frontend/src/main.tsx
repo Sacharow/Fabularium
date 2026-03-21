@@ -56,6 +56,7 @@ import InCampaignLayout from "./assets/pages/InCampaign/InCampaignLayout";
 // General Pages
 import Hub from "./assets/views/Hub";
 import CharactersNew from "./assets/views/Characters";
+import CampaignsNew from "./assets/views/Campaigns";
 
 // Auth Pages
 import SignIn from "./assets/views/auth/SignIn";
@@ -81,6 +82,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/hub" element={<Hub />} />
         <Route path="/characters-new" element={<CharactersNew />} />
+        <Route path="/campaigns-new" element={<CampaignsNew />} />
 
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />

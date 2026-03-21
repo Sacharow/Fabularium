@@ -154,7 +154,7 @@ const CharactersNew = () => {
             <input
               type="text"
               placeholder="Search characters..."
-              className="w-64 px-2"
+              className="w-64 px-2 focus:outline-none bg-transparent text-yellow-300 placeholder-yellow-500"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -235,53 +235,82 @@ const CharactersNew = () => {
       <hr className="border-yellow-500" />
 
       {/* Lower Section */}
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-5 gap-6">
         {filteredCharacters.map((character) => (
           <div
             key={character.id}
             onClick={() => navigate("/preview/character")}
-            className="relative flex flex-col gap-y-4 h-80 p-4 border bg-orange-900/50 border-yellow-700 rounded-lg shadow-lg hover:shadow-orange-500 transition duration-300 cursor-pointer"
+            className="group relative flex flex-col gap-y-3 h-96 p-4 border bg-gradient-to-br from-orange-900/60 to-orange-900/30 border-yellow-600 rounded-xl shadow-lg hover:shadow-2xl hover:shadow-orange-500/50 hover:border-yellow-500 transition duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-1"
           >
-            <NavLink
-              className="absolute top-2 right-2 z-50 p-2 border border-yellow-500 bg-orange-900 rounded hover:bg-orange-700 transition duration-200 cursor-pointer active:scale-90"
-              to="/edit-specific-character"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <Settings className="w-5 h-5" />
-            </NavLink>
-            <button
-              className="absolute top-12 right-2 z-50 p-2 border border-yellow-500 bg-orange-900 rounded hover:bg-orange-700 transition duration-200 cursor-pointer active:scale-90"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setWantToDelete(true);
-              }}
-            >
-              <Trash className="w-5 h-5" />
-            </button>
-            <div className="bg-orange-700/50 h-40 rounded-lg flex items-center justify-center">
-              <span className="text-6xl bg-orange-700 rounded-full p-4">
+            {/* Action Buttons */}
+            <div className="absolute top-3 right-3 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition duration-200">
+              <NavLink
+                className="p-2.5 border border-yellow-500 bg-orange-800 rounded-lg hover:bg-orange-700 transition duration-200 cursor-pointer active:scale-90 shadow-lg"
+                to="/edit-specific-character"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Settings className="w-5 h-5 text-yellow-400" />
+              </NavLink>
+              <button
+                className="p-2.5 border border-yellow-500 bg-red-700/80 rounded-lg hover:bg-red-600 transition duration-200 cursor-pointer active:scale-90 shadow-lg"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setWantToDelete(true);
+                }}
+              >
+                <Trash className="w-5 h-5 text-red-200" />
+              </button>
+            </div>
+
+            {/* Character Avatar */}
+            <div className="bg-gradient-to-br from-orange-700/70 to-orange-900/50 h-40 rounded-lg flex items-center justify-center border border-yellow-700/50 group-hover:border-yellow-600 transition duration-300">
+              <span className="text-7xl drop-shadow-lg group-hover:scale-110 transition duration-300">
                 🎲
               </span>
             </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xl font-bold">{character.name}</h3>
-                <h4 className="text-gray-300">Lv.{character.level}</h4>
+
+            {/* Character Info */}
+            <div className="flex flex-col gap-2 flex-1">
+              <div className="flex justify-between items-start gap-2">
+                <h3 className="text-lg font-bold text-white leading-tight flex-1">
+                  {character.name}
+                </h3>
+                <span className="bg-yellow-500/20 border border-yellow-500 text-yellow-300 text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap">
+                  Lv.{character.level}
+                </span>
               </div>
-              <p className="text-gray-300">{character.class}</p>
-              <p className="text-gray-300">{character.race}</p>
-              <p className="text-gray-300 text-xs">{character.dateCreated}</p>
-              <NavLink
-                to="/connected-campaign"
-                className="rounded bg-orange-900 p-1 text-orange-500 hover:text-white text-sm cursor-pointer hover:bg-orange-700 transition duration-300"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <p className="text-right px-2">To Campaign</p>
-              </NavLink>
+
+              <div className="flex flex-col gap-1.5 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Class</span>
+                  <span className="text-gray-200 font-semibold">
+                    {character.class}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Race</span>
+                  <span className="text-gray-200 font-semibold">
+                    {character.race}
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-gray-400 text-xs mt-auto">
+                {new Date(character.dateCreated).toLocaleDateString()}
+              </p>
             </div>
+
+            {/* Campaign Link Button */}
+            <NavLink
+              to="/connected-campaign"
+              className="w-full rounded-lg bg-gradient-to-r from-orange-800 to-orange-700 hover:from-orange-700 hover:to-orange-600 border border-yellow-700 text-yellow-300 hover:text-yellow-200 text-sm font-semibold py-2.5 cursor-pointer transition duration-300 text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              View Campaign
+            </NavLink>
           </div>
         ))}
       </div>
