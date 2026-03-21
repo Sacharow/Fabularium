@@ -254,7 +254,7 @@ const CharactersNew = () => {
                 <Settings className="w-5 h-5 text-yellow-400" />
               </NavLink>
               <button
-                className="p-2.5 border border-yellow-500 bg-red-700/80 rounded-lg hover:bg-red-600 transition duration-200 cursor-pointer active:scale-90 shadow-lg"
+                className="p-2.5 border border-yellow-500 bg-red-700 rounded-lg hover:bg-red-600 transition duration-200 cursor-pointer active:scale-90 shadow-lg"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
