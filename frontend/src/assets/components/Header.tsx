@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import menuItems from "./constants/menu";
 import { useState, useEffect, useMemo } from "react";
 import { Menu, X, Bell, BellDot } from "lucide-react";
@@ -6,9 +6,11 @@ import { useAuth } from "../../context/AuthContext";
 
 function Header() {
   const { isAuthenticated, user } = useAuth();
+  const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
+  const [isUserMenuOpen, setUserMenuOpen] = useState(false);
 
   // Update when window resizes
   useEffect(() => {
@@ -139,14 +141,52 @@ function Header() {
             </div>
 
             {rightMenuItems.map((item) => (
-              <NavLink key={item.name} to={item.href} className={navItemClass}>
-                <item.icon className="w-5 h-5" />
-                {item.name === "Profile" && user ? (
-                  <span className="font-medium">{user.name}</span>
-                ) : (
-                  <span className="font-medium">{item.name}</span>
+              <div key={item.name} className="relative">
+                <button
+                  className={navItemClass({
+                    isActive:
+                      item.name === "Profile"
+                        ? isUserMenuOpen || location.pathname === "/profile"
+                        : false,
+                  })}
+                  onClick={() => {
+                    if (item.name === "Profile") {
+                      setUserMenuOpen(!isUserMenuOpen);
+                    }
+                  }}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="font-medium">
+                    {item.name === "Profile" && user ? user.name : item.name}
+                  </span>
+                </button>
+                {item.name === "Profile" && isUserMenuOpen && (
+                  <div className="absolute top-14 right-0 bg-slate-800 rounded-lg shadow-2xl border border-slate-700 w-48 py-2 z-50">
+                    <NavLink
+                      to={item.href}
+                      className="block px-4 py-2 text-sm text-slate-200 hover:bg-slate-700/50 transition-colors"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      Details
+                    </NavLink>
+                    <NavLink
+                      to={item.href}
+                      className="block px-4 py-2 text-sm text-slate-200 hover:bg-slate-700/50 transition-colors"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      Calendar
+                    </NavLink>
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-slate-200 hover:bg-slate-700/50 transition-colors cursor-pointer"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </div>
                 )}
-              </NavLink>
+              </div>
             ))}
           </div>
         )}
