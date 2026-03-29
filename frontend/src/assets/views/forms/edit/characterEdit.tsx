@@ -28,6 +28,7 @@ type CharacterSection = {
   features?: string[];
   money?: Record<string, number>;
   background?: string;
+  alignment?: string;
   personalityTraits?: string;
   ideals?: string;
   bonds?: string;
@@ -113,6 +114,7 @@ const MOCK_CHARACTER: CharacterSection = {
   },
   background:
     "Once a humble farm hand, Aragorn discovered his destiny when ancient powers awakened within him.",
+  alignment: "Lawful Good",
   personalityTraits:
     "Honor and courage are my greatest virtues. I speak truthfully and act with integrity in all matters.",
   ideals: "Help those in need and protect the innocent from evil.",
@@ -500,6 +502,29 @@ export default function CharacterEditForm() {
                 />
               </div>
             </div>
+          </div>
+
+          {/* Alignment Section */}
+          <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-4 rounded-xl border border-yellow-700 shadow-xl text-sm">
+            <label className="text-orange-300 text-xs font-semibold block mb-2">
+              ⚖️ Alignment
+            </label>
+            <select
+              value={char.alignment ?? ""}
+              onChange={(e) => handleInputChange("alignment", e.target.value)}
+              className="w-full bg-orange-700 border border-yellow-500 text-orange-100 px-3 py-2 rounded focus:outline-none focus:border-yellow-300 font-bold"
+            >
+              <option value="">Select Alignment</option>
+              <option value="Lawful Good">Lawful Good</option>
+              <option value="Neutral Good">Neutral Good</option>
+              <option value="Chaotic Good">Chaotic Good</option>
+              <option value="Lawful Neutral">Lawful Neutral</option>
+              <option value="True Neutral">True Neutral</option>
+              <option value="Chaotic Neutral">Chaotic Neutral</option>
+              <option value="Lawful Evil">Lawful Evil</option>
+              <option value="Neutral Evil">Neutral Evil</option>
+              <option value="Chaotic Evil">Chaotic Evil</option>
+            </select>
           </div>
 
           {/* Core Stats Section */}

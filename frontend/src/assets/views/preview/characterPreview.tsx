@@ -27,6 +27,7 @@ type CharacterSection = {
   features?: string[];
   money?: Record<string, number>;
   background?: string;
+  alignment?: string;
   personalityTraits?: string;
   ideals?: string;
   bonds?: string;
@@ -111,6 +112,7 @@ const MOCK_CHARACTER: CharacterSection = {
   },
   background:
     "Once a humble farm hand, Aragorn discovered his destiny when ancient powers awakened within him.",
+  alignment: "Lawful Good",
   personalityTraits:
     "Honor and courage are my greatest virtues. I speak truthfully and act with integrity in all matters.",
   ideals: "Help those in need and protect the innocent from evil.",
@@ -295,6 +297,18 @@ export default function CharacterPreviewNew() {
                     {char.characterSubrace ?? "—"}
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Alignment Section */}
+          <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-4 rounded-xl border border-yellow-700 shadow-xl text-sm">
+            <div className="text-sm">
+              <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600">
+                <div className="text-xs text-orange-300 mb-1 font-semibold">
+                  Alignment
+                </div>
+                <div className="text-orange-200">{char.alignment ?? "—"}</div>
               </div>
             </div>
           </div>

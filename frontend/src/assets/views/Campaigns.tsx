@@ -16,6 +16,7 @@ const CampaignsNew = () => {
       title: "Lost Mines of Phandalin",
       author: "Dungeon Master Smith",
       dateCreated: "2024-01-15",
+      description: "A classic adventure in the world of Dungeons & Dragons.",
       color: "bg-blue-600",
       image:
         "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop",
@@ -25,6 +26,8 @@ const CampaignsNew = () => {
       title: "Dragon's Hoard",
       author: "Wizard Johnson",
       dateCreated: "2024-02-10",
+      description:
+        "An epic journey through mountains and valleys to find a dragon's treasure.",
       color: "bg-red-600",
       image: "",
     },
@@ -33,6 +36,8 @@ const CampaignsNew = () => {
       title: "Curse of Strahd",
       author: "Shadow DM",
       dateCreated: "2024-01-20",
+      description:
+        "Dark and gothic tale of a vampire lord's domain and the heroes who challenge him.",
       color: "bg-purple-600",
       image:
         "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop",
@@ -42,6 +47,8 @@ const CampaignsNew = () => {
       title: "Waterdeep Intrigue",
       author: "City Master",
       dateCreated: "2023-12-05",
+      description:
+        "Political intrigue and mystery in the greatest city of the Sword Coast.",
       color: "bg-cyan-600",
       image: "",
     },
@@ -50,6 +57,8 @@ const CampaignsNew = () => {
       title: "Tomb of Horrors",
       author: "Trap Master",
       dateCreated: "2024-03-01",
+      description:
+        "A deadly dungeon filled with traps and treasures beyond imagination.",
       color: "bg-yellow-600",
       image:
         "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?w=500&h=300&fit=crop",
@@ -59,6 +68,8 @@ const CampaignsNew = () => {
       title: "Hoard of the Dragon Queen",
       author: "Epic DM",
       dateCreated: "2024-02-20",
+      description:
+        "Follow a dragon cult's plans to summon a dragon and save the realm.",
       color: "bg-orange-600",
       image: "",
     },
@@ -67,6 +78,8 @@ const CampaignsNew = () => {
       title: "Princes of the Apocalypse",
       author: "Chaos Master",
       dateCreated: "2023-11-30",
+      description:
+        "Elemental princes threaten the world as ancient temples awaken.",
       color: "bg-green-600",
       image:
         "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?w=500&h=300&fit=crop",
@@ -76,6 +89,8 @@ const CampaignsNew = () => {
       title: "Out of the Abyss",
       author: "Demon Lord DM",
       dateCreated: "2024-01-25",
+      description:
+        "Escape from the Abyss and stop a demon lord's invasion of the material plane.",
       color: "bg-indigo-600",
       image: "",
     },
@@ -216,7 +231,7 @@ const CampaignsNew = () => {
             </div>
 
             {/* Campaign Image/Placeholder */}
-            <div className="relative h-44 rounded-lg overflow-hidden border border-yellow-700/50 group-hover:border-yellow-600 transition duration-300">
+            <div className="relative h-64 rounded-lg overflow-hidden border border-yellow-700/50 group-hover:border-yellow-600 transition duration-300">
               {campaign.image ? (
                 <>
                   <img
@@ -231,42 +246,41 @@ const CampaignsNew = () => {
                   className={`h-full rounded-lg flex items-center justify-center bg-gradient-to-br ${campaign.color} relative overflow-hidden`}
                 >
                   <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition duration-300"></div>
-                  <span className="text-7xl drop-shadow-lg group-hover:scale-120 transition duration-300">
+                  <span className="text-5xl drop-shadow-lg group-hover:scale-110 transition duration-300">
                     📜
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Campaign Info */}
-            <div className="flex flex-col gap-2 flex-1">
+            {/* Campaign Content */}
+            <div className="flex flex-col gap-3 flex-1">
+              {/* Title */}
               <h3 className="text-lg font-bold text-white leading-tight line-clamp-2">
                 {campaign.title}
               </h3>
 
-              <div className="flex flex-col gap-1.5 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-400 text-xs">Dungeon Master</span>
-                  <span className="text-gray-300 font-semibold text-sm truncate">
-                    {campaign.author}
-                  </span>
-                </div>
-                <p className="text-gray-400 text-xs">
-                  {new Date(campaign.dateCreated).toLocaleDateString()}
-                </p>
+              {/* Author */}
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 text-xs">Dungeon Master</span>
+                <span className="text-gray-300 font-semibold text-sm truncate">
+                  {campaign.author}
+                </span>
               </div>
-            </div>
 
-            {/* View Campaign Button */}
-            <button
-              className="w-full rounded-lg bg-gradient-to-r from-orange-800 to-orange-700 hover:from-orange-700 hover:to-orange-600 border border-yellow-700 text-yellow-300 hover:text-yellow-200 text-sm font-semibold py-2.5 cursor-pointer transition duration-300 mt-auto"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate("/preview/campaign");
-              }}
-            >
-              View Campaign
-            </button>
+              {/* Description */}
+              <p className="text-gray-300 text-sm line-clamp-3 flex-1">
+                {campaign.description}
+              </p>
+
+              {/* Separator */}
+              <hr className="border-yellow-600/30" />
+
+              {/* Date Created */}
+              <p className="text-gray-400 text-xs">
+                Created: {new Date(campaign.dateCreated).toLocaleDateString()}
+              </p>
+            </div>
           </div>
         ))}
       </div>
