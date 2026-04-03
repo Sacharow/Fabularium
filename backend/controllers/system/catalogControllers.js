@@ -58,7 +58,7 @@ const updateSpell = async (req, res) => {
 const deleteSpell = async (req, res) => {
     try {
         await systemService.deleteSpell(req.params.id);
-        return res.status(200).json({ message: "Spell deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting spell", error: err });
     }
@@ -114,7 +114,7 @@ const updateItem = async (req, res) => {
 const deleteItem = async (req, res) => {
     try {
         await systemService.deleteItem(req.params.id);
-        return res.status(200).json({ message: "Item deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting item", error: err });
     }
@@ -170,7 +170,7 @@ const updateFeature = async (req, res) => {
 const deleteFeature = async (req, res) => {
     try {
         await systemService.deleteFeature(req.params.id);
-        return res.status(200).json({ message: "Feature deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting feature", error: err });
     }
@@ -226,7 +226,7 @@ const updateFeat = async (req, res) => {
 const deleteFeat = async (req, res) => {
     try {
         await systemService.deleteFeat(req.params.id);
-        return res.status(200).json({ message: "Feat deleted" });
+        return res.status(204).send();
     } catch (err) {
         return res.status(500).json({ message: "Error deleting feat", error: err });
     }

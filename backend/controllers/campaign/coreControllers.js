@@ -150,6 +150,11 @@ const generateJoinCode = async (req, res) => {
 
 const joinCampaignUsingCode = async (req, res) => {
   try {
+    const user = req.user;
+    if (!user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const parsed = joinCampaignSchema.safeParse(req.body);
     if (!parsed.success) {
       return res
@@ -157,7 +162,7 @@ const joinCampaignUsingCode = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
     const result = await campaignService.joinCampaignUsingCode(
-      parsed.data.userId,
+      user.id,
       parsed.data.joinCode,
     );
     if (result.error) {
@@ -177,6 +182,7 @@ const joinCampaignUsingCode = async (req, res) => {
 const addContributor = async (req, res) => {
   try {
     const user = req.user;
+    const campaignId = req.params.id;
     const parsed = contributorSchema.safeParse(req.body);
     if (!parsed.success) {
       return res
@@ -184,7 +190,7 @@ const addContributor = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
     const ownerCheck = await campaignService.getCampaignOwnerById(
-      parsed.data.campaignId,
+      campaignId,
     );
     if (!ownerCheck) {
       return res.status(404).json({ message: "Campaign not found" });
@@ -193,7 +199,7 @@ const addContributor = async (req, res) => {
       return res.status(403).json({ message: "Forbidden" });
     }
     const updated = await campaignService.addContributorToCampaign(
-      parsed.data.campaignId,
+      campaignId,
       parsed.data.userId,
     );
     return res.status(200).json(updated);
@@ -207,6 +213,7 @@ const addContributor = async (req, res) => {
 const removeContributor = async (req, res) => {
   try {
     const user = req.user;
+    const campaignId = req.params.id;
     const parsed = contributorSchema.safeParse(req.body);
 
     if (!parsed.success) {
@@ -215,7 +222,7 @@ const removeContributor = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
     const ownerCheck = await campaignService.getCampaignOwnerById(
-      parsed.data.campaignId,
+      campaignId,
     );
     if (!ownerCheck) {
       return res.status(404).json({ message: "Campaign not found" });
@@ -225,10 +232,14 @@ const removeContributor = async (req, res) => {
     }
 
     const updated = await campaignService.removeContributorFromCampaign(
-      parsed.data.campaignId,
+      campaignId,
       parsed.data.userId,
     );
-    return res.status(200).json(updated);
+    if (!updated) {
+      return res.status(404).json({ message: "Campaign not found" });
+    }
+
+    return res.status(204).send();
   } catch (err) {
     return res
       .status(500)

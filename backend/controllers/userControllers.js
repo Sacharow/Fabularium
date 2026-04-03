@@ -3,8 +3,6 @@ require("dotenv").config();
 const { Role } = require("../generated/prisma/client");
 const z = require("zod");
 const { registerSchema, loginSchema } = require("../schemas/userSchemas");
-const path = require("path");
-const swaggerUi = require("swagger-ui-express");
 const {
   createClassicUser,
   authenticateUser,
@@ -69,7 +67,7 @@ const login = async (req, res) => {
         sameSite: "strict",
         path: "/",
       })
-      .header("Authorization", accessToken)
+      .header("Authorization", `Bearer ${accessToken}`)
       .json({ message: "Logged in" });
 
     return;
@@ -83,16 +81,19 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    res.clearCookie("access_token", {
+    const cookieOptions = {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
+      path: "/",
+    };
+
+    res.clearCookie("access_token", {
+      ...cookieOptions,
     });
 
     res.clearCookie("refresh_token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      ...cookieOptions,
     });
 
     return res.status(200).json({ message: "user logged out" });
@@ -125,9 +126,7 @@ const refresh = (req, res) => {
 
     return res.status(200).json({ message: "Token refreshed" });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Error with refreshing token", err });
+    return res.status(401).json({ message: "Invalid refresh token" });
   }
 };
 
