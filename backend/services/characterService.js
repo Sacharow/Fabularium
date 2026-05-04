@@ -61,6 +61,8 @@ const createCharacterForUser = async (userId, data) => {
             data: {
                 name: data.name,
                 ownerId: userId,
+                image: data.image ?? null,
+                icon: data.icon ?? null,
                 background: data.background ?? null,
                 alignment: data.alignment ?? null,
                 level: data.level ?? 1,
@@ -143,6 +145,8 @@ const updateOwnedCharacter = async (characterId, userId, data) => {
             where: { id: characterId },
             data: {
                 name: data.name,
+                image: data.image ?? undefined,
+                icon: data.icon ?? undefined,
                 background: data.background ?? undefined,
                 alignment: data.alignment ?? undefined,
                 level: data.level,

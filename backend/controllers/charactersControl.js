@@ -8,6 +8,10 @@ const {
     deleteOwnedCharacter
 } = require("../services/characterService");
 const {
+    getCharacterSectionById,
+    listCharacterSections
+} = require("../services/characterViewService");
+const {
     createCharacterSchema,
     updateCharacterSchema
 } = require("../schemas/characterSchemas");
@@ -40,7 +44,7 @@ const getCharacterById = async (req, res) => {
         if (!user?.id) return res.status(401).json({ message: "Unauthorized" });
         const { id } = req.params;
 
-        const { error, character } = await getOwnedCharacterById(id, user.id);
+        const { error, character } = await getCharacterSectionById(id, user.id);
         if (error) return res.status(error.status).json({ message: error.message });
 
         return res.status(200).json(character);
@@ -54,7 +58,7 @@ const listMyCharacters = async (req, res) => {
         const user = req.user;
         if (!user?.id) return res.status(401).json({ message: "Unauthorized" });
 
-        const characters = await listCharactersForUser(user.id);
+        const characters = await listCharacterSections(user.id);
 
         return res.status(200).json(characters);
     } catch (err) {

@@ -62,6 +62,8 @@ model Users {
 model Character {
   id           String    @id @default(uuid())
   name         String
+  image        String?
+  icon         String?
   ownerId      String
   owner        Users      @relation(fields: [ownerId], references: [id])
   campaignId   String?

@@ -13,6 +13,8 @@ const statsSchema = z.object({
 
 const createCharacterSchema = z.object({
     name: z.string().min(1).max(60),
+    image: z.string().url().optional(),
+    icon: z.string().url().optional(),
     background: z.string().optional(),
     alignment: z.string().optional(),
     level: z.number().int().min(1).max(20).optional(),
@@ -29,6 +31,8 @@ const createCharacterSchema = z.object({
 
 const updateCharacterSchema = z.object({
     name: z.string().min(1).max(60).optional(),
+    image: z.string().url().nullable().optional(),
+    icon: z.string().url().nullable().optional(),
     background: z.string().nullable().optional(),
     alignment: z.string().nullable().optional(),
     level: z.number().int().min(1).max(20).optional(),
