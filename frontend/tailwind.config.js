@@ -1,3 +1,5 @@
+import { text } from "node:stream/consumers";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -8,6 +10,9 @@ export default {
       },
       fontFamily: {
         quintessential: ["Quintessential", "serif"],
+        UncialAntiqua: ["Uncial Antiqua", "serif"],
+        Almendra: ["Almendra", "serif"],
+        Fondamento: ["Fondamento", "serif"],
       },
     },
   },

@@ -1,169 +1,220 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, { message: "Name is required" }),
+  email: z.email().trim().min(1, { message: "Email is required" }),
+  subject: z.string().trim().min(1, "Subject is required"),
+  message: z
+    .string()
+    .trim()
+    .min(1, { message: "Message is required" })
+    .max(2000, { message: "Message must be 2000 characters or fewer" }),
+});
+
+type ContactFormData = z.infer<typeof contactSchema>;
 
 function Contact() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     subject: "",
     message: "",
   });
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ContactFormData, string>>
+  >({});
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
+    const field = name as keyof ContactFormData;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+    }));
+
+    if (submitted) {
+      setSubmitted(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate form
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-      alert("Please fill out all fields");
+
+    const parsed = contactSchema.safeParse(formData);
+
+    if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+
+      setErrors({
+        name: fieldErrors.name?.[0],
+        email: fieldErrors.email?.[0],
+        subject: fieldErrors.subject?.[0],
+        message: fieldErrors.message?.[0],
+      });
+
       return;
     }
 
-    // Here you would typically send the form data to your backend
-    console.log("Form submitted:", formData);
-    
+    setErrors({});
+
     // Show success message
     setSubmitted(true);
     setFormData({ name: "", email: "", subject: "", message: "" });
-    
+
     // Reset after 3 seconds
     setTimeout(() => setSubmitted(false), 3000);
   };
 
   return (
-    <div className="flex items-center justify-center py-16 px-4">
-      <div className="w-full max-w-4xl">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="text-yellow-300 hover:text-yellow-200 underline mb-6 text-sm"
-        >
-          ← Back
-        </button>
+    <div className="min-h-screen ml-64 bg-dark text-neutral-text">
+      <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-8 py-10 lg:px-12">
+        <section className="border-2 border-gold-neutral bg-neutral px-8 py-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gold-neutral">Contact</h1>
+              <p className="mt-1 text-sm text-text-neutral">
+                A minimal way to reach the team.
+              </p>
+            </div>
+          </div>
+        </section>
 
-        {/* Header Card */}
-        <div className="bg-orange-950/80 border-2 rounded-xl py-8 px-10 border-orange-900 shadow-lg mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Contact Us</h1>
-          <p className="text-sm text-gray-300">We'd love to hear from you. Get in touch with our team.</p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Contact Information */}
+        <section className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-1 space-y-4">
-            {/* Email */}
-            <div className="bg-orange-950/60 border border-orange-900 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-semibold text-yellow-300 mb-2">Email</h3>
-              <p className="text-gray-300 text-sm break-all">
-                <a href="mailto:info@fabularium.dev" className="hover:text-yellow-200">
+            <div className="border-2 border-gold-neutral bg-neutral p-4">
+              <h3 className="text-sm font-semibold text-gold-neutral">Email</h3>
+              <p className="mt-2 text-sm text-text-neutral">
+                <a
+                  href="mailto:info@fabularium.dev"
+                  className="text-gold-neutral hover:text-gold-light"
+                >
                   info@fabularium.dev
                 </a>
               </p>
             </div>
 
-            {/* Office */}
-            <div className="bg-orange-950/60 border border-orange-900 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-semibold text-yellow-300 mb-2">Location</h3>
-              <p className="text-gray-300 text-sm">
-                Faculty of Mathematics, Physics and Informatics<br />
-                University of Gdansk<br />
-                Poland
+            <div className="border-2 border-gold-neutral bg-neutral p-4">
+              <h3 className="text-sm font-semibold text-gold-neutral">
+                Location
+              </h3>
+              <p className="mt-2 text-sm text-text-neutral">
+                University of Gdansk — Poland
               </p>
             </div>
 
-            {/* Social */}
-            <div className="bg-orange-950/60 border border-orange-900 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-semibold text-yellow-300 mb-2">Follow Us</h3>
-              <div className="space-y-2">
-                <p className="text-gray-300 text-sm">
-                  <a href="#" className="text-yellow-300 hover:text-yellow-200">
-                    Discord Community
-                  </a>
-                </p>
-                <p className="text-gray-300 text-sm">
-                  <a href="#" className="text-yellow-300 hover:text-yellow-200">
-                    GitHub
-                  </a>
-                </p>
-              </div>
+            <div className="border-2 border-gold-neutral bg-neutral p-4">
+              <h3 className="text-sm font-semibold text-gold-neutral">
+                Community
+              </h3>
+              <p className="mt-2 text-sm text-text-neutral">Discord • GitHub</p>
             </div>
           </div>
 
-          {/* Contact Form */}
           <div className="md:col-span-2">
-            <form onSubmit={handleSubmit} className="bg-orange-950/60 border border-orange-900 rounded-lg p-6 shadow-md">
-              <div className="mb-4">
-                <label className="block text-gray-200 font-semibold text-sm mb-2">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full border border-orange-900 rounded py-2 px-3 bg-black/70 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-300"
-                  placeholder="Your name"
-                />
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              className="border-2 border-gold-neutral bg-neutral p-6"
+            >
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Name"
+                    className="w-full bg-dark text-text-neutral border border-gold-neutral px-3 py-2"
+                  />
+                  {errors.name && (
+                    <p className="mt-1 text-xs text-error">{errors.name}</p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Email"
+                    className="w-full bg-dark text-text-neutral border border-gold-neutral px-3 py-2"
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-xs text-error">{errors.email}</p>
+                  )}
+                </div>
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-200 font-semibold text-sm mb-2">Email</label>
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full border border-orange-900 rounded py-2 px-3 bg-black/70 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-300"
-                  placeholder="your.email@example.com"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-200 font-semibold text-sm mb-2">Subject</label>
-                <input
-                  type="text"
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full border border-orange-900 rounded py-2 px-3 bg-black/70 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-300"
-                  placeholder="What is this about?"
+                  placeholder="Subject"
+                  className="w-full bg-dark text-text-neutral border border-gold-neutral px-3 py-2"
                 />
+                {errors.subject && (
+                  <p className="mt-1 text-xs text-error">{errors.subject}</p>
+                )}
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-200 font-semibold text-sm mb-2">Message</label>
                 <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  rows={5}
-                  className="w-full border border-orange-900 rounded py-2 px-3 bg-black/70 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-300"
-                  placeholder="Tell us what's on your mind..."
+                  rows={6}
+                  placeholder="Message"
+                  className="w-full bg-dark text-text-neutral border border-gold-neutral px-3 py-2"
                 />
+                {errors.message && (
+                  <p className="mt-1 text-xs text-error">{errors.message}</p>
+                )}
               </div>
 
-              <button
-                type="submit"
-                className="cursor-pointer w-full bg-yellow-300 text-black font-bold py-2 px-4 rounded hover:scale-105 hover:bg-yellow-400 transition duration-300"
-              >
-                Send Message
-              </button>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  className="px-4 py-2 border border-gold-neutral hover:bg-gold-neutral cursor-pointer"
+                >
+                  Send
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({
+                      name: "",
+                      email: "",
+                      subject: "",
+                      message: "",
+                    });
+                    setErrors({});
+                    setSubmitted(false);
+                  }}
+                  className="px-4 py-2 border border-gold-neutral text-text-neutral hover:bg-gold-neutral cursor-pointer"
+                >
+                  Clear
+                </button>
+              </div>
 
               {submitted && (
-                <div className="mt-4 p-3 bg-orange-900/40 border border-orange-700 rounded text-yellow-200 text-sm">
-                  ✓ Thank you! We'll get back to you soon.
+                <div className="mt-4 text-sm text-success">
+                  Thank you — we'll be in touch shortly.
                 </div>
               )}
             </form>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   );
 }

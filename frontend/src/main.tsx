@@ -71,13 +71,16 @@ import CharacterEdit from "./assets/views/forms/edit/characterEdit";
 // Add Pages
 import CharacterAdd from "./assets/views/forms/add/characterAdd";
 
+import Sidebar from "./assets/components/ui/Sidebar";
+
 function AppRoutes() {
   const location = useLocation();
   const hideHeader = location.pathname === "/";
 
   return (
     <>
-      {!hideHeader && <Header />}
+      {/*!hideHeader && <Header />} */}
+      <Sidebar />
       <Routes>
         <Route path="/hub" element={<Hub />} />
         <Route path="/characters-new" element={<CharactersNew />} />
