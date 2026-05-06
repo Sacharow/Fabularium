@@ -8,13 +8,23 @@ import {
   Star,
   Users as UsersIcon,
   Wand,
+  Scroll,
+  Dumbbell,
+  Wand2,
+  Backpack,
+  Zap,
 } from "lucide-react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 
 function Sidebar() {
   const location = useLocation();
   const onResourcesPage = location.pathname === "/resources-new";
+  const onCharacterPreviewPage = location.pathname === "/preview/character";
+  const showCreateNewButton =
+    location.pathname === "/characters-new" ||
+    location.pathname === "/campaigns-new";
   const activeResourceSection = location.hash.replace("#", "") || "backgrounds";
+  const activeCharacterSection = location.hash.replace("#", "") || "general";
 
   const topNavClass = (isActive: boolean) =>
     `${buttonStyle} ${isActive ? "bg-light border-l-8 border-gold-neutral" : ""}`;
@@ -32,11 +42,13 @@ function Sidebar() {
         >
           <h1>FABULARIUM</h1>
         </NavLink>
-        <div className="flex justify-between items-center">
-          <button className="p-2 my-2 w-full border-2 border-gold-neutral bg-dark hover:bg-gold-neutral cursor-pointer">
-            <p>CREATE NEW</p>
-          </button>
-        </div>
+        {showCreateNewButton && (
+          <div className="flex justify-between items-center">
+            <button className="p-2 my-2 w-full border-2 border-gold-neutral bg-dark hover:bg-gold-neutral cursor-pointer">
+              <p>CREATE NEW</p>
+            </button>
+          </div>
+        )}
         <hr className="text-neutral-text" />
         <div className="flex flex-col gap-2">
           <NavLink
@@ -46,6 +58,62 @@ function Sidebar() {
             <User />
             <p>CHARACTERS</p>
           </NavLink>
+          {onCharacterPreviewPage && (
+            <div className="flex flex-col gap-2 pl-6 border-l-2 border-neutral-text">
+              <Link
+                to="/preview/character#general"
+                className={innerButtonClass(
+                  activeCharacterSection === "general",
+                )}
+              >
+                <Scroll className="w-4 h-4" />
+                <span className="text-sm">GENERAL</span>
+              </Link>
+              <Link
+                to="/preview/character#personal"
+                className={innerButtonClass(
+                  activeCharacterSection === "personal",
+                )}
+              >
+                <User className="w-4 h-4" />
+                <span className="text-sm">PERSONAL</span>
+              </Link>
+              <Link
+                to="/preview/character#stats"
+                className={innerButtonClass(activeCharacterSection === "stats")}
+              >
+                <Dumbbell className="w-4 h-4" />
+                <span className="text-sm">STATS</span>
+              </Link>
+              <Link
+                to="/preview/character#features"
+                className={innerButtonClass(
+                  activeCharacterSection === "features",
+                )}
+              >
+                <Zap className="w-4 h-4" />
+                <span className="text-sm">FEATURES</span>
+              </Link>
+              <Link
+                to="/preview/character#spells"
+                className={innerButtonClass(
+                  activeCharacterSection === "spells",
+                )}
+              >
+                <Wand2 className="w-4 h-4" />
+                <span className="text-sm">SPELLS</span>
+              </Link>
+              <Link
+                to="/preview/character#inventory"
+                className={innerButtonClass(
+                  activeCharacterSection === "inventory",
+                )}
+              >
+                <Backpack className="w-4 h-4" />
+                <span className="text-sm">INVENTORY</span>
+              </Link>
+            </div>
+          )}
           <NavLink
             to="/campaigns-new"
             className={({ isActive }) => topNavClass(isActive)}

@@ -35,7 +35,7 @@ function CharacterCard({
       </div>
       {/* MIDDLE SECTION */}
       <div className="flex flex-col gap-4">
-        <hr />
+        <hr className="text-gold-dark" />
         <p className="text-lg tracking-widest">STATS</p>
         <div className="grid grid-cols-3 gap-4">
           {[

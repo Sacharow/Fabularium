@@ -1,621 +1,406 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Scroll, User, Dumbbell, Wand2, Backpack, Zap } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  GeneralSection,
+  PersonalSection,
+  StatsSection,
+  AccordionSection,
+  type CharacterSectionKey,
+  type StatDetail,
+  type PersonalSectionContent,
+  type PersonalDetail,
+  type PersonalNote,
+  type StatSectionContent,
+  type AccordionItem,
+  type CharacterSection,
+} from "../../components/CharacterPreview";
 
-type Stat = {
-  name: string;
-  skills?: Record<string, number>;
-};
-
-type CharacterSection = {
-  id: number;
-  campaignId?: string | number;
-  name: string;
-  image?: string;
-  icon?: string;
-  level?: number;
-  profBonus?: number;
-  characterClass?: string;
-  characterRace?: string;
-  characterSubrace?: string;
-  characterSubclass?: string;
-  abilityScores?: Record<string, number>;
-  abilityProf?: string[];
-  stats?: Stat[];
-  skillProf?: string[];
-  skillExpertise?: string[];
-  equipment?: string[];
-  features?: string[];
-  money?: Record<string, number>;
-  background?: string;
-  personalityTraits?: string;
-  ideals?: string;
-  bonds?: string;
-  flaws?: string;
-  initiativeBonus?: number;
-  speed?: number;
-  hitDice?: number;
-  hitPointsMax?: number;
-  hitPointsCurrent?: number;
-  armorClass?: number;
-  passivePerception?: number;
-};
-
-const MOCK_CHARACTER: CharacterSection = {
-  id: 1,
-  campaignId: 1,
-  name: "Aragorn Stormborne",
-  image: "/temp/rgb (1).png",
-  icon: "⚔️",
-  level: 5,
-  profBonus: 3,
-  characterClass: "Fighter",
-  characterRace: "Human",
-  characterSubrace: "Standard Human",
-  characterSubclass: "Champion",
-  abilityScores: {
-    STRENGTH: 18,
-    DEXTERITY: 14,
-    CONSTITUTION: 16,
-    INTELLIGENCE: 10,
-    WISDOM: 13,
-    CHARISMA: 12,
-  },
-  abilityProf: ["STRENGTH", "CONSTITUTION"],
-  stats: [
-    { name: "STRENGTH", skills: { Athletics: 6 } },
-    {
-      name: "DEXTERITY",
-      skills: { Acrobatics: 4, "Sleight of Hand": 0, Stealth: 0 },
-    },
-    { name: "CONSTITUTION", skills: {} },
-    {
-      name: "INTELLIGENCE",
-      skills: {
-        Arcana: 0,
-        History: 0,
-        Investigation: 0,
-        Nature: 0,
-        Religion: 0,
+// Mock character data
+const mockCharacter = {
+  general: [
+    { name: "Name", value: "Aragorn" },
+    { name: "Last Name", value: "Strider" },
+    { name: "Nickname", value: "The Ranger" },
+    { name: "Level", value: 12 },
+    { name: "Experience", value: "45,000 XP" },
+    { name: "Class", value: "Fighter" },
+    { name: "Subclass", value: "Champion" },
+    { name: "Race", value: "Human" },
+    { name: "Subrace", value: "Standard" },
+    { name: "Hit Points", value: 98 },
+    { name: "Armor Class", value: 16 },
+    { name: "Speed", value: "30 ft." },
+    { name: "Inspiration", value: 1 },
+    { name: "Proficiency Bonus", value: "+3" },
+  ] as StatDetail[],
+  personal: {
+    details: [
+      {
+        label: "Personality",
+        value: "Stoic and determined with a dry sense of humor.",
       },
-    },
-    {
-      name: "WISDOM",
-      skills: {
-        "Animal Handling": 0,
-        Insight: 0,
-        Medicine: 0,
-        Perception: 2,
-        Survival: 0,
+      { label: "Ideals", value: "Freedom and protection of the innocent." },
+      {
+        label: "Bonds",
+        value: "Sworn to protect those who cannot protect themselves.",
       },
+      { label: "Flaws", value: "Pushes himself beyond reasonable limits." },
+      { label: "Alignment", value: "Lawful Good" },
+      { label: "Languages", value: "Common, Elvish, Draconic" },
+      { label: "Height", value: "6'4\"" },
+      { label: "Weight", value: "215 lbs" },
+      { label: "Eye Color", value: "Gray" },
+      { label: "Hair Color", value: "Dark Brown" },
+      { label: "Skin Color", value: "Fair" },
+      { label: "Age", value: 35 },
+    ] as PersonalDetail[],
+    backstory:
+      "Once a ranger of the wild lands, raised among the rangers and trained in the old ways. Now seeks redemption for past failures.",
+    notes: [
+      {
+        title: "Family Heirloom Sword",
+        content:
+          "Carries a family heirloom sword passed down through generations.",
+      },
+      {
+        title: "Fire Fear",
+        content:
+          "Becomes visibly tense around open flame and burning buildings.",
+      },
+    ] as PersonalNote[],
+  },
+  stats: {
+    abilities: [
+      {
+        ability: "Strength",
+        score: 16,
+        savingThrow: "+6",
+        savingThrowDistinction: "Proficiency",
+        skills: [
+          {
+            name: "Athletics",
+            modifier: "+9",
+            distinction: "Expertise",
+          },
+        ],
+      },
+      {
+        ability: "Dexterity",
+        score: 14,
+        savingThrow: "+2",
+        savingThrowDistinction: "Nothing",
+        skills: [
+          { name: "Acrobatics", modifier: "+2", distinction: "Nothing" },
+          { name: "Sleight of Hand", modifier: "+2", distinction: "Nothing" },
+          { name: "Stealth", modifier: "+2", distinction: "Nothing" },
+        ],
+      },
+      {
+        ability: "Constitution",
+        score: 15,
+        savingThrow: "+5",
+        savingThrowDistinction: "Proficiency",
+        skills: [],
+      },
+      {
+        ability: "Intelligence",
+        score: 13,
+        savingThrow: "+1",
+        savingThrowDistinction: "Nothing",
+        skills: [
+          { name: "Arcana", modifier: "+4", distinction: "Proficiency" },
+          { name: "History", modifier: "+4", distinction: "Proficiency" },
+          { name: "Investigation", modifier: "+1", distinction: "Nothing" },
+          { name: "Nature", modifier: "+1", distinction: "Nothing" },
+          { name: "Religion", modifier: "+1", distinction: "Nothing" },
+        ],
+      },
+      {
+        ability: "Wisdom",
+        score: 14,
+        savingThrow: "+2",
+        savingThrowDistinction: "Nothing",
+        skills: [
+          { name: "Animal Handling", modifier: "+2", distinction: "Nothing" },
+          { name: "Insight", modifier: "+2", distinction: "Nothing" },
+          { name: "Medicine", modifier: "+2", distinction: "Nothing" },
+          { name: "Perception", modifier: "+5", distinction: "Proficiency" },
+          { name: "Survival", modifier: "+5", distinction: "Proficiency" },
+        ],
+      },
+      {
+        ability: "Charisma",
+        score: 12,
+        savingThrow: "+1",
+        savingThrowDistinction: "Nothing",
+        skills: [
+          { name: "Deception", modifier: "+1", distinction: "Nothing" },
+          { name: "Intimidation", modifier: "+4", distinction: "Proficiency" },
+          { name: "Performance", modifier: "+1", distinction: "Nothing" },
+          { name: "Persuasion", modifier: "+1", distinction: "Nothing" },
+        ],
+      },
+    ],
+    proficiencyBonus: "+3",
+  } satisfies StatSectionContent,
+  features: [
+    {
+      title: "Class Features",
+      content: "Fighter abilities and class-specific features",
+      subitems: [
+        { title: "Fighting Style", content: "Great Weapon Fighting" },
+        { title: "Second Wind", content: "1d10 + 12 HP" },
+        { title: "Action Surge", content: "Recharge on short rest" },
+        { title: "Champion Archetype", content: "Improved Critical" },
+      ],
     },
     {
-      name: "CHARISMA",
-      skills: { Deception: 0, Intimidation: 0, Performance: 0, Persuasion: 0 },
+      title: "Race Features",
+      content: "Human racial abilities",
+      subitems: [
+        { title: "Ability Score Increase", content: "+1 to all attributes" },
+        { title: "Extra Feat", content: "Great Weapon Master" },
+      ],
     },
-  ],
-  skillProf: ["Athletics", "Perception", "Survival", "Intimidation"],
-  skillExpertise: ["Athletics"],
-  equipment: [
-    "Longsword +1",
-    "Plate Armor",
-    "Shield",
-    "Backpack",
-    "Bedroll",
-    "Rope (50ft)",
-    "Waterskin",
-  ],
-  money: {
-    Gold: 250,
-    Silver: 45,
-    Copper: 12,
+    {
+      title: "Feats",
+      content: "Character feats and special abilities",
+      subitems: [
+        { title: "Great Weapon Master", content: "-5 to hit, +10 damage" },
+        { title: "Resilient", content: "Constitution saving throws +1" },
+      ],
+    },
+    {
+      title: "Other",
+      content: "Additional features and abilities",
+      subitems: [{ title: "Expertise", content: "Athletics, Intimidation" }],
+    },
+  ] as AccordionItem[],
+  spells: [
+    {
+      title: "Cantrips (At Will)",
+      content: "2 spells, at will",
+      subitems: [
+        { title: "Spell 1", content: "Description" },
+        { title: "Spell 2", content: "Description" },
+      ],
+    },
+    {
+      title: "1st Level Spells",
+      content: "2 spells, 4 total slots",
+      subitems: [
+        { title: "Spell Name 1", content: "Description" },
+        { title: "Spell Name 2", content: "Description" },
+      ],
+    },
+    {
+      title: "2nd Level Spells",
+      content: "1 spell, 3 total slots",
+      subitems: [{ title: "Spell Name", content: "Description" }],
+    },
+    {
+      title: "3rd Level Spells",
+      content: "1 spell, 3 total slots",
+      subitems: [{ title: "Spell Name", content: "Description" }],
+    },
+    {
+      title: "4th Level Spells",
+      content: "1 spell, 2 total slots",
+      subitems: [{ title: "Spell Name", content: "Description" }],
+    },
+    {
+      title: "5th Level Spells",
+      content: "1 spell, 1 total slot",
+      subitems: [{ title: "Spell Name", content: "Description" }],
+    },
+    {
+      title: "6th Level Spells",
+      content: "0 spells, 0 total slots",
+      subitems: [],
+    },
+    {
+      title: "7th Level Spells",
+      content: "0 spells, 0 total slots",
+      subitems: [],
+    },
+    {
+      title: "8th Level Spells",
+      content: "0 spells, 0 total slots",
+      subitems: [],
+    },
+    {
+      title: "9th Level Spells",
+      content: "0 spells, 0 total slots",
+      subitems: [],
+    },
+  ] as AccordionItem[],
+  inventory: [
+    {
+      title: "Weapons",
+      content: "Combat equipment",
+      subitems: [
+        { title: "Greatsword +1", content: "2d6 + 3, family heirloom" },
+        { title: "Dagger", content: "1d4 + 3" },
+      ],
+    },
+    {
+      title: "Armor & Shields",
+      content: "Protective equipment",
+      subitems: [
+        { title: "Plate Armor", content: "AC 18" },
+        { title: "Shield", content: "+2 AC" },
+      ],
+    },
+    {
+      title: "Equipment",
+      content: "Adventuring gear",
+      subitems: [
+        { title: "Backpack", content: "Standard adventurer's pack" },
+        { title: "Rope (50ft)", content: "x2" },
+        { title: "Torches", content: "x10" },
+      ],
+    },
+    {
+      title: "Magical Items",
+      content: "Enchanted items and artifacts",
+      subitems: [
+        { title: "Ring of Protection", content: "+1 AC and saves" },
+        { title: "Potion of Healing", content: "x3" },
+      ],
+    },
+  ] as AccordionItem[],
+};
+
+const sections: CharacterSection[] = [
+  {
+    key: "general",
+    label: "General",
+    icon: Scroll,
+    intro: "Core information and vital statistics.",
+    content: mockCharacter.general,
   },
-  background:
-    "Once a humble farm hand, Aragorn discovered his destiny when ancient powers awakened within him.",
-  personalityTraits:
-    "Honor and courage are my greatest virtues. I speak truthfully and act with integrity in all matters.",
-  ideals: "Help those in need and protect the innocent from evil.",
-  bonds:
-    "I owe my life to the mentor who trained me. I seek to prove myself worthy of their faith.",
-  flaws:
-    "I can be overly confident in my abilities and sometimes rush into danger without thinking.",
-  initiativeBonus: 2,
-  speed: 30,
-  hitDice: 10,
-  hitPointsMax: 52,
-  hitPointsCurrent: 48,
-  armorClass: 18,
-  passivePerception: 12,
-};
+  {
+    key: "personal",
+    label: "Personal",
+    icon: User,
+    intro: "Personality, background, and distinguishing features.",
+    content: mockCharacter.personal,
+  },
+  {
+    key: "stats",
+    label: "Stats",
+    icon: Dumbbell,
+    intro: "Ability scores, skills, and saving throws.",
+    content: mockCharacter.stats,
+  },
+  {
+    key: "features",
+    label: "Features",
+    icon: Zap,
+    intro: "Class features, racial abilities, feats, and special traits.",
+    content: mockCharacter.features,
+  },
+  {
+    key: "spells",
+    label: "Spells",
+    icon: Wand2,
+    intro: "Prepared spells and spell slots.",
+    content: mockCharacter.spells,
+  },
+  {
+    key: "inventory",
+    label: "Inventory",
+    icon: Backpack,
+    intro: "Equipment, items, and magical treasures.",
+    content: mockCharacter.inventory,
+  },
+];
 
-// D&D 5e Skills organized by ability
-const D_AND_D_SKILLS = {
-  STRENGTH: ["Athletics"],
-  DEXTERITY: ["Acrobatics", "Sleight of Hand", "Stealth"],
-  INTELLIGENCE: ["Arcana", "History", "Investigation", "Nature", "Religion"],
-  WISDOM: ["Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
-  CHARISMA: ["Deception", "Intimidation", "Performance", "Persuasion"],
-};
+const sectionKeys = sections.map((section) => section.key);
 
-export default function CharacterPreviewNew() {
-  const { characterId, campaignId } = useParams<{
-    characterId?: string;
-    campaignId?: string;
-  }>();
+function CharacterPreview() {
+  const location = useLocation();
   const navigate = useNavigate();
-  const [char, setChar] = useState<CharacterSection | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
-    STRENGTH: false,
-    DEXTERITY: false,
-    INTELLIGENCE: false,
-    WISDOM: false,
-    CHARISMA: false,
-  });
-  const [equipmentSearch, setEquipmentSearch] = useState("");
-  const [featuresSearch, setFeaturesSearch] = useState("");
+  const [activeSection, setActiveSection] =
+    useState<CharacterSectionKey>("general");
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
-  const toggleDropdown = (ability: string) => {
-    setOpenDropdowns((prev) => ({
-      ...prev,
-      [ability]: !prev[ability],
-    }));
-  };
+  const sectionFromHash = location.hash.replace("#", "") as CharacterSectionKey;
 
   useEffect(() => {
-    if (!characterId) {
-      setChar(MOCK_CHARACTER);
-      setLoading(false);
+    if (!sectionKeys.includes(sectionFromHash)) {
+      if (location.pathname === "/preview/character") {
+        navigate("/preview/character#general", { replace: true });
+      }
       return;
     }
 
-    fetch(`http://localhost:3000/api/characters/${characterId}`, {
-      credentials: "include",
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to fetch character");
-        return res.json();
-      })
-      .then((data) => {
-        setChar(data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.error("Failed to load character", e);
-        setChar(MOCK_CHARACTER);
-        setLoading(false);
-      });
-  }, [campaignId, characterId, navigate]);
+    setActiveSection(sectionFromHash);
+  }, [location.pathname, location.hash, navigate, sectionFromHash]);
 
-  if (loading) return <div className="pt-6 text-center">Loading...</div>;
+  const currentSection =
+    sections.find((section) => section.key === activeSection) ?? sections[0];
 
-  if (!char) {
-    return (
-      <div className="p-6">
-        <p>Character not found.</p>
-        <button onClick={() => navigate(-1)} className="mt-4 underline">
-          Go back
-        </button>
-      </div>
-    );
-  }
+  const toggleItem = (itemId: string) => {
+    setExpandedItems((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemId)) {
+        newSet.delete(itemId);
+      } else {
+        newSet.add(itemId);
+      }
+      return newSet;
+    });
+  };
 
-  const introData = {
-    currentSection: "Character Section",
-    urlName: "character-view",
+  const renderSection = () => {
+    const baseProps = {
+      expandedItems,
+      toggleItem,
+    };
+
+    switch (activeSection) {
+      case "general":
+        return (
+          <GeneralSection {...baseProps} content={currentSection.content as StatDetail[]} />
+        );
+      case "personal":
+        return (
+          <PersonalSection
+            {...baseProps}
+            content={currentSection.content as PersonalSectionContent}
+          />
+        );
+      case "stats":
+        return (
+          <StatsSection {...baseProps} content={currentSection.content as StatSectionContent} />
+        );
+      case "features":
+      case "spells":
+      case "inventory":
+        return (
+          <AccordionSection {...baseProps} content={currentSection.content as AccordionItem[]} />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
-    <div className="p-6">
-      <div className="pb-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <p className="text-orange-200 text-sm font-medium">
-            <NavLink
-              to="/campaigns"
-              className="cursor-pointer hover:text-orange-400 transition"
-            >
-              Campaigns
-            </NavLink>
-            <span className="mx-2">→</span>
-            <NavLink
-              to={`/in-campaign/${char.campaignId}/${introData.urlName}`}
-              className="cursor-pointer hover:text-orange-400 transition"
-            >
-              {introData.currentSection}
-            </NavLink>
-            <span className="mx-2">→</span>
-            <span className="text-orange-400 font-semibold">{char.name}</span>
-          </p>
-          <button className="bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-600 text-white text-sm py-2 px-4 rounded-lg cursor-pointer transition font-semibold">
-            ✏️ Edit
-          </button>
-        </div>
+    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex flex-col gap-12">
+      {/* Header */}
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold tracking-widest">CHARACTER SHEET</h1>
+        <p className="text-sm text-gray-light max-w-2xl">
+          {currentSection.intro}
+        </p>
       </div>
 
-      <div className="max-w-7xl mx-auto grid gap-6 md:grid-cols-[300px_1fr]">
-        {/* Sidebar */}
-        <aside className="space-y-4">
-          {/* Character Intro Section */}
-          <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-yellow-700 shadow-xl">
-            <div className="relative">
-              {char.image ? (
-                <div
-                  className="w-full rounded-lg mb-4 relative overflow-hidden bg-gray-900 flex items-center justify-center"
-                  style={{ aspectRatio: "1 / 1" }}
-                >
-                  <img
-                    src={char.image}
-                    alt={char.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div
-                  className="w-full bg-gradient-to-br from-purple-600 to-purple-950 shadow-lg rounded-lg mb-4 flex items-center justify-center text-8xl"
-                  style={{ aspectRatio: "1 / 1" }}
-                >
-                  {char.icon || "🎲"}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <h2 className="text-xl font-bold text-white">{char.name}</h2>
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600">
-                  <div className="text-xs text-orange-300 mb-1 font-semibold">
-                    Class
-                  </div>
-                  <div className="text-orange-200">
-                    {char.characterClass ?? "—"}
-                  </div>
-                </div>
-                <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600">
-                  <div className="text-xs text-orange-300 mb-1 font-semibold">
-                    Subclass
-                  </div>
-                  <div className="text-orange-200">
-                    {char.characterSubclass ?? "—"}
-                  </div>
-                </div>
-                <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600">
-                  <div className="text-xs text-orange-300 mb-1 font-semibold">
-                    Race
-                  </div>
-                  <div className="text-orange-200">
-                    {char.characterRace ?? "—"}
-                  </div>
-                </div>
-                <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600">
-                  <div className="text-xs text-orange-300 mb-1 font-semibold">
-                    Subrace
-                  </div>
-                  <div className="text-orange-200">
-                    {char.characterSubrace ?? "—"}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Core Stats Section */}
-          <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-4 rounded-xl border border-yellow-700 shadow-xl">
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                <div className="text-xs text-orange-300 mb-1">Level</div>
-                <div className="font-bold text-lg text-orange-200">
-                  {char.level ?? "—"}
-                </div>
-              </div>
-              <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                <div className="text-xs text-orange-300 mb-1">Prof. Bonus</div>
-                <div className="font-bold text-lg text-orange-200">
-                  {(char.profBonus ?? "-") === "-"
-                    ? "-"
-                    : char.profBonus! >= 0
-                      ? `+${char.profBonus}`
-                      : `${char.profBonus}`}
-                </div>
-              </div>
-              <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                <div className="text-xs text-orange-300 mb-1">AC</div>
-                <div className="font-bold text-lg text-orange-200">
-                  {char.armorClass ?? "—"}
-                </div>
-              </div>
-              <div className="bg-orange-800 p-3 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                <div className="text-xs text-orange-300 mb-1">Initiative</div>
-                <div className="font-bold text-lg text-orange-200">
-                  {(char.initiativeBonus ?? "-") === "-"
-                    ? "-"
-                    : char.initiativeBonus! >= 0
-                      ? `+${char.initiativeBonus}`
-                      : `${char.initiativeBonus}`}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* HP & Movement Section */}
-          <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-4 rounded-xl border border-yellow-700 shadow-xl text-sm">
-            <div className="flex justify-between mb-2">
-              <span className="text-orange-300">❤️ HP</span>
-              <span className="font-bold text-red-400">
-                {char.hitPointsCurrent ?? "—"}
-                {char.hitPointsMax ? ` / ${char.hitPointsMax}` : ""}
-              </span>
-            </div>
-            <div className="flex justify-between mb-2">
-              <span className="text-orange-300">🚀 Speed</span>
-              <span className="font-bold text-orange-200">
-                {char.speed ?? "—"} ft
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-orange-300">👁️ Perception</span>
-              <span className="font-bold text-orange-200">
-                {char.passivePerception ?? "—"}
-              </span>
-            </div>
-          </div>
-
-          {/* Wealth Section */}
-          {char.money && Object.keys(char.money).length > 0 && (
-            <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-4 rounded-xl border border-yellow-700 shadow-xl text-sm">
-              <div className="text-sm text-orange-400 font-semibold mb-2">
-                💰 Wealth
-              </div>
-              <div className="space-y-1">
-                {Object.entries(char.money).map(([k, v]) => (
-                  <div key={k} className="flex justify-between">
-                    <span className="text-orange-300 capitalize">{k}</span>
-                    <span className="font-bold text-yellow-400">{v}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </aside>
-
-        {/* Main Content */}
-        <main className="space-y-6">
-          {/* Stats Section */}
-          <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-yellow-700 shadow-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-orange-400 flex items-center gap-2">
-                <span className="text-xl">🎲</span> Ability Scores
-              </h3>
-            </div>
-
-            {char.stats && char.stats.length > 0 ? (
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-                {char.stats.map((s) => {
-                  const abilityValue = char.abilityScores?.[s.name] ?? 10;
-                  const modifier = Math.floor((abilityValue - 10) / 2);
-                  const hasProf = char.abilityProf?.includes(s.name);
-                  return (
-                    <div
-                      key={s.name}
-                      className="bg-orange-800 p-4 rounded-lg border border-yellow-600 text-center hover:bg-orange-600 transition"
-                    >
-                      <div className="text-xs text-orange-300 mb-2 font-semibold">
-                        {s.name}
-                      </div>
-                      <div className="text-2xl font-bold text-orange-300 mb-1">
-                        {abilityValue}
-                      </div>
-                      <div className="text-sm text-orange-200 mb-2">
-                        {modifier >= 0 ? `+${modifier}` : `${modifier}`}
-                      </div>
-                      {hasProf && (
-                        <div className="text-xs text-yellow-200 font-semibold">
-                          Proficiency
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-sm text-orange-200">No stats available.</div>
-            )}
-          </div>
-
-          {/* Skills & Equipment Grid */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Skills with Dropdowns */}
-            <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-yellow-700 shadow-xl">
-              <h4 className="text-lg font-semibold text-orange-400 mb-4 flex items-center gap-2">
-                <span className="text-xl">🎯</span> Skills
-              </h4>
-              <div className="space-y-2">
-                {(
-                  Object.keys(D_AND_D_SKILLS) as Array<
-                    keyof typeof D_AND_D_SKILLS
-                  >
-                ).map((ability) => (
-                  <div key={ability}>
-                    <button
-                      onClick={() => toggleDropdown(ability)}
-                      className="w-full bg-orange-800 px-4 py-2 rounded-lg border border-yellow-600 flex justify-between items-center hover:bg-orange-600 transition text-orange-200 font-semibold cursor-pointer"
-                    >
-                      <span>{ability}</span>
-                      <span className="text-sm">
-                        {openDropdowns[ability] ? "▼" : "▶"}
-                      </span>
-                    </button>
-                    {openDropdowns[ability] && (
-                      <div className="mt-1 space-y-1 pl-2 border-l-2 border-yellow-600">
-                        {D_AND_D_SKILLS[ability].map((skill) => {
-                          const hasProf = char.skillProf?.includes(skill);
-                          const hasExpertise =
-                            char.skillExpertise?.includes(skill);
-                          const skillBonus =
-                            char.stats?.find((s) => s.name === ability)
-                              ?.skills?.[skill] ?? 0;
-                          return (
-                            <div
-                              key={skill}
-                              className={`px-3 py-1 rounded border text-sm flex justify-between items-center ${
-                                hasExpertise
-                                  ? "bg-amber-700/60 border-amber-500 text-amber-200"
-                                  : hasProf
-                                    ? "bg-orange-700/40 border-yellow-500 text-orange-200"
-                                    : "bg-orange-800 border-yellow-600 text-orange-300"
-                              }`}
-                            >
-                              <span className="flex items-center gap-2">
-                                {hasExpertise && (
-                                  <span className="text-xs font-bold">◆◆</span>
-                                )}
-                                {hasProf && !hasExpertise && (
-                                  <span className="text-xs font-bold">◆</span>
-                                )}
-                                {skill}
-                              </span>
-                              <span className="font-bold">{skillBonus}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Equipment with Scroll */}
-            <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-yellow-700 shadow-xl">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-lg font-semibold text-orange-400 flex items-center gap-2">
-                  <span className="text-xl">⚔️</span> Equipment
-                </h4>
-                <input
-                  type="text"
-                  placeholder="Search items..."
-                  value={equipmentSearch}
-                  onChange={(e) => setEquipmentSearch(e.target.value)}
-                  className="bg-orange-800 border border-yellow-600 text-orange-200 px-3 py-1 rounded text-sm focus:outline-none focus:border-yellow-400 placeholder-orange-400 w-40"
-                />
-              </div>
-              {char.equipment && char.equipment.length > 0 ? (
-                <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
-                  {char.equipment
-                    .filter((it) =>
-                      it.toLowerCase().includes(equipmentSearch.toLowerCase()),
-                    )
-                    .map((it, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-orange-800 px-4 py-2 rounded-lg border border-yellow-600 text-orange-300 hover:bg-orange-600 transition"
-                      >
-                        • {it}
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className="text-sm text-orange-400">
-                  No equipment listed.
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Features Section */}
-          <div>
-            <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-yellow-700 shadow-xl">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-lg font-semibold text-orange-400 flex items-center gap-2">
-                  <span className="text-xl">🛠️</span> Features
-                </h4>
-                <input
-                  type="text"
-                  placeholder="Search features..."
-                  value={featuresSearch}
-                  onChange={(e) => setFeaturesSearch(e.target.value)}
-                  className="bg-orange-800 border border-yellow-600 text-orange-200 px-3 py-1 rounded text-sm focus:outline-none focus:border-yellow-400 placeholder-orange-400 w-120"
-                />
-              </div>
-              {char.features && char.features.length > 0 ? (
-                <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
-                  {char.features
-                    .filter((it) =>
-                      it.toLowerCase().includes(featuresSearch.toLowerCase()),
-                    )
-                    .map((it, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-orange-800 px-4 py-2 rounded-lg border border-yellow-600 text-orange-300 hover:bg-orange-600 transition"
-                      >
-                        • {it}
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className="text-sm text-orange-400">
-                  No features listed.
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Background Section */}
-          {(char.background ||
-            char.personalityTraits ||
-            char.ideals ||
-            char.bonds ||
-            char.flaws) && (
-            <div className="bg-gradient-to-br from-orange-800 to-orange-700 p-6 rounded-xl border border-yellow-700 shadow-xl">
-              <h4 className="text-lg font-semibold text-orange-400 mb-4 flex items-center gap-2">
-                <span className="text-xl">📖</span> Background & Personality
-              </h4>
-              <div className="space-y-4">
-                {char.background && (
-                  <div className="bg-orange-800 p-4 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                    <div className="text-sm text-orange-300 font-semibold mb-1">
-                      📚 Background
-                    </div>
-                    <p className="text-orange-200">{char.background}</p>
-                  </div>
-                )}
-                {char.personalityTraits && (
-                  <div className="bg-orange-800 p-4 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                    <div className="text-sm text-orange-300 font-semibold mb-1">
-                      ✨ Traits
-                    </div>
-                    <p className="text-orange-200">{char.personalityTraits}</p>
-                  </div>
-                )}
-                {char.ideals && (
-                  <div className="bg-orange-800 p-4 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                    <div className="text-sm text-orange-300 font-semibold mb-1">
-                      💡 Ideals
-                    </div>
-                    <p className="text-orange-200">{char.ideals}</p>
-                  </div>
-                )}
-                {char.bonds && (
-                  <div className="bg-orange-800 p-4 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                    <div className="text-sm text-orange-300 font-semibold mb-1">
-                      🔗 Bonds
-                    </div>
-                    <p className="text-orange-200">{char.bonds}</p>
-                  </div>
-                )}
-                {char.flaws && (
-                  <div className="bg-orange-800 p-4 rounded-lg border border-yellow-600 hover:bg-orange-600 transition duration-200">
-                    <div className="text-sm text-orange-300 font-semibold mb-1">
-                      ⚠️ Flaws
-                    </div>
-                    <p className="text-orange-200">{char.flaws}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </main>
-      </div>
+      {/* Content Area */}
+      <main className="flex flex-col gap-4">{renderSection()}</main>
     </div>
   );
 }
+
+export default CharacterPreview;

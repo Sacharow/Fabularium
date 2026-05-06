@@ -30,13 +30,13 @@ function CampaignCard({
 
       <div className="flex flex-1 flex-col gap-6 p-6">
         <div className="min-h-16">
-          <p className="text-sm leading-relaxed text-neutral-text/80">
+          <p className="text-sm leading-relaxed text-neutral-text">
             {description}
           </p>
         </div>
 
         <div className="flex flex-col gap-4 mt-auto">
-          <hr className="border-gold-neutral/30" />
+          <hr className="border-gold-dark" />
           <div className="grid grid-cols-2 gap-4">
             {[
               {

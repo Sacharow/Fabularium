@@ -38,8 +38,8 @@ function CampaignsNew() {
           <p className="text-lg tracking-widest font-bold whitespace-nowrap">
             RUNNING AS A DM
           </p>
-          <hr className="flex-grow border-gold-neutral/30" />
-          <p className="text-sm text-neutral-text/70 whitespace-nowrap">
+          <hr className="flex-grow border-gold-dark" />
+          <p className="text-sm text-gray-light whitespace-nowrap">
             {numberOfDmCampaigns} Active Campaign
             {numberOfDmCampaigns !== 1 ? "s" : ""}
           </p>
@@ -64,8 +64,8 @@ function CampaignsNew() {
           <p className="text-lg tracking-widest font-bold whitespace-nowrap">
             PLAYING AS A PLAYER
           </p>
-          <hr className="flex-grow border-gold-neutral/30" />
-          <p className="text-sm text-neutral-text/70 whitespace-nowrap">
+          <hr className="flex-grow border-gold-dark" />
+          <p className="text-sm text-gray-light whitespace-nowrap">
             {numberOfPlayerCampaigns} Active Game
             {numberOfPlayerCampaigns !== 1 ? "s" : ""}
           </p>
