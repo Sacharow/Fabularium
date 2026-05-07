@@ -47,6 +47,7 @@ export function PlayersSection({ content }: Props) {
             <PreviewActionButton
               onClick={handleCopyCampaignKey}
               variant="ghost"
+              className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
               icon={<Copy className="h-4 w-4" />}
               title={copied ? "Copied!" : "Copy campaign key"}
             >
@@ -55,6 +56,7 @@ export function PlayersSection({ content }: Props) {
             <PreviewActionButton
               onClick={handleGenerateNew}
               variant="ghost"
+              className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
               icon={<RefreshCw className="h-4 w-4" />}
               title="Generate new campaign key"
             >

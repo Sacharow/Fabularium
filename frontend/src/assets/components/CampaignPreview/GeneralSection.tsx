@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { z } from "zod";
-import { Check, X, Copy, Trash } from "lucide-react";
+import { Check, X, Copy, Trash, Upload, X as XIcon } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 import type { CampaignSectionInteractiveProps } from "./types";
 
@@ -86,6 +86,22 @@ export function GeneralSection({
       const next = { ...prev, [field]: value };
       return next;
     });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        handleFieldChange("image", result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    handleFieldChange("image", undefined);
   };
 
   const currentInfo = isEditing ? editedInfo : info;
@@ -215,6 +231,43 @@ export function GeneralSection({
                       className="text-lg font-semibold text-neutral-text bg-dark border border-gold-dark p-2 "
                     />
                   </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs uppercase tracking-widest text-gray-light">
+                    Campaign Image
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gold-dark bg-dark hover:bg-light cursor-pointer">
+                      <Upload className="h-4 w-4 text-gray-light" />
+                      <span className="text-sm text-gray-light">
+                        {currentInfo.image ? "Change Image" : "Upload Image"}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    {currentInfo.image && (
+                      <PreviewActionButton
+                        onClick={handleRemoveImage}
+                        variant="danger"
+                        icon={<XIcon className="h-4 w-4" />}
+                        title="Remove image"
+                      />
+                    )}
+                  </div>
+                  {currentInfo.image && (
+                    <div className="w-full h-144 overflow-hidden border border-gold-dark">
+                      <img
+                        src={currentInfo.image}
+                        alt="Campaign preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </>
