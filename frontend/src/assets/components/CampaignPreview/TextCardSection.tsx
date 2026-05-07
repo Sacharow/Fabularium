@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Check, X, Plus, Trash2 } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 import type { TextCard } from "./types";
@@ -6,11 +6,20 @@ import type { TextCard } from "./types";
 interface Props {
   title?: string;
   items?: TextCard[];
+  isEditMode?: boolean;
+  onEditModeChange?: (isEditing: boolean) => void;
+  onContentChange?: (newItems: TextCard[]) => void;
 }
 
-export function TextCardSection({ title, items = [] }: Props) {
+export function TextCardSection({
+  title,
+  items = [],
+  isEditMode = false,
+  onEditModeChange,
+  onContentChange,
+}: Props) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isEditMode);
   const [editedItems, setEditedItems] = useState<TextCard[]>(items);
 
   const toggleItem = (itemId: string) => {
@@ -27,16 +36,28 @@ export function TextCardSection({ title, items = [] }: Props) {
 
   const handleEdit = () => {
     setIsEditing(true);
+    onEditModeChange?.(true);
   };
 
   const handleSave = () => {
     setIsEditing(false);
+    onEditModeChange?.(false);
+    onContentChange?.(editedItems);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
     setEditedItems(items);
+    onEditModeChange?.(false);
   };
+
+  useEffect(() => {
+    setEditedItems(items);
+  }, [items]);
+
+  useEffect(() => {
+    setIsEditing(isEditMode);
+  }, [isEditMode]);
 
   const handleItemChange = (
     index: number,
@@ -108,9 +129,16 @@ export function TextCardSection({ title, items = [] }: Props) {
 
           return (
             <div key={itemId} className="flex flex-col">
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => toggleItem(itemId)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggleItem(itemId);
+                  }
+                }}
                 className={`w-full p-4 text-left cursor-pointer border-2 border-gold-neutral  ${
                   isOpen
                     ? "bg-light hover:bg-gray-light"
@@ -159,7 +187,7 @@ export function TextCardSection({ title, items = [] }: Props) {
                     />
                   </div>
                 </div>
-              </button>
+              </div>
 
               {isOpen && (
                 <div

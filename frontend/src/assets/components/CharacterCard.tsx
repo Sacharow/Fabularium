@@ -1,5 +1,5 @@
 import { ArrowRight, Diamond } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function CharacterCard({
   name,
@@ -20,9 +20,19 @@ function CharacterCard({
   armorClass?: number;
   connectedCampaign?: string;
 }) {
+  const navigate = useNavigate();
+
   return (
-    <NavLink
-      to="/preview/character"
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={() => navigate("/preview/character")}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          navigate("/preview/character");
+        }
+      }}
       className="bg-neutral w-full flex flex-col gap-8 text-neutral-text border-2 border-gold-neutral p-4 hover:scale-105 cursor-pointer"
     >
       {/* UPPER SECTION */}
@@ -59,12 +69,16 @@ function CharacterCard({
       {/* LOWER SECTION */}
       <div className="flex flex-row items-center justify-between hover:bg-light hover:border-l-8 hover:border-gold-neutral p-2">
         <Diamond size={18} className="text-gold-neutral" />
-        <NavLink to="/preview/campaign" className="ml-2">
+        <NavLink
+          to="/preview/campaign"
+          className="ml-2"
+          onClick={(e) => e.stopPropagation()}
+        >
           View {connectedCampaign}
           <ArrowRight size={18} className="inline ml-1 text-gold-neutral" />
         </NavLink>
       </div>
-    </NavLink>
+    </div>
   );
 }
 

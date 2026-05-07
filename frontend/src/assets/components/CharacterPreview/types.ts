@@ -21,7 +21,8 @@ export interface SkillDetail {
 
 export interface AbilityStat {
   ability: string;
-  score: number;
+  score: string;
+  modifier?: string;
   savingThrow: string;
   savingThrowDistinction: "Nothing" | "Proficiency";
   skills: SkillDetail[];

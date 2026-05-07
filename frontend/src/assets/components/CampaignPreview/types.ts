@@ -45,3 +45,9 @@ export type CampaignSection = {
 export interface CampaignSectionProps {
   content: CampaignSection["content"];
 }
+
+export interface CampaignSectionInteractiveProps extends CampaignSectionProps {
+  isEditMode?: boolean;
+  onEditModeChange?: (isEditing: boolean) => void;
+  onContentChange?: (newContent: CampaignSection["content"]) => void;
+}

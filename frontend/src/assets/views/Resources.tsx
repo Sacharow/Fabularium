@@ -313,7 +313,7 @@ function ResourcesNew() {
                     m === "Name" ? "Level" : m === "Level" ? "School" : "Name",
                   );
                 }}
-                className="px-8 py-2 bg-neutral border-2 border-gold-neutral text-sm text-gold-neutral w-48 justify-between uppercase cursor-pointer inline-flex items-center gap-4 hover:bg-light"
+                className="px-4 py-3 bg-neutral border-2 border-gold-neutral text-sm text-gold-neutral uppercase cursor-pointer inline-flex items-center gap-4 hover:bg-light"
                 aria-label="Cycle spell filter mode"
               >
                 <span className="font-semibold">FILTER:</span>
@@ -323,47 +323,56 @@ function ResourcesNew() {
           )}
           {itemsToRender.map((item) => {
             const isOpen = activeItem === item.name;
-            const itemShellClass = isOpen
-              ? "border-2 border-gold-neutral bg-light/50 hover:bg-light/50"
-              : "border-2 border-gold-neutral bg-neutral hover:bg-light";
 
             return (
-              <button
-                key={item.name}
-                type="button"
-                onClick={() => handleToggleItem(item.name)}
-                className={`w-full p-4 text-left ${itemShellClass} flex flex-col cursor-pointer`}
-                aria-expanded={isOpen}
-                aria-controls={`${item.name}-panel`}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-neutral-text">
-                      {item.name}
-                    </h3>
-                    <p className="text-xs uppercase tracking-widest text-gold-light">
-                      {item.meta}
-                    </p>
+              <div key={item.name} className="flex flex-col">
+                <button
+                  type="button"
+                  onClick={() => handleToggleItem(item.name)}
+                  className={`w-full p-4 text-left cursor-pointer border-2 border-gold-neutral ${
+                    isOpen
+                      ? "bg-light hover:bg-gray-light"
+                      : "bg-neutral hover:bg-light"
+                  }`}
+                  aria-expanded={isOpen}
+                  aria-controls={`${item.name}-panel`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-text">
+                        {item.name}
+                      </h3>
+                      <p className="mt-1 text-xs uppercase tracking-widest text-gold-light">
+                        {item.meta}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="flex items-center gap-1 text-xs uppercase tracking-widest text-neutral-text">
+                        <ChevronDown
+                          className={`h-4 w-4 ${
+                            isOpen ? "rotate-180 text-gold-neutral" : ""
+                          }`}
+                        />
+                        {isOpen ? "Close" : "Open"}
+                      </span>
+                    </div>
                   </div>
-                  <span className="flex items-center gap-1 text-xs uppercase tracking-widest text-neutral-text">
-                    <ChevronDown
-                      className={`h-4 w-4 ${isOpen ? "rotate-180 text-gold-neutral" : ""}`}
-                    />
-                    {isOpen ? "Close" : "Open"}
-                  </span>
-                </div>
+                </button>
 
                 {isOpen && (
-                  <div id={`${item.name}-panel`} className="pt-4">
+                  <div
+                    id={`${item.name}-panel`}
+                    className="bg-neutral border-2 border-t-0 border-gold-dark p-4 flex flex-col gap-3"
+                  >
                     <p className="text-sm leading-7 text-neutral-text">
                       {item.body}
                     </p>
 
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2">
                       {item.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="border border-gold-neutral bg-dark px-2 py-1 text-xs uppercase tracking-widest text-neutral-text"
+                          className="border border-gold-dark bg-dark px-2 py-1 text-xs uppercase tracking-widest text-neutral-text"
                         >
                           {tag}
                         </span>
@@ -371,7 +380,7 @@ function ResourcesNew() {
                     </div>
                   </div>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>

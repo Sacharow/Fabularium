@@ -30,21 +30,11 @@ function Contact() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    const field = name as keyof ContactFormData;
 
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [field]: undefined,
-    }));
-
-    if (submitted) {
-      setSubmitted(false);
-    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -14,7 +14,9 @@ import {
   Backpack,
   Zap,
 } from "lucide-react";
-import { NavLink, Link, useLocation } from "react-router-dom";
+import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import CreateEntityModal from "./CreateEntityModal";
 
 function Sidebar() {
   const location = useLocation();
@@ -45,18 +47,7 @@ function Sidebar() {
           <h1>FABULARIUM</h1>
         </NavLink>
         <div className="flex justify-between items-center">
-          <button
-            type="button"
-            disabled={!canCreateNew}
-            aria-disabled={!canCreateNew}
-            className={`p-2 my-2 w-full border-2 ${
-              canCreateNew
-                ? "border-gold-neutral bg-dark hover:bg-gold-neutral cursor-pointer text-neutral-text"
-                : "border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed"
-            }`}
-          >
-            <p>CREATE NEW</p>
-          </button>
+          <SidebarCreateButton canCreateNew={canCreateNew} />
         </div>
         <hr className="text-neutral-text" />
         <div className="flex flex-col gap-2">
@@ -243,6 +234,49 @@ function Sidebar() {
         </NavLink>
       </div>
     </div>
+  );
+}
+
+function SidebarCreateButton({ canCreateNew }: { canCreateNew: boolean }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+  const kind: "character" | "campaign" = location.pathname.startsWith(
+    "/characters",
+  )
+    ? "character"
+    : "campaign";
+
+  return (
+    <>
+      <button
+        type="button"
+        disabled={!canCreateNew}
+        aria-disabled={!canCreateNew}
+        onClick={() => canCreateNew && setOpen(true)}
+        className={`p-2 my-2 w-full border-2 ${
+          canCreateNew
+            ? "border-gold-neutral bg-dark hover:bg-gold-neutral cursor-pointer text-neutral-text"
+            : "border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed"
+        }`}
+      >
+        <p>CREATE NEW</p>
+      </button>
+
+      <CreateEntityModal
+        kind={kind}
+        open={open}
+        onClose={() => setOpen(false)}
+        onCreate={(title) => {
+          setOpen(false);
+          // Mock redirect: go to the preview general section
+          if (kind === "character") navigate("/preview/character#general");
+          else navigate("/preview/campaign#general");
+          console.log("Created (from sidebar):", kind, title);
+        }}
+      />
+    </>
   );
 }
 

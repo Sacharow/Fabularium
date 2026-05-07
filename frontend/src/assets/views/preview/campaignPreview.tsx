@@ -4,6 +4,7 @@ import { GeneralSection } from "../../components/CampaignPreview/GeneralSection"
 import { TextCardSection } from "../../components/CampaignPreview/TextCardSection";
 import { NotesSection } from "../../components/CampaignPreview/NotesSection";
 import { PlayersSection } from "../../components/CampaignPreview/PlayersSection";
+import type { CampaignSectionKey } from "../../components/CampaignPreview/types";
 
 // Default content matching CampaignPreview defaults
 const defaults = {
@@ -154,6 +155,32 @@ function CampaignPreviewView() {
     (location.hash.replace("#", "") || "general") as string,
   );
 
+  const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [sectionContent, setSectionContent] = useState(
+    new Map<string, any>([
+      ["general", defaults.general],
+      ["locations", defaults.locations],
+      ["npcs", defaults.npcs],
+      ["quests", defaults.quests],
+      ["notes", defaults.notes],
+      ["players", defaults.players],
+    ]),
+  );
+
+  const handleEditModeChange = (
+    section: CampaignSectionKey,
+    isEditing: boolean,
+  ) => {
+    setEditingSection(isEditing ? section : null);
+  };
+
+  const handleContentChange = (
+    section: CampaignSectionKey,
+    newContent: any,
+  ) => {
+    setSectionContent((prev) => new Map(prev).set(section, newContent));
+  };
+
   useEffect(() => {
     const section = location.hash.replace("#", "") || "general";
     setActiveSection(section);
@@ -167,19 +194,92 @@ function CampaignPreviewView() {
   const renderSection = () => {
     switch (activeSection) {
       case "general":
-        return <GeneralSection content={defaults.general} />;
+        return (
+          <GeneralSection
+            content={sectionContent.get("general") ?? defaults.general}
+            isEditMode={editingSection === "general"}
+            onEditModeChange={(isEditing) =>
+              handleEditModeChange("general", isEditing)
+            }
+            onContentChange={(newContent) =>
+              handleContentChange("general", newContent)
+            }
+          />
+        );
       case "locations":
-        return <TextCardSection title="Locations" items={defaults.locations} />;
+        return (
+          <TextCardSection
+            title="Locations"
+            items={sectionContent.get("locations") ?? defaults.locations}
+            isEditMode={editingSection === "locations"}
+            onEditModeChange={(isEditing) =>
+              handleEditModeChange("locations", isEditing)
+            }
+            onContentChange={(newContent) =>
+              handleContentChange("locations", newContent)
+            }
+          />
+        );
       case "npcs":
-        return <TextCardSection title="NPCs" items={defaults.npcs} />;
+        return (
+          <TextCardSection
+            title="NPCs"
+            items={sectionContent.get("npcs") ?? defaults.npcs}
+            isEditMode={editingSection === "npcs"}
+            onEditModeChange={(isEditing) =>
+              handleEditModeChange("npcs", isEditing)
+            }
+            onContentChange={(newContent) =>
+              handleContentChange("npcs", newContent)
+            }
+          />
+        );
       case "quests":
-        return <TextCardSection title="Quests" items={defaults.quests} />;
+        return (
+          <TextCardSection
+            title="Quests"
+            items={sectionContent.get("quests") ?? defaults.quests}
+            isEditMode={editingSection === "quests"}
+            onEditModeChange={(isEditing) =>
+              handleEditModeChange("quests", isEditing)
+            }
+            onContentChange={(newContent) =>
+              handleContentChange("quests", newContent)
+            }
+          />
+        );
       case "notes":
-        return <NotesSection items={defaults.notes} />;
+        return (
+          <NotesSection
+            items={sectionContent.get("notes") ?? defaults.notes}
+            isEditMode={editingSection === "notes"}
+            onEditModeChange={(isEditing) =>
+              handleEditModeChange("notes", isEditing)
+            }
+            onContentChange={(newContent) =>
+              handleContentChange("notes", newContent)
+            }
+          />
+        );
       case "players":
-        return <PlayersSection content={defaults.players} />;
+        return (
+          <PlayersSection
+            content={sectionContent.get("players") ?? defaults.players}
+          />
+        );
       default:
-        return <GeneralSection content={defaults.general} />;
+        return (
+          <GeneralSection
+            content={sectionContent.get("general") ?? defaults.general}
+            isEditMode={editingSection === "general"}
+            onEditModeChange={(isEditing) =>
+              handleEditModeChange("general", isEditing)
+            }
+            onContentChange={(newContent) =>
+              handleContentChange("general", newContent)
+            }
+          />
+        );
     }
   };
 

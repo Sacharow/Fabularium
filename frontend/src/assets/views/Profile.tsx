@@ -1,5 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+
+const profileSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .min(1, "Username is required")
+    .max(50, "Username must be 50 characters or less"),
+  bio: z.string().trim().max(500, "Bio must be 500 characters or less"),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
 
 function Profile() {
   const navigate = useNavigate();
@@ -8,6 +20,9 @@ function Profile() {
     "Adventurer, lore seeker, occasional DM. Keep your profile short and sweet.",
   );
   const [editing, setEditing] = useState(false);
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ProfileFormData, string>>
+  >({});
 
   // Placeholder data — replace with real data when available
   const email = "rundal@example.com";
@@ -27,7 +42,24 @@ function Profile() {
           </div>
           <button
             className="h-9 border border-gold-neutral bg-neutral px-4 text-sm tracking-wide hover:bg-gold-neutral cursor-pointer"
-            onClick={() => setEditing((prev) => !prev)}
+            onClick={() => {
+              if (editing) {
+                // Validate on save
+                const result = profileSchema.safeParse({ username, bio });
+                if (!result.success) {
+                  const fieldErrors = result.error.flatten().fieldErrors;
+                  setErrors({
+                    username: fieldErrors.username?.[0],
+                    bio: fieldErrors.bio?.[0],
+                  });
+                  return;
+                }
+                setErrors({});
+              } else {
+                setErrors({});
+              }
+              setEditing((prev) => !prev);
+            }}
           >
             {editing ? "SAVE" : "EDIT PROFILE"}
           </button>
@@ -54,11 +86,18 @@ function Profile() {
                     {username}
                   </p>
                 ) : (
-                  <input
-                    className="mt-2 h-10 w-full border border-gold-neutral bg-dark px-3 outline-none"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
+                  <>
+                    <input
+                      className="mt-2 h-10 w-full border border-gold-neutral bg-dark px-3 outline-none"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                    {errors.username && (
+                      <p className="mt-1 text-xs text-error">
+                        {errors.username}
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -88,11 +127,16 @@ function Profile() {
               {!editing ? (
                 <p className="mt-2 max-w-2xl text-sm text-gray-light">{bio}</p>
               ) : (
-                <textarea
-                  className="mt-2 min-h-28 w-full resize-none border border-gold-neutral bg-dark p-3 outline-none"
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                />
+                <>
+                  <textarea
+                    className="mt-2 min-h-28 w-full resize-none border border-gold-neutral bg-dark p-3 outline-none"
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                  />
+                  {errors.bio && (
+                    <p className="mt-1 text-xs text-error">{errors.bio}</p>
+                  )}
+                </>
               )}
             </div>
           </section>

@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Check, X, Plus, Trash2 } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 import type { NoteItem } from "./types";
 
 interface Props {
   items?: NoteItem[];
+  isEditMode?: boolean;
+  onEditModeChange?: (isEditing: boolean) => void;
+  onContentChange?: (newItems: NoteItem[]) => void;
 }
 
-export function NotesSection({ items = [] }: Props) {
+export function NotesSection({
+  items = [],
+  isEditMode = false,
+  onEditModeChange,
+  onContentChange,
+}: Props) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isEditMode);
   const [editedItems, setEditedItems] = useState<NoteItem[]>(items);
 
   const toggleItem = (itemId: string) => {
@@ -26,16 +34,28 @@ export function NotesSection({ items = [] }: Props) {
 
   const handleEdit = () => {
     setIsEditing(true);
+    onEditModeChange?.(true);
   };
 
   const handleSave = () => {
     setIsEditing(false);
+    onEditModeChange?.(false);
+    onContentChange?.(editedItems);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
     setEditedItems(items);
+    onEditModeChange?.(false);
   };
+
+  useEffect(() => {
+    setEditedItems(items);
+  }, [items]);
+
+  useEffect(() => {
+    setIsEditing(isEditMode);
+  }, [isEditMode]);
 
   const handleNoteChange = (
     index: number,

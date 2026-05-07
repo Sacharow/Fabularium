@@ -74,7 +74,8 @@ const mockCharacter = {
     abilities: [
       {
         ability: "Strength",
-        score: 16,
+        score: "16",
+        modifier: "+3",
         savingThrow: "+6",
         savingThrowDistinction: "Proficiency",
         skills: [
@@ -87,7 +88,8 @@ const mockCharacter = {
       },
       {
         ability: "Dexterity",
-        score: 14,
+        score: "14",
+        modifier: "+2",
         savingThrow: "+2",
         savingThrowDistinction: "Nothing",
         skills: [
@@ -98,14 +100,16 @@ const mockCharacter = {
       },
       {
         ability: "Constitution",
-        score: 15,
+        score: "15",
+        modifier: "+2",
         savingThrow: "+5",
         savingThrowDistinction: "Proficiency",
         skills: [],
       },
       {
         ability: "Intelligence",
-        score: 13,
+        score: "13",
+        modifier: "+1",
         savingThrow: "+1",
         savingThrowDistinction: "Nothing",
         skills: [
@@ -118,7 +122,8 @@ const mockCharacter = {
       },
       {
         ability: "Wisdom",
-        score: 14,
+        score: "14",
+        modifier: "+2",
         savingThrow: "+2",
         savingThrowDistinction: "Nothing",
         skills: [
@@ -131,7 +136,8 @@ const mockCharacter = {
       },
       {
         ability: "Charisma",
-        score: 12,
+        score: "12",
+        modifier: "+1",
         savingThrow: "+1",
         savingThrowDistinction: "Nothing",
         skills: [

@@ -9,6 +9,8 @@ import type {
 } from "./types";
 import { Circle, CircleDot } from "lucide-react";
 
+// Validation removed - all fields accepted as-is
+
 interface StatsSectionProps extends CharacterSectionProps {
   content: StatSectionContent;
 }
@@ -24,10 +26,7 @@ export function StatsSection({
   const [editedContent, setEditedContent] =
     useState<StatSectionContent>(statsContent);
 
-  const getModifier = (score: number) => {
-    const modifier = Math.floor((score - 10) / 2);
-    return modifier >= 0 ? `+${modifier}` : `${modifier}`;
-  };
+  // Modifier is now entered manually per-ability and per-skill.
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -46,7 +45,7 @@ export function StatsSection({
     onEditModeChange?.(false);
   };
 
-  const handleAbilityScoreChange = (ability: string, newScore: number) => {
+  const handleAbilityScoreChange = (ability: string, newScore: string) => {
     setEditedContent((prev) => ({
       ...prev,
       abilities: prev.abilities.map((a) =>
@@ -111,6 +110,37 @@ export function StatsSection({
     }));
   };
 
+  const handleAbilityModifierChange = (ability: string, newValue: string) => {
+    setEditedContent((prev) => ({
+      ...prev,
+      abilities: prev.abilities.map((a) =>
+        a.ability === ability ? { ...a, modifier: newValue } : a,
+      ),
+    }));
+  };
+
+  const handleSkillModifierChange = (
+    ability: string,
+    skillName: string,
+    newValue: string,
+  ) => {
+    setEditedContent((prev) => ({
+      ...prev,
+      abilities: prev.abilities.map((a) =>
+        a.ability === ability
+          ? {
+              ...a,
+              skills: a.skills.map((skill) =>
+                skill.name === skillName
+                  ? { ...skill, modifier: newValue }
+                  : skill,
+              ),
+            }
+          : a,
+      ),
+    }));
+  };
+
   const handleProficiencyBonusChange = (newValue: string) => {
     setEditedContent((prev) => ({
       ...prev,
@@ -160,23 +190,25 @@ export function StatsSection({
       </div>
 
       <div className="flex justify-start">
-        <div className="w-full max-w-xs border-2 border-gold-neutral bg-neutral p-4 flex items-center justify-between gap-4 min-w-0">
-          <p className="text-xs uppercase tracking-widest text-gray-light">
-            Proficiency Bonus
-          </p>
-          {isEditing ? (
-            <input
-              type="text"
-              value={currentContent.proficiencyBonus}
-              placeholder="+5"
-              onChange={(e) => handleProficiencyBonusChange(e.target.value)}
-              className="text-3xl font-bold text-gold-neutral bg-dark border border-gold-dark px-2 py-1 w-20 text-right"
-            />
-          ) : (
-            <p className="text-3xl font-bold text-gold-neutral">
-              {currentContent.proficiencyBonus}
+        <div className="w-full max-w-xs border-2 border-gold-neutral bg-neutral p-4 flex flex-col gap-2 min-w-0">
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-xs uppercase tracking-widest text-gray-light">
+              Proficiency Bonus
             </p>
-          )}
+            {isEditing ? (
+              <input
+                type="text"
+                value={currentContent.proficiencyBonus}
+                placeholder="+5"
+                onChange={(e) => handleProficiencyBonusChange(e.target.value)}
+                className="text-3xl font-bold text-gold-neutral bg-dark border border-gold-dark px-2 py-1 w-20 text-right"
+              />
+            ) : (
+              <p className="text-3xl font-bold text-gold-neutral">
+                {currentContent.proficiencyBonus}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -199,9 +231,24 @@ export function StatsSection({
                 <p className="text-xs uppercase tracking-widest text-gray-light">
                   Modifier
                 </p>
-                <p className="text-2xl font-bold text-gold-neutral">
-                  {getModifier(ability.score)}
-                </p>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={ability.modifier ?? ""}
+                    placeholder="+2"
+                    onChange={(e) =>
+                      handleAbilityModifierChange(
+                        ability.ability,
+                        e.target.value,
+                      )
+                    }
+                    className="text-2xl font-bold text-gold-neutral bg-dark border border-gold-dark px-2 py-1 w-20 text-right"
+                  />
+                ) : (
+                  <p className="text-2xl font-bold text-gold-neutral">
+                    {ability.modifier ?? ""}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -211,18 +258,20 @@ export function StatsSection({
                   Score
                 </p>
                 {isEditing ? (
-                  <input
-                    type="number"
-                    value={ability.score}
-                    placeholder="400"
-                    onChange={(e) =>
-                      handleAbilityScoreChange(
-                        ability.ability,
-                        parseInt(e.target.value, 10) || 0,
-                      )
-                    }
-                    className="w-full min-w-0 text-lg font-semibold text-neutral-text bg-neutral border border-gold-dark p-2"
-                  />
+                  <>
+                    <input
+                      type="text"
+                      value={ability.score}
+                      placeholder="10"
+                      onChange={(e) =>
+                        handleAbilityScoreChange(
+                          ability.ability,
+                          e.target.value,
+                        )
+                      }
+                      className="w-full min-w-0 text-lg font-semibold text-neutral-text bg-neutral border border-gold-dark p-2"
+                    />
+                  </>
                 ) : (
                   <p className="text-lg font-semibold text-neutral-text">
                     {ability.score}
@@ -265,15 +314,20 @@ export function StatsSection({
                     </button>
                   </div>
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={ability.savingThrow}
-                      placeholder="+5"
-                      onChange={(e) =>
-                        handleSavingThrowChange(ability.ability, e.target.value)
-                      }
-                      className="w-full min-w-0 text-lg font-semibold text-neutral-text bg-neutral border border-gold-dark px-2 py-1"
-                    />
+                    <>
+                      <input
+                        type="text"
+                        value={ability.savingThrow}
+                        placeholder="+5"
+                        onChange={(e) =>
+                          handleSavingThrowChange(
+                            ability.ability,
+                            e.target.value,
+                          )
+                        }
+                        className="w-full min-w-0 text-lg font-semibold text-neutral-text bg-neutral border border-gold-dark px-2 py-1"
+                      />
+                    </>
                   ) : (
                     <p className="text-lg font-semibold text-neutral-text">
                       {ability.savingThrow}
@@ -290,60 +344,77 @@ export function StatsSection({
               {ability.skills.length > 0 ? (
                 <div className="flex flex-col gap-2">
                   {ability.skills.map((skill: SkillDetail) => (
-                    <div
-                      key={skill.name}
-                      className="flex items-center justify-between gap-3 border border-gold-dark bg-neutral px-3 py-2"
-                    >
-                      <p className="text-sm text-neutral-text">{skill.name}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-gold-neutral">
-                          {skill.modifier}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            isEditing &&
-                            handleSkillDistinctionToggle(
-                              ability.ability,
-                              skill.name,
-                            )
-                          }
-                          disabled={!isEditing}
-                          className={`flex items-center gap-1 ${
-                            isEditing
-                              ? "cursor-pointer text-gray-light hover:text-gold-neutral"
-                              : "cursor-default"
-                          }`}
-                          aria-label={`${skill.distinction} skill proficiency`}
-                          title={
-                            isEditing
-                              ? skill.distinction === "Nothing"
-                                ? "Set proficiency"
-                                : skill.distinction === "Proficiency"
-                                  ? "Set expertise"
-                                  : "Remove distinction"
-                              : skill.distinction
-                          }
-                        >
-                          {skill.distinction === "Nothing" && (
-                            <>
-                              <Circle className="h-4 w-4" />
-                              <Circle className="h-4 w-4" />
-                            </>
+                    <div key={skill.name} className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between gap-3 border border-gold-dark bg-neutral px-3 py-2">
+                        <p className="text-sm text-neutral-text">
+                          {skill.name}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={skill.modifier}
+                              placeholder="+2"
+                              onChange={(e) =>
+                                handleSkillModifierChange(
+                                  ability.ability,
+                                  skill.name,
+                                  e.target.value,
+                                )
+                              }
+                              className="text-gold-neutral bg-dark border border-gold-dark px-2 py-1 w-16 text-right"
+                            />
+                          ) : (
+                            <span className="text-gold-neutral">
+                              {skill.modifier}
+                            </span>
                           )}
-                          {skill.distinction === "Proficiency" && (
-                            <>
-                              <CircleDot className="h-4 w-4 text-gold-neutral" />
-                              <Circle className="h-4 w-4" />
-                            </>
-                          )}
-                          {skill.distinction === "Expertise" && (
-                            <>
-                              <CircleDot className="h-4 w-4 text-gold-neutral" />
-                              <CircleDot className="h-4 w-4 text-gold-neutral" />
-                            </>
-                          )}
-                        </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              isEditing &&
+                              handleSkillDistinctionToggle(
+                                ability.ability,
+                                skill.name,
+                              )
+                            }
+                            disabled={!isEditing}
+                            className={`flex items-center gap-1 ${
+                              isEditing
+                                ? "cursor-pointer text-gray-light hover:text-gold-neutral"
+                                : "cursor-default"
+                            }`}
+                            aria-label={`${skill.distinction} skill proficiency`}
+                            title={
+                              isEditing
+                                ? skill.distinction === "Nothing"
+                                  ? "Set proficiency"
+                                  : skill.distinction === "Proficiency"
+                                    ? "Set expertise"
+                                    : "Remove distinction"
+                                : skill.distinction
+                            }
+                          >
+                            {skill.distinction === "Nothing" && (
+                              <>
+                                <Circle className="h-4 w-4" />
+                                <Circle className="h-4 w-4" />
+                              </>
+                            )}
+                            {skill.distinction === "Proficiency" && (
+                              <>
+                                <CircleDot className="h-4 w-4 text-gold-neutral" />
+                                <Circle className="h-4 w-4" />
+                              </>
+                            )}
+                            {skill.distinction === "Expertise" && (
+                              <>
+                                <CircleDot className="h-4 w-4 text-gold-neutral" />
+                                <CircleDot className="h-4 w-4 text-gold-neutral" />
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
