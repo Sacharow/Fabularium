@@ -1,22 +1,8 @@
 @import "tailwindcss";
 
-@theme {
-  --color-neutral: oklch(27.4% 0.006 286.033);
-  --color-light: oklch(44.2% 0.017 285.786);
-  --color-dark: oklch(21% 0.006 285.885);
-  --color-neutral-text: oklch(98.7% 0.022 95.277);
-  --color-gold-neutral: oklch(76.9% 0.188 70.08);
-  --color-gold-dark: oklch(55.5% 0.163 48.998);
-  --color-gold-light: oklch(83.7% 0.128 66.29);
-  --color-error: oklch(57.7% 0.245 27.325);
-  --color-success: oklch(64.8% 0.2 131.684);
-  --color-gray-neutral: oklch(44.6% 0.03 256.802);
-  --color-gray-light: oklch(70.7% 0.022 261.325);
-}
-
 @font-face {
-  font-family: "Fondamento";
-  src: url("/fonts/Fondamento-Regular.ttf") format("truetype");
+  font-family: "Quintessential";
+  src: url("/fonts/Quintessential-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -31,7 +17,7 @@ body {
 :root {
   color: rgba(255, 255, 255, 0.87);
   font-size: larger;
-  font-family: "Fondamento", serif;
+  font-family: "Quintessential", serif;
 }
 
 body {
