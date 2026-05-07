@@ -18,10 +18,10 @@ import Profile from "./assets/pages/Profile";
 import CharacterEditStandalone from "./assets/pages/CharacterEditStandalone";
 
 // Info pages
-import About from "./assets/pages/info/About";
-import Contact from "./assets/pages/info/Contact";
-import Policy from "./assets/pages/info/Policy";
-import Terms from "./assets/pages/info/Terms";
+import About from "./assets/views/info/About";
+import Contact from "./assets/views/info/Contact";
+import Policy from "./assets/views/info/Policy";
+import Terms from "./assets/views/info/Terms";
 
 import InCampaignCharacter from "./assets/pages/InCampaign/Sections/Character";
 import InCampaignLocation from "./assets/pages/InCampaign/Sections/Location";
@@ -58,6 +58,7 @@ import Hub from "./assets/views/Hub";
 import CharactersNew from "./assets/views/Characters";
 import CampaignsNew from "./assets/views/Campaigns";
 import ResourcesNew from "./assets/views/Resources";
+import ProfileNew from "./assets/views/Profile";
 
 // Auth Pages
 import SignIn from "./assets/views/auth/SignIn";
@@ -66,6 +67,7 @@ import ResetPassword from "./assets/views/auth/ResetPassword";
 
 // Preview Pages
 import CharacterPreviewNew from "./assets/views/preview/characterPreview";
+import CampaignPreviewNew from "./assets/views/preview/campaignPreview";
 
 // Edit Pages
 import CharacterEdit from "./assets/views/forms/edit/characterEdit";
@@ -88,12 +90,14 @@ function AppRoutes() {
         <Route path="/characters-new" element={<CharactersNew />} />
         <Route path="/campaigns-new" element={<CampaignsNew />} />
         <Route path="/resources-new" element={<ResourcesNew />} />
+        <Route path="/profile-new" element={<ProfileNew />} />
 
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route path="/preview/character" element={<CharacterPreviewNew />} />
+        <Route path="/preview/campaign" element={<CampaignPreviewNew />} />
 
         <Route path="/edit/character" element={<CharacterEdit />} />
 

@@ -1,4 +1,5 @@
 import { Users, BookOpen } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 function CampaignCard({
   title,
@@ -14,7 +15,10 @@ function CampaignCard({
   id?: string;
 }) {
   return (
-    <div className="bg-neutral w-full min-h-96 flex flex-col overflow-hidden text-neutral-text border-2 border-gold-neutral hover:scale-105 cursor-pointer transition-transform">
+    <NavLink
+      to="/preview/campaign"
+      className="bg-neutral w-full min-h-96 flex flex-col overflow-hidden text-neutral-text border-2 border-gold-neutral hover:scale-105 cursor-pointer"
+    >
       <div className="relative h-52 w-full shrink-0 bg-dark">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -64,7 +68,7 @@ function CampaignCard({
           </div>
         </div>
       </div>
-    </div>
+    </NavLink>
   );
 }
 

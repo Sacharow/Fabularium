@@ -110,18 +110,24 @@ const SignIn = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-gray-neutral hover:text-gray-light transition-colors cursor-pointer"
+                  className="text-gray-neutral hover:text-gray-light cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              <NavLink
+                to="/reset-password"
+                className="text-sm text-gold-light hover:text-gold-neutral cursor-pointer"
+              >
+                Forgot your password?
+              </NavLink>
               {fieldErrors.password ? (
                 <p className="text-sm text-error">{fieldErrors.password}</p>
               ) : null}
             </div>
             <button
               type="submit"
-              className="w-full border-2 border-gold-neutral py-4 text-md text-text-neutral font-medium hover:bg-gold-neutral cursor-pointer"
+              className="w-full border-2 border-gold-neutral bg-dark py-4 text-md text-text-neutral font-medium hover:bg-gold-neutral cursor-pointer"
             >
               SIGN IN
             </button>

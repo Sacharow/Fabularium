@@ -325,6 +325,11 @@ function CharacterPreview() {
   const [activeSection, setActiveSection] =
     useState<CharacterSectionKey>("general");
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [editingSection, setEditingSection] =
+    useState<CharacterSectionKey | null>(null);
+  const [sectionContent, setSectionContent] = useState(
+    new Map(sections.map((s) => [s.key, s.content])),
+  );
 
   const sectionFromHash = location.hash.replace("#", "") as CharacterSectionKey;
 
@@ -342,6 +347,9 @@ function CharacterPreview() {
   const currentSection =
     sections.find((section) => section.key === activeSection) ?? sections[0];
 
+  const currentContent =
+    sectionContent.get(activeSection) ?? currentSection.content;
+
   const toggleItem = (itemId: string) => {
     setExpandedItems((prev) => {
       const newSet = new Set(prev);
@@ -354,33 +362,57 @@ function CharacterPreview() {
     });
   };
 
+  const handleEditModeChange = (isEditing: boolean) => {
+    if (isEditing) {
+      setEditingSection(activeSection);
+    } else {
+      setEditingSection(null);
+    }
+  };
+
+  const handleContentChange = (newContent: CharacterSection["content"]) => {
+    setSectionContent((prev) => new Map(prev).set(activeSection, newContent));
+  };
+
   const renderSection = () => {
     const baseProps = {
       expandedItems,
       toggleItem,
+      isEditMode: editingSection === activeSection,
+      onEditModeChange: handleEditModeChange,
+      onContentChange: handleContentChange,
     };
 
     switch (activeSection) {
       case "general":
         return (
-          <GeneralSection {...baseProps} content={currentSection.content as StatDetail[]} />
+          <GeneralSection
+            {...baseProps}
+            content={currentContent as StatDetail[]}
+          />
         );
       case "personal":
         return (
           <PersonalSection
             {...baseProps}
-            content={currentSection.content as PersonalSectionContent}
+            content={currentContent as PersonalSectionContent}
           />
         );
       case "stats":
         return (
-          <StatsSection {...baseProps} content={currentSection.content as StatSectionContent} />
+          <StatsSection
+            {...baseProps}
+            content={currentContent as StatSectionContent}
+          />
         );
       case "features":
       case "spells":
       case "inventory":
         return (
-          <AccordionSection {...baseProps} content={currentSection.content as AccordionItem[]} />
+          <AccordionSection
+            {...baseProps}
+            content={currentContent as AccordionItem[]}
+          />
         );
       default:
         return null;

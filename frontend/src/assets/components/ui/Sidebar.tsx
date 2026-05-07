@@ -20,11 +20,13 @@ function Sidebar() {
   const location = useLocation();
   const onResourcesPage = location.pathname === "/resources-new";
   const onCharacterPreviewPage = location.pathname === "/preview/character";
-  const showCreateNewButton =
-    location.pathname === "/characters-new" ||
-    location.pathname === "/campaigns-new";
+  const onCampaignPreviewPage = location.pathname === "/preview/campaign";
+  const canCreateNew =
+    location.pathname.startsWith("/characters") ||
+    location.pathname.startsWith("/campaigns");
   const activeResourceSection = location.hash.replace("#", "") || "backgrounds";
   const activeCharacterSection = location.hash.replace("#", "") || "general";
+  const activeCampaignSection = location.hash.replace("#", "") || "general";
 
   const topNavClass = (isActive: boolean) =>
     `${buttonStyle} ${isActive ? "bg-light border-l-8 border-gold-neutral" : ""}`;
@@ -42,13 +44,20 @@ function Sidebar() {
         >
           <h1>FABULARIUM</h1>
         </NavLink>
-        {showCreateNewButton && (
-          <div className="flex justify-between items-center">
-            <button className="p-2 my-2 w-full border-2 border-gold-neutral bg-dark hover:bg-gold-neutral cursor-pointer">
-              <p>CREATE NEW</p>
-            </button>
-          </div>
-        )}
+        <div className="flex justify-between items-center">
+          <button
+            type="button"
+            disabled={!canCreateNew}
+            aria-disabled={!canCreateNew}
+            className={`p-2 my-2 w-full border-2 ${
+              canCreateNew
+                ? "border-gold-neutral bg-dark hover:bg-gold-neutral cursor-pointer text-neutral-text"
+                : "border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed"
+            }`}
+          >
+            <p>CREATE NEW</p>
+          </button>
+        </div>
         <hr className="text-neutral-text" />
         <div className="flex flex-col gap-2">
           <NavLink
@@ -121,6 +130,58 @@ function Sidebar() {
             <Anvil />
             <p>CAMPAIGNS</p>
           </NavLink>
+          {onCampaignPreviewPage && (
+            <div className="flex flex-col gap-2 pl-6 border-l-2 border-neutral-text">
+              <Link
+                to="/preview/campaign#general"
+                className={innerButtonClass(
+                  activeCampaignSection === "general",
+                )}
+              >
+                <Scroll className="w-4 h-4" />
+                <span className="text-sm">GENERAL</span>
+              </Link>
+              <Link
+                to="/preview/campaign#locations"
+                className={innerButtonClass(
+                  activeCampaignSection === "locations",
+                )}
+              >
+                <Component className="w-4 h-4" />
+                <span className="text-sm">LOCATIONS</span>
+              </Link>
+              <Link
+                to="/preview/campaign#npcs"
+                className={innerButtonClass(activeCampaignSection === "npcs")}
+              >
+                <User className="w-4 h-4" />
+                <span className="text-sm">NPCS</span>
+              </Link>
+              <Link
+                to="/preview/campaign#quests"
+                className={innerButtonClass(activeCampaignSection === "quests")}
+              >
+                <Star className="w-4 h-4" />
+                <span className="text-sm">QUESTS</span>
+              </Link>
+              <Link
+                to="/preview/campaign#notes"
+                className={innerButtonClass(activeCampaignSection === "notes")}
+              >
+                <BookOpen className="w-4 h-4" />
+                <span className="text-sm">NOTES</span>
+              </Link>
+              <Link
+                to="/preview/campaign#players"
+                className={innerButtonClass(
+                  activeCampaignSection === "players",
+                )}
+              >
+                <UsersIcon className="w-4 h-4" />
+                <span className="text-sm">PLAYERS</span>
+              </Link>
+            </div>
+          )}
           <NavLink
             to="/resources-new"
             className={({ isActive }) => topNavClass(isActive)}
@@ -176,10 +237,10 @@ function Sidebar() {
       {/* DOWN SECTION */}
       <div className="flex flex-col gap-2">
         <hr className="text-neutral-text" />
-        <div className={buttonStyle}>
+        <NavLink to="/profile-new" className={buttonStyle}>
           <UserCircle />
           <p>PROFILE</p>
-        </div>
+        </NavLink>
       </div>
     </div>
   );

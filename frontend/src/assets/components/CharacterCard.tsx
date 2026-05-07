@@ -21,7 +21,10 @@ function CharacterCard({
   connectedCampaign?: string;
 }) {
   return (
-    <div className="bg-neutral w-full flex flex-col gap-8 text-neutral-text border-2 border-gold-neutral p-4 hover:scale-105 cursor-pointer">
+    <NavLink
+      to="/preview/character"
+      className="bg-neutral w-full flex flex-col gap-8 text-neutral-text border-2 border-gold-neutral p-4 hover:scale-105 cursor-pointer"
+    >
       {/* UPPER SECTION */}
       <div>
         <div className="flex flex-row justify-between items-center">
@@ -56,12 +59,12 @@ function CharacterCard({
       {/* LOWER SECTION */}
       <div className="flex flex-row items-center justify-between hover:bg-light hover:border-l-8 hover:border-gold-neutral p-2">
         <Diamond size={18} className="text-gold-neutral" />
-        <NavLink to="/CONNECTED-CAMPAIGN" className="ml-2">
+        <NavLink to="/preview/campaign" className="ml-2">
           View {connectedCampaign}
           <ArrowRight size={18} className="inline ml-1 text-gold-neutral" />
         </NavLink>
       </div>
-    </div>
+    </NavLink>
   );
 }
 

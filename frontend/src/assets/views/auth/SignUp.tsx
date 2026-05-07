@@ -148,7 +148,7 @@ const SignUp = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-neutral hover:text-gray-light transition-colors cursor-pointer"
+                    className="text-gray-neutral hover:text-gray-light cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -176,7 +176,7 @@ const SignUp = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-neutral hover:text-gray-light transition-colors cursor-pointer"
+                    className="text-gray-neutral hover:text-gray-light cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -191,7 +191,7 @@ const SignUp = () => {
 
             <button
               type="submit"
-              className="w-full border-2 border-gold-neutral py-4 text-md text-text-neutral font-medium hover:bg-gold-neutral cursor-pointer"
+              className="w-full border-2 border-gold-neutral bg-dark py-4 text-md text-text-neutral font-medium hover:bg-gold-neutral cursor-pointer"
             >
               SIGN UP
             </button>

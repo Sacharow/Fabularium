@@ -25,7 +25,7 @@ function CampaignsNew() {
           </div>
           <button
             type="button"
-            className="border-2 border-gold-neutral bg-dark px-4 h-10 text-sm tracking-widest font-bold hover:bg-gold-neutral cursor-pointer"
+            className="border-2 border-gold-neutral bg-neutral px-4 h-10 text-sm tracking-widest font-bold hover:bg-gold-neutral cursor-pointer"
           >
             JOIN CAMPAIGN
           </button>

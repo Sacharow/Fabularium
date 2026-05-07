@@ -70,4 +70,7 @@ export interface CharacterSectionProps {
   content: CharacterSection["content"];
   expandedItems: Set<string>;
   toggleItem: (itemId: string) => void;
+  isEditMode?: boolean;
+  onEditModeChange?: (isEditing: boolean) => void;
+  onContentChange?: (newContent: CharacterSection["content"]) => void;
 }
