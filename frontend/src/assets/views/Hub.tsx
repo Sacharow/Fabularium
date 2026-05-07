@@ -1,228 +1,160 @@
 import Footer from "../components/Footer";
 import { NavLink } from "react-router-dom";
 import D20 from "../components/ui/D20";
+import { Circle, Diamond, Star } from "lucide-react";
 
 function Hub() {
   return (
-    <div className="flex flex-col gap-16">
-      {/* Hero Section */}
-      <div
-        className="h-96 bg-cover bg-center relative"
-        style={{
-          backgroundImage: `url('/heros/space.jpg')`,
-        }}
-      >
-        {/* Optional overlay for text readability */}
-        <div className="absolute inset-0 top-16 flex justify-center">
-          <h1 className="text-8xl font-bold text-orange-500 text-shadow-lg text-shadow-orange-950">
-            FABULARIUM
-          </h1>
-        </div>
-        <div className="flex justify-center items-center bottom-40 left-200 absolute inset-0">
-          <D20 className="w-24 h-24" />
-        </div>
-        <div className="flex justify-center items-center bottom-40 right-200 absolute inset-0">
-          <D20 className="w-24 h-24" />
-        </div>
-        <div className="absolute inset-0 top-64 flex justify-center gap-16">
-          <NavLink to="/sign-in" className={epicButtonStyle}>
-            <p className="text-center">SIGN IN</p>
-          </NavLink>
-          <NavLink to="/sign-up" className={epicButtonStyle}>
-            <p className="text-center">SIGN UP</p>
-          </NavLink>
-        </div>
-        <hr className="text-orange-500 border-2 absolute inset-0 top-96" />
-      </div>
+    <div className="min-h-screen ml-64 bg-dark text-neutral-text">
+      <main className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-12 py-10">
+        <section className="border-2 border-gold-neutral bg-neutral p-14">
+          <div className="flex flex-col items-center gap-8 text-center">
+            <div className="flex items-center gap-6 text-gold-neutral">
+              <D20 className="h-14 w-14" />
+              <h1 className="text-5xl font-bold tracking-widest text-gold-neutral sm:text-6xl">
+                FABULARIUM
+              </h1>
+              <D20 className="h-14 w-14" />
+            </div>
 
-      {/* Informational Section */}
-      <div className="w-full flex justify-center">
-        <div className="w-[75%]">
-          {/* About Us */}
-          <h2 className="text-4xl font-bold text-orange-500 mb-8">ABOUT US</h2>
-          <div className="flex flex-col gap-y-16 mb-16">
-            {/* About Us Section 1: What is Fabularium */}
-            <div className={featureContainerStyle}>
-              <div className={featureLeftBoxStyle}>
-                <div className="text-6xl mb-4">✨</div>
-                <h3 className="text-xl font-bold text-white text-center leading-tight">
-                  What is Fabularium
-                </h3>
-              </div>
-              <div className={featureLeftDescriptionStyle}>
-                <p className="text-slate-200 leading-relaxed mb-4">
-                  <strong>Fabularium</strong> is an application designed to help
-                  tabletop RPG enthusiasts collect and organize campaign
-                  information effortlessly. Whether you're a player or a game
-                  master, our platform provides a centralized hub for managing
-                  all your campaign data.
-                </p>
-              </div>
-            </div>
-            {/* About Us Section 2: How It Works */}
-            <div className={featureContainerStyle}>
-              <div className={featureRightDescriptionStyle}>
-                <p className="text-slate-200 leading-relaxed mb-4">
-                  Register and track detailed information about your worlds,
-                  players, their characters, and all other elements of your
-                  campaigns. Manage complex campaign data with intuitive tools
-                  designed specifically for TTRPG storytelling.
-                </p>
-                <ul className="text-slate-300 space-y-2 text-sm">
-                  <li>✓ Organize campaign data</li>
-                  <li>✓ Track player information</li>
-                  <li>✓ Manage characters & worlds</li>
-                </ul>
-              </div>
-              <div className={featureRightBoxStyle}>
-                <div className="text-6xl mb-4">🎲</div>
-                <h3 className="text-xl font-bold text-white text-center leading-tight">
-                  How It Works
-                </h3>
-              </div>
-            </div>
-            {/* About Us Section 3: Our Mission */}
-            <div className={featureContainerStyle}>
-              <div className={featureLeftBoxStyle}>
-                <div className="text-6xl mb-4">🚀</div>
-                <h3 className="text-xl font-bold text-white text-center leading-tight">
-                  Our Mission
-                </h3>
-              </div>
-              <div className={featureLeftDescriptionStyle}>
-                <p className="text-slate-200 leading-relaxed mb-4">
-                  Enable better storytelling and more immersive gaming
-                  experiences by making it easy to browse and update campaign
-                  information, track session progress, and gain a complete
-                  overview of all your TTRPG activities.
-                </p>
-              </div>
+            <p className="max-w-3xl text-lg leading-8">
+              A campaign manager for tabletop role-playing games, designed to
+              keep your worldbuilding and session notes organized in one calm,
+              readable space.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <NavLink
+                to="/sign-in"
+                className="border-2 border-gold-neutral bg-dark px-12 py-3 text-sm font-semibold uppercase hover:bg-gold-neutral"
+              >
+                Sign In
+              </NavLink>
+              <NavLink
+                to="/sign-up"
+                className="border-2 border-gold-neutral bg-dark px-12 py-3 text-sm font-semibold uppercase hover:bg-gold-neutral"
+              >
+                Sign Up
+              </NavLink>
             </div>
           </div>
-          <hr className="border-t border-orange-500 mb-16"></hr>
-          {/* Features */}
-          <h1 className="text-4xl font-bold text-orange-500 mb-8">FEATURES</h1>
-          <div className="flex flex-col gap-y-16">
-            {/* Section 1: Campaign Management */}
-            <div className={featureContainerStyle}>
-              <div className={featureLeftBoxStyle}>
-                <div className="text-6xl mb-4">📖</div>
-                <h3 className="text-xl font-bold text-white text-center leading-tight">
-                  Campaign Management
-                </h3>
-              </div>
-              <div className={featureLeftDescriptionStyle}>
-                <p className="text-slate-200 leading-relaxed mb-4">
-                  Create and organize epic campaigns with ease. Manage multiple
-                  storylines, campaigns, and adventures in one intuitive
-                  interface.
-                </p>
-                <ul className="text-slate-300 space-y-2 text-sm">
-                  <li>✓ Create unlimited campaigns</li>
-                  <li>✓ Organize by themes</li>
-                  <li>✓ Collaborative storytelling</li>
-                </ul>
-              </div>
-            </div>
-            {/* Section 2: Character Creation */}
-            <div className={featureContainerStyle}>
-              <div className={featureRightDescriptionStyle}>
-                <p className="text-slate-200 leading-relaxed mb-4">
-                  Build detailed characters with customizable attributes,
-                  backgrounds, and abilities. Bring your heroes to life.
-                </p>
-                <ul className="text-slate-300 space-y-2 text-sm">
-                  <li>✓ Full character sheets</li>
-                  <li>✓ Custom attributes</li>
-                  <li>✓ Rich backstories</li>
-                </ul>
-              </div>
-              <div className={featureRightBoxStyle}>
-                <div className="text-6xl mb-4">⚔️</div>
-                <h3 className="text-xl font-bold text-white text-center leading-tight">
-                  Character Creation
-                </h3>
-              </div>
-            </div>
-            {/* Section 3: World Building */}
-            <div className={featureContainerStyle}>
-              <div className={featureLeftBoxStyle}>
-                <div className="text-6xl mb-4">🌍</div>
-                <h3 className="text-xl font-bold text-white text-center leading-tight">
-                  World Building
-                </h3>
-              </div>
-              <div className={featureLeftDescriptionStyle}>
-                <p className="text-slate-200 leading-relaxed mb-4">
-                  Create and organize epic worlds with ease. Design detailed
-                  environments, locations, and settings for your campaigns.
-                </p>
-                <ul className="text-slate-300 space-y-2 text-sm">
-                  <li>✓ Interactive maps</li>
-                  <li>✓ NPC management</li>
-                  <li>✓ Quest tracking</li>
-                </ul>
-              </div>
-            </div>
-            <hr className="border-t border-orange-500"></hr>
-          </div>
-        </div>
-      </div>
-      {/* Contributors Section */}
-      <div className="w-full flex justify-center">
-        <div className="w-[75%]">
-          <h2 className="text-2xl font-bold text-orange-500 mb-8">Built by</h2>
-          <div className="flex justify-center">
-            <div className="grid grid-cols-3 gap-6 w-full max-w-2xl">
-              {Object.values(authors).map(({ name: author, image, github }) => (
-                <NavLink
-                  key={author}
-                  to={github}
-                  className="flex flex-col items-center justify-center p-6 bg-gradient-to-r from-orange-900 to-orange-700 rounded-lg hover:shadow-yellow-300 hover:shadow-lg transition duration-300 cursor-pointer hover:scale-105"
-                >
-                  <img
-                    src={image}
-                    alt={author}
-                    className="w-20 h-20 rounded-full object-cover mb-3 border-2 border-orange-400"
-                  />
-                  <p className="text-sm text-slate-200 text-center font-medium">
-                    {author}
-                  </p>
-                </NavLink>
-              ))}
+        </section>
+
+        <section className="grid gap-6 grid-cols-3">
+          <InfoCard
+            title="About"
+            icon="Star"
+            body="A lightweight, intuitive, and visually calm campaign manager for tabletop role-playing games."
+          />
+          <InfoCard
+            title="How it works"
+            icon="Circle"
+            body="Create camapigns or join them as a player, organize your worldbuilding notes and session recaps in one place, and share them with your players to keep everyone on the same page."
+          />
+          <InfoCard
+            title="Mission"
+            icon="Diamond"
+            body="Make campaign prep and session management feel lighter, cleaner, and easier to revisit later."
+          />
+        </section>
+
+        <section className="border-2 border-gold-neutral bg-neutral px-12 py-10">
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold uppercase text-gold-neutral tracking-widest">
+                Features
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-text-neutral">
+                Everything you need to keep your campaign organized and your
+                players informed, without the need to juggle multiple apps or
+                tabs during prep and sessions.
+              </p>
             </div>
           </div>
-          <p className="text-center text-sm text-orange-400 mt-8">
-            <span className="font-bold">Repository:</span>{" "}
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <FeatureChip title="Character creation" />
+            <FeatureChip title="Campaign management" />
+            <FeatureChip title="Material browser" />
+          </div>
+        </section>
+
+        <section className="border-2 border-gold-neutral bg-neutral px-12 py-10">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <h2 className="text-2xl font-semibold uppercase text-gold-neutral tracking-widest">
+              Built by
+            </h2>
+            <p className="text-sm text-text-neutral">Project contributors</p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {Object.values(authors).map(({ name: author, image, github }) => (
+              <NavLink
+                key={author}
+                to={github}
+                className="flex items-center gap-4 border-2 border-gold-neutral bg-dark px-4 py-4 hover:bg-light"
+              >
+                <img
+                  src={image}
+                  alt={author}
+                  className="h-14 w-14 rounded-full border-2 border-gold-neutral object-cover"
+                />
+                <div>
+                  <p className="font-medium">{author}</p>
+                  <p className="text-sm text-text-neutral">GitHub profile</p>
+                </div>
+              </NavLink>
+            ))}
+          </div>
+
+          <p className="mt-8 text-sm text-text-neutral">
+            Repository:{" "}
             <a
               href="https://github.com/Sacharow/Fabularium"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-orange-300 transition"
+              className="text-gold-neutral hover:text-gold-light"
             >
               github.com/Sacharow/Fabularium
             </a>
           </p>
-        </div>
-      </div>
-      {/* Footer */}
-      <Footer />
+        </section>
+
+        <Footer />
+      </main>
     </div>
   );
 }
 
-const epicButtonStyle =
-  "text-5xl h-16 font-bold text-orange-600 text-shadow-lg text-shadow-orange-950 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-300 hover:text-white";
-const featureContainerStyle =
-  "grid grid-cols-4 hover:shadow-yellow-300 hover:shadow-xl transition duration-300 rounded-lg min-h-48";
-const featureLeftBoxStyle =
-  "col-span-1 flex flex-col justify-center items-center p-8 bg-gradient-to-r from-orange-900 to-orange-400 rounded-l-lg";
-const featureLeftDescriptionStyle =
-  "col-span-3 flex flex-col justify-center items-start p-8 bg-gradient-to-r from-orange-400 to-transparent rounded-r-lg";
-const featureRightBoxStyle =
-  "col-span-1 flex flex-col justify-center items-center p-8 bg-gradient-to-l from-orange-900 to-orange-400 rounded-r-lg";
-const featureRightDescriptionStyle =
-  "col-span-3 flex flex-col justify-center items-start p-8 bg-gradient-to-l from-orange-400 to-transparent rounded-l-lg";
+function InfoCard({
+  title,
+  icon,
+  body,
+}: {
+  title: string;
+  icon: string;
+  body: string;
+}) {
+  return (
+    <article className="border-2 border-gold-neutral bg-neutral p-6">
+      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-gold-neutral">
+        {icon === "Star" && <Star />}
+        {icon === "Circle" && <Circle />}
+        {icon === "Diamond" && <Diamond />}
+      </div>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <p className="mt-3 text-sm leading-7 text-text-neutral">{body}</p>
+    </article>
+  );
+}
+
+function FeatureChip({ title }: { title: string }) {
+  return (
+    <div className="border-2 border-gold-neutral bg-dark px-5 py-4 text-sm font-medium">
+      {title}
+    </div>
+  );
+}
 
 const authors = {
   "1": {
