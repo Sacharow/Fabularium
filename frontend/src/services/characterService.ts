@@ -45,7 +45,13 @@ export const characterService = {
       credentials: "include",
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error("Failed to edit character");
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMsg = errorData.error
+        ? JSON.stringify(errorData.error)
+        : errorData.message;
+      throw new Error(`Failed to edit character: ${errorMsg}`);
+    }
     return res.json();
   },
   async deleteCharacter(id: string) {

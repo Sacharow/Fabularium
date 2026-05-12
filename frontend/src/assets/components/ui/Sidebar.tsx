@@ -17,11 +17,15 @@ import {
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import CreateEntityModal from "./CreateEntityModal";
+import { useAuth } from "../../../context/AuthContext";
 
 function Sidebar() {
+  const { user, isAuthenticated } = useAuth();
   const location = useLocation();
-  const onResourcesPage = location.pathname === "/resources-new";
-  const onCharacterPreviewPage = location.pathname === "/preview/character";
+  const onResourcesPage = location.pathname === "/resources";
+  const onCharacterPreviewPage =
+    location.pathname === "/preview/character" ||
+    location.pathname.startsWith("/character/");
   const onCampaignPreviewPage = location.pathname === "/preview/campaign";
   const canCreateNew =
     location.pathname.startsWith("/characters") ||
@@ -29,6 +33,9 @@ function Sidebar() {
   const activeResourceSection = location.hash.replace("#", "") || "backgrounds";
   const activeCharacterSection = location.hash.replace("#", "") || "general";
   const activeCampaignSection = location.hash.replace("#", "") || "general";
+  const characterPreviewBase = location.pathname.startsWith("/character/")
+    ? location.pathname
+    : "/preview/character";
 
   const topNavClass = (isActive: boolean) =>
     `${buttonStyle} ${isActive ? "bg-light border-l-8 border-gold-neutral" : ""}`;
@@ -41,7 +48,7 @@ function Sidebar() {
       {/* UPPER SECTION */}
       <div className="flex flex-col gap-2">
         <NavLink
-          to="/hub"
+          to="/"
           className="text-2xl text-gold-neutral font-bold tracking-widest hover:text-gold-light"
         >
           <h1>FABULARIUM</h1>
@@ -52,7 +59,7 @@ function Sidebar() {
         <hr className="text-neutral-text" />
         <div className="flex flex-col gap-2">
           <NavLink
-            to="/characters-new"
+            to="/characters"
             className={({ isActive }) => topNavClass(isActive)}
           >
             <User />
@@ -61,7 +68,7 @@ function Sidebar() {
           {onCharacterPreviewPage && (
             <div className="flex flex-col gap-2 pl-6 border-l-2 border-neutral-text">
               <Link
-                to="/preview/character#general"
+                to={`${characterPreviewBase}#general`}
                 className={innerButtonClass(
                   activeCharacterSection === "general",
                 )}
@@ -70,7 +77,7 @@ function Sidebar() {
                 <span className="text-sm">GENERAL</span>
               </Link>
               <Link
-                to="/preview/character#personal"
+                to={`${characterPreviewBase}#personal`}
                 className={innerButtonClass(
                   activeCharacterSection === "personal",
                 )}
@@ -79,14 +86,14 @@ function Sidebar() {
                 <span className="text-sm">PERSONAL</span>
               </Link>
               <Link
-                to="/preview/character#stats"
+                to={`${characterPreviewBase}#stats`}
                 className={innerButtonClass(activeCharacterSection === "stats")}
               >
                 <Dumbbell className="w-4 h-4" />
                 <span className="text-sm">STATS</span>
               </Link>
               <Link
-                to="/preview/character#features"
+                to={`${characterPreviewBase}#features`}
                 className={innerButtonClass(
                   activeCharacterSection === "features",
                 )}
@@ -95,7 +102,7 @@ function Sidebar() {
                 <span className="text-sm">FEATURES</span>
               </Link>
               <Link
-                to="/preview/character#spells"
+                to={`${characterPreviewBase}#spells`}
                 className={innerButtonClass(
                   activeCharacterSection === "spells",
                 )}
@@ -104,7 +111,7 @@ function Sidebar() {
                 <span className="text-sm">SPELLS</span>
               </Link>
               <Link
-                to="/preview/character#inventory"
+                to={`${characterPreviewBase}#inventory`}
                 className={innerButtonClass(
                   activeCharacterSection === "inventory",
                 )}
@@ -115,7 +122,7 @@ function Sidebar() {
             </div>
           )}
           <NavLink
-            to="/campaigns-new"
+            to="/campaigns"
             className={({ isActive }) => topNavClass(isActive)}
           >
             <Anvil />
@@ -174,7 +181,7 @@ function Sidebar() {
             </div>
           )}
           <NavLink
-            to="/resources-new"
+            to="/resources"
             className={({ isActive }) => topNavClass(isActive)}
           >
             <Component />
@@ -183,7 +190,7 @@ function Sidebar() {
           {onResourcesPage && (
             <div className="flex flex-col gap-2 pl-6 border-l-2 border-neutral-text">
               <Link
-                to="/resources-new#backgrounds"
+                to="/resources#backgrounds"
                 className={innerButtonClass(
                   activeResourceSection === "backgrounds",
                 )}
@@ -192,7 +199,7 @@ function Sidebar() {
                 <span className="text-sm">BACKGROUNDS</span>
               </Link>
               <Link
-                to="/resources-new#classes"
+                to="/resources#classes"
                 className={innerButtonClass(
                   activeResourceSection === "classes",
                 )}
@@ -201,21 +208,21 @@ function Sidebar() {
                 <span className="text-sm">CLASSES</span>
               </Link>
               <Link
-                to="/resources-new#feats"
+                to="/resources#feats"
                 className={innerButtonClass(activeResourceSection === "feats")}
               >
                 <Star className="w-4 h-4" />
                 <span className="text-sm">FEATS</span>
               </Link>
               <Link
-                to="/resources-new#races"
+                to="/resources#races"
                 className={innerButtonClass(activeResourceSection === "races")}
               >
                 <UsersIcon className="w-4 h-4" />
                 <span className="text-sm">RACES</span>
               </Link>
               <Link
-                to="/resources-new#spells"
+                to="/resources#spells"
                 className={innerButtonClass(activeResourceSection === "spells")}
               >
                 <Wand className="w-4 h-4" />
@@ -228,9 +235,15 @@ function Sidebar() {
       {/* DOWN SECTION */}
       <div className="flex flex-col gap-2">
         <hr className="text-neutral-text" />
-        <NavLink to="/profile-new" className={buttonStyle}>
+        <NavLink
+          to={isAuthenticated ? "/profile" : "/sign-in"}
+          className={buttonStyle}
+          title={isAuthenticated ? user?.name : "Sign In"}
+        >
           <UserCircle />
-          <p>PROFILE</p>
+          <p className="min-w-0 flex-1 truncate">
+            {isAuthenticated && user?.name ? user.name : "SIGN IN"}
+          </p>
         </NavLink>
       </div>
     </div>

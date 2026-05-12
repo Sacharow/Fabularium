@@ -43,6 +43,7 @@ enum Alignment {
 model Users {
   id             String    @id @default(uuid())
   name           String
+  bio            String    @default("")
   email          String    @unique
   passwordHashed String?   // null gdy OAuth < -- dpdać później
   provider       String    @default("local")
@@ -68,17 +69,11 @@ model Character {
   owner        Users      @relation(fields: [ownerId], references: [id])
   campaignId   String?
   campaign     Campaign? @relation(fields: [campaignId], references: [id])
+  race         String?
+  subrace      String?
 
-  raceId       String?
-  race         Race?     @relation(fields: [raceId], references: [id])
-  subraceId    String?
-  subRace     SubRace?  @relation(fields: [subraceId], references: [id])
-
-  classId      String?
-  class        Class?    @relation(fields: [classId], references: [id])
-
-  subclassId   String?
-  subclass     Subclass? @relation(fields: [subclassId], references: [id])
+  class        String?
+  subclass     String?
 
   level        Int       @default(1)
   xp           Int       @default(0)
@@ -288,7 +283,6 @@ model Race {
   speed     Int?
   languages String?
   raceAbilities RaceAbility[]
-  characters Character[]
 }
 
 model SubRace {
@@ -298,7 +292,6 @@ model SubRace {
   name      String @unique
   description String?
   subRaceAbilities SubRaceAbility[]
-  characters Character[]
 }
 
 model RaceAbility {
@@ -328,7 +321,6 @@ model Class {
   subclasses Subclass[]
   progressions ClassProgression[]
 
-  characters Character[]
 }
 
 model Subclass {
@@ -338,7 +330,6 @@ model Subclass {
   name      String @unique
   description String?
 
-  characters Character[]
 }
 
 model ClassProgression {

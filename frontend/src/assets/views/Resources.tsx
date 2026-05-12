@@ -222,7 +222,7 @@ const sections: ResourceSection[] = [
 
 const sectionKeys = sections.map((section) => section.key);
 
-function ResourcesNew() {
+function Resources() {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] =
@@ -399,4 +399,4 @@ function ResourcesNew() {
   );
 }
 
-export default ResourcesNew;
+export default Resources;
