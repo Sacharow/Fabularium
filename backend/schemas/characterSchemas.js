@@ -39,6 +39,51 @@ const combatSchema = z.object({
   passivePerception: z.number().int().nullable().optional(),
 });
 
+const spellSlotSchema = z.object({
+  spellLevel: z.number().int().min(0),
+  maxSlots: z.number().int().min(0),
+  usedSlots: z.number().int().min(0),
+});
+
+const spellLevelEntrySchema = z.union([
+  z.string().min(1),
+  z.object({
+    name: z.string().min(1),
+    description: z.string().optional(),
+  }),
+]);
+
+const spellsByLevelSchema = z.object({
+  level0: z.array(spellLevelEntrySchema).optional(),
+  level1: z.array(spellLevelEntrySchema).optional(),
+  level2: z.array(spellLevelEntrySchema).optional(),
+  level3: z.array(spellLevelEntrySchema).optional(),
+  level4: z.array(spellLevelEntrySchema).optional(),
+  level5: z.array(spellLevelEntrySchema).optional(),
+  level6: z.array(spellLevelEntrySchema).optional(),
+  level7: z.array(spellLevelEntrySchema).optional(),
+  level8: z.array(spellLevelEntrySchema).optional(),
+  level9: z.array(spellLevelEntrySchema).optional(),
+});
+
+const moneySchema = z.object({
+  gp: z.number().int().min(0).optional(),
+  sp: z.number().int().min(0).optional(),
+  ep: z.number().int().min(0).optional(),
+  cp: z.number().int().min(0).optional(),
+  pp: z.number().int().min(0).optional(),
+});
+
+const equipmentItemSchema = z.union([
+  z.string().min(1),
+  z.object({
+    name: z.string().min(1),
+    type: z.string().optional(),
+    weight: z.number().nullable().optional(),
+    description: z.string().optional(),
+  }),
+]);
+
 const createCharacterSchema = z.object({
   name: z.string().min(1).max(60),
   image: z.string().url().optional(),
@@ -86,6 +131,13 @@ const updateCharacterSchema = z.object({
   saves: savesSchema.optional(),
   skills: z.array(skillSchema).optional(),
   combat: combatSchema.optional(),
+  features: z.array(z.string().min(1)).optional(),
+  knownSpells: z.array(z.string().min(1)).optional(),
+  preparedSpells: z.array(z.string().min(1)).optional(),
+  spellsByLevel: spellsByLevelSchema.optional(),
+  spellSlots: z.array(spellSlotSchema).optional(),
+  equipment: z.array(equipmentItemSchema).optional(),
+  money: moneySchema.optional(),
 });
 
 module.exports = {

@@ -23,17 +23,29 @@ const getCharacterSectionById = async (characterId, userId) => {
       },
       inventoryItems: {
         include: {
-          item: { select: { id: true, name: true } },
+          item: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+              description: true,
+              weight: true,
+            },
+          },
         },
       },
       knownSpells: {
         include: {
-          spell: { select: { id: true, name: true } },
+          spell: {
+            select: { id: true, name: true, level: true, description: true },
+          },
         },
       },
       preparedSpells: {
         include: {
-          spell: { select: { id: true, name: true } },
+          spell: {
+            select: { id: true, name: true, level: true, description: true },
+          },
         },
       },
       spellSlots: true,

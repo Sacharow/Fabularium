@@ -9,6 +9,32 @@ const mapCharacterToSection = (character) => {
   if (!character) return null;
 
   const profBonus = 2 + Math.floor((character.level - 1) / 4);
+  const spellsByLevel = Array.from(
+    { length: 10 },
+    (_, level) => `level${level}`,
+  ).reduce((acc, key) => {
+    acc[key] = [];
+    return acc;
+  }, {});
+
+  const addSpellToLevel = (spell) => {
+    const name = spell?.name || spell?.id;
+    const description =
+      typeof spell?.description === "string" ? spell.description : "";
+    const rawLevel = typeof spell?.level === "number" ? spell.level : 0;
+    const safeLevel = Math.max(0, Math.min(9, rawLevel));
+    const key = `level${safeLevel}`;
+
+    if (name && !spellsByLevel[key].some((entry) => entry.name === name)) {
+      spellsByLevel[key].push({
+        name,
+        description,
+      });
+    }
+  };
+
+  (character.knownSpells || []).forEach((ks) => addSpellToLevel(ks.spell));
+  (character.preparedSpells || []).forEach((ps) => addSpellToLevel(ps.spell));
 
   return {
     id: character.id,
@@ -85,7 +111,12 @@ const mapCharacterToSection = (character) => {
     equipment: character.inventoryItems
       ? character.inventoryItems
           .filter((inv) => inv.equipped)
-          .map((inv) => inv.item?.name || inv.item?.id)
+          .map((inv) => ({
+            name: inv.item?.name || inv.item?.id,
+            type: inv.item?.type || "Equipment",
+            description: inv.item?.description || "",
+            weight: inv.item?.weight ?? null,
+          }))
       : [],
 
     // Features
@@ -128,6 +159,8 @@ const mapCharacterToSection = (character) => {
     preparedSpells: character.preparedSpells
       ? character.preparedSpells.map((ps) => ps.spell?.name || ps.spell?.id)
       : [],
+
+    spellsByLevel,
 
     spellSlots: character.spellSlots || [],
   };

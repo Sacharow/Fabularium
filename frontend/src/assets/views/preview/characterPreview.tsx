@@ -283,6 +283,11 @@ const mockCharacter = {
 void mockCharacter;
 
 type AbilityKey = "str" | "dex" | "con" | "int" | "wis" | "cha";
+type SpellLevelEntry = {
+  name: string;
+  description: string;
+};
+type SpellLevelPayloadEntry = SpellLevelEntry | string;
 
 type CharacterViewData = {
   id: string;
@@ -323,6 +328,12 @@ type CharacterViewData = {
   passivePerception?: number | null;
   knownSpells?: string[];
   preparedSpells?: string[];
+  spellsByLevel?: Partial<
+    Record<
+      `level${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`,
+      SpellLevelPayloadEntry[]
+    >
+  >;
 };
 
 const abilityOrder: Array<{ key: AbilityKey; label: string }> = [
@@ -374,39 +385,110 @@ const buildFeatures = (features: string[] = []): AccordionItem[] => [
   },
 ];
 
+const spellLevelLabels: string[] = [
+  "0th Level Spells",
+  "1st Level Spells",
+  "2nd Level Spells",
+  "3rd Level Spells",
+  "4th Level Spells",
+  "5th Level Spells",
+  "6th Level Spells",
+  "7th Level Spells",
+  "8th Level Spells",
+  "9th Level Spells",
+];
+
+const normalizeSpellsByLevel = (
+  spellsByLevel: CharacterViewData["spellsByLevel"],
+): Record<string, SpellLevelEntry[]> => {
+  const normalized = Object.fromEntries(
+    Array.from({ length: 10 }, (_, level) => [
+      `level${level}`,
+      [] as SpellLevelEntry[],
+    ]),
+  ) as Record<string, SpellLevelEntry[]>;
+
+  if (!spellsByLevel) {
+    return normalized;
+  }
+
+  Object.entries(spellsByLevel).forEach(([key, value]) => {
+    if (!(key in normalized)) {
+      return;
+    }
+
+    const parsed = (Array.isArray(value) ? value : []).map((spell) => {
+      if (typeof spell === "string") {
+        const name = spell.trim();
+        return name ? { name, description: "" } : null;
+      }
+
+      if (spell && typeof spell === "object") {
+        const name = String(spell.name || "").trim();
+        if (!name) {
+          return null;
+        }
+
+        return {
+          name,
+          description:
+            typeof spell.description === "string" ? spell.description : "",
+        };
+      }
+
+      return null;
+    });
+
+    normalized[key] = parsed.filter(
+      (spell): spell is SpellLevelEntry => spell !== null,
+    );
+  });
+
+  return normalized;
+};
+
 const buildSpells = (
+  spellsByLevel: CharacterViewData["spellsByLevel"],
   knownSpells: string[] = [],
   preparedSpells: string[] = [],
-): AccordionItem[] => [
-  {
-    title: "Known Spells",
-    content:
-      knownSpells.length > 0
-        ? `${knownSpells.length} known`
-        : "No known spells recorded",
-    subitems:
-      knownSpells.length > 0
-        ? knownSpells.map((spell) => ({
-            title: spell,
-            content: "Spell detail unavailable",
-          }))
-        : undefined,
-  },
-  {
-    title: "Prepared Spells",
-    content:
-      preparedSpells.length > 0
-        ? `${preparedSpells.length} prepared`
-        : "No prepared spells recorded",
-    subitems:
-      preparedSpells.length > 0
-        ? preparedSpells.map((spell) => ({
-            title: spell,
-            content: "Prepared spell detail unavailable",
-          }))
-        : undefined,
-  },
-];
+): AccordionItem[] => {
+  const normalized = normalizeSpellsByLevel(spellsByLevel);
+  const hasAnyBucketedSpells = Object.values(normalized).some(
+    (levelSpells) => levelSpells.length > 0,
+  );
+
+  // Fallback for legacy payloads that do not expose level buckets.
+  if (knownSpells.length > 0 && !hasAnyBucketedSpells) {
+    normalized.level0 = Array.from(new Set(knownSpells)).map((name) => ({
+      name,
+      description: "",
+    }));
+  }
+
+  if (preparedSpells.length > 0 && !hasAnyBucketedSpells) {
+    normalized.level1 = Array.from(new Set(preparedSpells)).map((name) => ({
+      name,
+      description: "",
+    }));
+  }
+
+  return Array.from({ length: 10 }, (_, level) => {
+    const levelKey = `level${level}`;
+    const spells = normalized[levelKey] || [];
+
+    return {
+      title: spellLevelLabels[level],
+      content:
+        spells.length > 0
+          ? `${spells.length} spell${spells.length === 1 ? "" : "s"}`
+          : "No spells recorded",
+      subitems: spells.map((spell) => ({
+        title: spell.name,
+        content: spell.description || "",
+      })),
+    };
+  });
+};
 
 const buildInventory = (
   equipment: CharacterViewData["equipment"] = [],
@@ -591,8 +673,12 @@ const buildCharacterSections = (
       key: "spells",
       label: "Spells",
       icon: Wand2,
-      intro: "Prepared spells.",
-      content: buildSpells(character.knownSpells, character.preparedSpells),
+      intro: "Spellbook grouped by spell level (0th to 9th).",
+      content: buildSpells(
+        character.spellsByLevel,
+        character.knownSpells,
+        character.preparedSpells,
+      ),
     },
     {
       key: "inventory",
@@ -655,6 +741,9 @@ type CharacterUpdatePayload = {
   features?: string[];
   knownSpells?: string[];
   preparedSpells?: string[];
+  spellsByLevel?: Partial<
+    Record<`level${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`, SpellLevelEntry[]>
+  >;
   equipment?: Array<{
     name: string;
     type?: string;
@@ -703,6 +792,20 @@ const extractAccordionSubitemTitles = (items: AccordionItem[]) =>
       .map((subitem) => parseMaybeText(subitem.title))
       .filter((title): title is string => Boolean(title)),
   );
+
+const extractSpellLevelFromTitle = (title: string) => {
+  const match = title.match(/(\d)/);
+  if (!match) {
+    return null;
+  }
+
+  const level = Number(match[1]);
+  if (!Number.isInteger(level) || level < 0 || level > 9) {
+    return null;
+  }
+
+  return level;
+};
 
 const extractEquipmentItems = (items: AccordionItem[]) => {
   return items.flatMap((item) =>
@@ -924,20 +1027,59 @@ const buildCharacterUpdatePayload = (
     }
     case "spells": {
       const spellItems = content as AccordionItem[];
-      const knownSpellsItem = spellItems.find((item) =>
-        item.title.toLowerCase().includes("known"),
+      const spellsByLevel = Array.from({ length: 10 }, (_, level) => ({
+        key: `level${level}`,
+        values: [] as SpellLevelEntry[],
+      })).reduce(
+        (acc, entry) => {
+          acc[entry.key] = entry.values;
+          return acc;
+        },
+        {} as Record<string, SpellLevelEntry[]>,
       );
-      const preparedSpellsItem = spellItems.find((item) =>
-        item.title.toLowerCase().includes("prepared"),
+
+      spellItems.forEach((item) => {
+        const parsedLevel = extractSpellLevelFromTitle(item.title);
+        if (parsedLevel == null) {
+          return;
+        }
+
+        const key = `level${parsedLevel}`;
+        const entries: SpellLevelEntry[] = (item.subitems ?? [])
+          .map((subitem) => {
+            const name = parseMaybeText(subitem.title);
+            if (!name) {
+              return null;
+            }
+
+            return {
+              name,
+              description:
+                typeof subitem.content === "string" ? subitem.content : "",
+            };
+          })
+          .filter((entry): entry is SpellLevelEntry => entry !== null);
+
+        const deduped = entries.filter(
+          (entry, index, arr) =>
+            arr.findIndex((itemEntry) => itemEntry.name === entry.name) ===
+            index,
+        );
+        spellsByLevel[key] = deduped;
+      });
+
+      const flattenedSpellNames = Array.from(
+        new Set(
+          Object.values(spellsByLevel)
+            .flat()
+            .map((spell) => spell.name),
+        ),
       );
 
       return {
-        knownSpells: extractAccordionSubitemTitles(
-          knownSpellsItem ? [knownSpellsItem] : [],
-        ),
-        preparedSpells: extractAccordionSubitemTitles(
-          preparedSpellsItem ? [preparedSpellsItem] : [],
-        ),
+        spellsByLevel,
+        knownSpells: flattenedSpellNames,
+        preparedSpells: flattenedSpellNames,
       };
     }
     case "inventory": {
