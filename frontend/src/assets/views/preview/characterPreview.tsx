@@ -300,7 +300,12 @@ type CharacterViewData = {
   stats?: Array<{ name: string; value: number }>;
   skillProf?: string[];
   skillExpertise?: string[];
-  equipment?: string[];
+  equipment?: Array<{
+    name: string;
+    type?: string;
+    description?: string;
+    weight?: number | null;
+  }>;
   features?: string[];
   money?: Record<string, number>;
   background?: string | null;
@@ -318,11 +323,6 @@ type CharacterViewData = {
   passivePerception?: number | null;
   knownSpells?: string[];
   preparedSpells?: string[];
-  spellSlots?: Array<{
-    spellLevel: number;
-    maxSlots: number;
-    usedSlots: number;
-  }>;
 };
 
 const abilityOrder: Array<{ key: AbilityKey; label: string }> = [
@@ -377,11 +377,6 @@ const buildFeatures = (features: string[] = []): AccordionItem[] => [
 const buildSpells = (
   knownSpells: string[] = [],
   preparedSpells: string[] = [],
-  spellSlots: Array<{
-    spellLevel: number;
-    maxSlots: number;
-    usedSlots: number;
-  }> = [],
 ): AccordionItem[] => [
   {
     title: "Known Spells",
@@ -411,32 +406,17 @@ const buildSpells = (
           }))
         : undefined,
   },
-  {
-    title: "Spell Slots",
-    content:
-      spellSlots.length > 0
-        ? `${spellSlots.length} slot level${spellSlots.length === 1 ? "" : "s"}`
-        : "No spell slots recorded",
-    subitems:
-      spellSlots.length > 0
-        ? spellSlots.map((slot) => ({
-            title: `Level ${slot.spellLevel}`,
-            content: `${slot.usedSlots}/${slot.maxSlots} used`,
-          }))
-        : undefined,
-  },
 ];
 
 const buildInventory = (
-  equipment: string[] = [],
+  equipment: CharacterViewData["equipment"] = [],
   money: Record<string, number> = {},
 ): AccordionItem[] => {
-  const currencyEntries = ["gp", "sp", "ep", "cp", "pp"]
+  const currencyEntries = ["cp", "sp", "ep", "gp", "pp"]
     .map((currency) => ({
       currency,
       amount: money[currency] ?? 0,
     }))
-    .filter((entry) => entry.amount > 0)
     .map((entry) => ({
       title: entry.currency.toUpperCase(),
       content: `${entry.amount}`,
@@ -452,18 +432,17 @@ const buildInventory = (
       subitems:
         equipment.length > 0
           ? equipment.map((item) => ({
-              title: item,
-              content: "Equipped item",
+              title: item.name,
+              content: item.description || "No description provided",
+              type: item.type || "Equipment",
+              weight: item.weight ?? undefined,
             }))
           : undefined,
     },
     {
       title: "Currency",
-      content:
-        currencyEntries.length > 0
-          ? `${currencyEntries.length} coin type${currencyEntries.length === 1 ? "" : "s"}`
-          : "No currency recorded",
-      subitems: currencyEntries.length > 0 ? currencyEntries : undefined,
+      content: "5 coin types",
+      subitems: currencyEntries,
     },
   ];
 };
@@ -612,12 +591,8 @@ const buildCharacterSections = (
       key: "spells",
       label: "Spells",
       icon: Wand2,
-      intro: "Prepared spells and spell slots.",
-      content: buildSpells(
-        character.knownSpells,
-        character.preparedSpells,
-        character.spellSlots,
-      ),
+      intro: "Prepared spells.",
+      content: buildSpells(character.knownSpells, character.preparedSpells),
     },
     {
       key: "inventory",
@@ -677,6 +652,22 @@ type CharacterUpdatePayload = {
     hitDiceTotal?: number | null;
     passivePerception?: number | null;
   };
+  features?: string[];
+  knownSpells?: string[];
+  preparedSpells?: string[];
+  equipment?: Array<{
+    name: string;
+    type?: string;
+    weight?: number;
+    description?: string;
+  }>;
+  money?: {
+    gp?: number;
+    sp?: number;
+    ep?: number;
+    cp?: number;
+    pp?: number;
+  };
 };
 
 const parseMaybeNumber = (value: string | number | undefined) => {
@@ -704,6 +695,58 @@ const parseMaybeText = (value: string | number | undefined) => {
   }
 
   return trimmedValue;
+};
+
+const extractAccordionSubitemTitles = (items: AccordionItem[]) =>
+  items.flatMap((item) =>
+    (item.subitems ?? [])
+      .map((subitem) => parseMaybeText(subitem.title))
+      .filter((title): title is string => Boolean(title)),
+  );
+
+const extractEquipmentItems = (items: AccordionItem[]) => {
+  return items.flatMap((item) =>
+    (item.subitems ?? [])
+      .map((subitem) => {
+        const name = parseMaybeText(subitem.title);
+        const description =
+          typeof subitem.content === "string" ? subitem.content : "";
+
+        return {
+          name: name || "",
+          type: subitem.type || "Equipment",
+          weight: subitem.weight,
+          description: description || "",
+        };
+      })
+      .filter((item) => Boolean(item.name)),
+  );
+};
+
+const getAccordionStringContent = (value: AccordionItem["content"]) =>
+  typeof value === "string" ? value : "";
+
+const parseCurrencySubitems = (currencyItems: AccordionItem | undefined) => {
+  const money: CharacterUpdatePayload["money"] = {};
+  (currencyItems?.subitems ?? []).forEach((subitem) => {
+    const currencyKey = subitem.title.trim().toLowerCase();
+    const amount = parseMaybeNumber(getAccordionStringContent(subitem.content));
+    if (typeof amount !== "number") {
+      return;
+    }
+
+    if (
+      currencyKey === "gp" ||
+      currencyKey === "sp" ||
+      currencyKey === "ep" ||
+      currencyKey === "cp" ||
+      currencyKey === "pp"
+    ) {
+      money[currencyKey] = amount;
+    }
+  });
+
+  return money;
 };
 
 const getDetailValue = (
@@ -871,6 +914,44 @@ const buildCharacterUpdatePayload = (
         stats,
         saves,
         skills,
+      };
+    }
+    case "features": {
+      const featureItems = content as AccordionItem[];
+      return {
+        features: extractAccordionSubitemTitles(featureItems),
+      };
+    }
+    case "spells": {
+      const spellItems = content as AccordionItem[];
+      const knownSpellsItem = spellItems.find((item) =>
+        item.title.toLowerCase().includes("known"),
+      );
+      const preparedSpellsItem = spellItems.find((item) =>
+        item.title.toLowerCase().includes("prepared"),
+      );
+
+      return {
+        knownSpells: extractAccordionSubitemTitles(
+          knownSpellsItem ? [knownSpellsItem] : [],
+        ),
+        preparedSpells: extractAccordionSubitemTitles(
+          preparedSpellsItem ? [preparedSpellsItem] : [],
+        ),
+      };
+    }
+    case "inventory": {
+      const inventoryItems = content as AccordionItem[];
+      const equippedItems = inventoryItems.find((item) =>
+        item.title.toLowerCase().includes("equipped"),
+      );
+      const currencyItems = inventoryItems.find((item) =>
+        item.title.toLowerCase().includes("currency"),
+      );
+
+      return {
+        equipment: extractEquipmentItems(equippedItems ? [equippedItems] : []),
+        money: parseCurrencySubitems(currencyItems),
       };
     }
     default:
@@ -1129,12 +1210,27 @@ function CharacterPreview() {
           />
         );
       case "features":
+        return (
+          <AccordionSection
+            {...baseProps}
+            content={currentContent as AccordionItem[]}
+            sectionType="features"
+          />
+        );
       case "spells":
+        return (
+          <AccordionSection
+            {...baseProps}
+            content={currentContent as AccordionItem[]}
+            sectionType="spells"
+          />
+        );
       case "inventory":
         return (
           <AccordionSection
             {...baseProps}
             content={currentContent as AccordionItem[]}
+            sectionType="equipment"
           />
         );
       default:

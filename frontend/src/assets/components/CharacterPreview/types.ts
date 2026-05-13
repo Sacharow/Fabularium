@@ -32,6 +32,9 @@ export interface AccordionItem {
   title: string;
   content: string | StatDetail[];
   subitems?: AccordionItem[];
+  // Equipment-specific fields
+  type?: string;
+  weight?: number;
 }
 
 export interface PersonalDetail {
