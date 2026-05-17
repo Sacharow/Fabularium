@@ -15,7 +15,9 @@ const makeJoinCode = async () => {
     }
   }
 
-  throw new Error("Could not generate unique join code after multiple attempts");
+  throw new Error(
+    "Could not generate unique join code after multiple attempts",
+  );
 };
 
 const createCampaignForOwner = async (campaignData, ownerId) => {
@@ -25,6 +27,7 @@ const createCampaignForOwner = async (campaignData, ownerId) => {
     data: {
       name: campaignData.name,
       description: campaignData.description,
+      currentSession: campaignData.currentSession,
       ownerId,
       joinCode,
     },
@@ -35,6 +38,7 @@ const createCampaignForOwner = async (campaignData, ownerId) => {
 const listCampaigns = async () => {
   return prisma.campaign.findMany({
     include: { owner: true, contributors: true },
+    orderBy: { name: "asc" },
   });
 };
 
@@ -45,11 +49,21 @@ const getCampaignById = async (id) => {
       owner: true,
       contributors: true,
       characters: true,
-      missions: { include: { location: true } },
+      missions: {
+        include: {
+          location: true,
+          missionNpcs: { include: { npc: true } },
+        },
+      },
       notes: true,
       maps: true,
-      locations: { include: { npcs: true } },
-      npcs: true,
+      locations: { include: { npcs: true, missions: true } },
+      npcs: {
+        include: {
+          locations: true,
+          missionNpcs: { include: { mission: true } },
+        },
+      },
     },
   });
 };
@@ -67,6 +81,8 @@ const updateCampaignById = async (id, data) => {
     data: {
       name: data.name,
       description: data.description,
+      photo: data.photo,
+      currentSession: data.currentSession,
     },
   });
 };
@@ -131,6 +147,7 @@ const listContributorsByCampaignId = async (id) => {
 const listCharactersByCampaignId = async (id) => {
   return prisma.character.findMany({
     where: { campaignId: id },
+    orderBy: { name: "asc" },
   });
 };
 

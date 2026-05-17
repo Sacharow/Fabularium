@@ -14,6 +14,7 @@ interface Character {
   speed: number;
   armorClass: number;
   connectedCampaign: string;
+  campaignId?: string;
 }
 
 function Characters() {
@@ -90,6 +91,7 @@ function Characters() {
               speed={character.speed}
               armorClass={character.armorClass}
               connectedCampaign={character.connectedCampaign}
+              campaignId={character.campaignId}
             />
           ))}
         </div>

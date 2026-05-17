@@ -169,6 +169,7 @@ const getOwnedCharacterById = async (characterId, userId) => {
 const listCharactersForUser = async (userId) => {
   return prisma.character.findMany({
     where: { ownerId: userId },
+    orderBy: { name: "asc" },
     select: {
       id: true,
       name: true,

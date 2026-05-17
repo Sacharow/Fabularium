@@ -11,6 +11,7 @@ function CharacterCard({
   speed,
   armorClass,
   connectedCampaign,
+  campaignId,
 }: {
   name?: string;
   level?: number;
@@ -20,10 +21,14 @@ function CharacterCard({
   speed?: number;
   armorClass?: number;
   connectedCampaign?: string;
+  campaignId?: string;
   id?: string;
 }) {
   const navigate = useNavigate();
   const characterPath = id ? `/character/${id}` : "/preview/character";
+  const connectedCampaignPath = campaignId
+    ? `/preview/campaign/${campaignId}`
+    : "/preview/campaign";
   const displayName = name?.replace(/-/g, " ").replace(/\s+/g, " ").trim();
 
   return (
@@ -84,7 +89,7 @@ function CharacterCard({
         <Diamond size={18} className="text-gold-neutral" />
         {connectedCampaign ? (
           <NavLink
-            to="/preview/campaign"
+            to={connectedCampaignPath}
             className="ml-2"
             onClick={(e) => e.stopPropagation()}
           >

@@ -123,16 +123,10 @@ export function NotesSection({
 
           return (
             <div key={itemId} className="flex flex-col">
-              <button
-                type="button"
-                onClick={() => toggleItem(itemId)}
-                className={`w-full p-4 text-left cursor-pointer border-2 border-gold-neutral  ${
-                  isOpen
-                    ? "bg-light hover:bg-gray-light"
-                    : "bg-neutral hover:bg-light"
+              <div
+                className={`w-full p-4 text-left border-2 border-gold-neutral ${
+                  isOpen ? "bg-light" : "bg-neutral"
                 }`}
-                aria-expanded={isOpen}
-                aria-controls={`${itemId}-panel`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
@@ -156,8 +150,7 @@ export function NotesSection({
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {isEditing && (
                       <PreviewActionButton
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           handleRemoveNote(index);
                         }}
                         variant="danger"
@@ -167,14 +160,25 @@ export function NotesSection({
                         <Trash2 className="h-3 w-3" />
                       </PreviewActionButton>
                     )}
-                    <ChevronDown
-                      className={`h-4 w-4  flex-shrink-0 ${
-                        isOpen ? "rotate-180 text-gold-neutral" : ""
+                    <button
+                      type="button"
+                      onClick={() => toggleItem(itemId)}
+                      className={`p-1 cursor-pointer rounded hover:bg-light ${
+                        isOpen ? "text-gold-neutral" : "text-neutral-text"
                       }`}
-                    />
+                      aria-expanded={isOpen}
+                      aria-controls={`${itemId}-panel`}
+                      title={isOpen ? "Collapse note" : "Expand note"}
+                    >
+                      <ChevronDown
+                        className={`h-4 w-4 flex-shrink-0 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
                   </div>
                 </div>
-              </button>
+              </div>
 
               {isOpen && (
                 <div

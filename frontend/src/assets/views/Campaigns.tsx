@@ -10,6 +10,8 @@ interface Campaign {
   description?: string;
   contributors?: any[];
   ownerId?: string;
+  currentSession?: number;
+  photo?: string | null;
 }
 
 function Campaigns() {
@@ -101,8 +103,9 @@ function Campaigns() {
                 id={c.id}
                 title={c.name}
                 description={c.description}
+                image={c.photo ?? undefined}
                 players={(c.contributors?.length ?? 0) + 1}
-                currentSession={"-"}
+                currentSession={c.currentSession ?? "-"}
               />
             ))
           )}
@@ -132,8 +135,9 @@ function Campaigns() {
                 id={c.id}
                 title={c.name}
                 description={c.description}
+                image={c.photo ?? undefined}
                 players={(c.contributors?.length ?? 0) + 1}
-                currentSession={"-"}
+                currentSession={c.currentSession ?? "-"}
               />
             ))
           )}

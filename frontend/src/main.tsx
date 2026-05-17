@@ -44,6 +44,7 @@ function AppRoutes() {
 
         <Route path="/character/:id" element={<CharacterPreviewNew />} />
         <Route path="/preview/character" element={<CharacterPreviewNew />} />
+        <Route path="/preview/campaign/:id" element={<CampaignPreviewNew />} />
         <Route path="/preview/campaign" element={<CampaignPreviewNew />} />
 
         <Route path="/" element={<Hub />} />

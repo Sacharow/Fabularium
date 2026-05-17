@@ -7,22 +7,24 @@ function CampaignCard({
   players,
   currentSession,
   id,
+  image,
 }: {
   title?: string;
   description?: string;
   players?: number;
-  currentSession?: string;
+  currentSession?: number | string;
   id?: string;
+  image?: string;
 }) {
   return (
     <NavLink
-      to="/preview/campaign"
+      to={id ? `/preview/campaign/${id}` : "/preview/campaign"}
       className="bg-neutral w-full min-h-96 flex flex-col overflow-hidden text-neutral-text border-2 border-gold-neutral hover:scale-105 cursor-pointer"
     >
       <div className="relative h-52 w-full shrink-0 bg-dark">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/heros/forge.jpg')" }}
+          style={{ backgroundImage: `url('${image ?? "/heros/forge.jpg"}')` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-dark/25 to-neutral" />
         <div className="absolute inset-0 flex items-end p-6">

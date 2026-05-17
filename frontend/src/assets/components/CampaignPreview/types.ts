@@ -50,4 +50,5 @@ export interface CampaignSectionInteractiveProps extends CampaignSectionProps {
   isEditMode?: boolean;
   onEditModeChange?: (isEditing: boolean) => void;
   onContentChange?: (newContent: CampaignSection["content"]) => void;
+  onDeleteCampaign?: () => void;
 }

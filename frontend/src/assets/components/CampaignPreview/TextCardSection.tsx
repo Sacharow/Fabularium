@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Check, X, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, Check, X, Plus } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 import type { TextCard } from "./types";
 
@@ -139,7 +139,7 @@ export function TextCardSection({
                     toggleItem(itemId);
                   }
                 }}
-                className={`w-full p-4 text-left cursor-pointer border-2 border-gold-neutral  ${
+                className={`w-full p-3 text-left cursor-pointer border-2 border-gold-neutral  ${
                   isOpen
                     ? "bg-light hover:bg-gray-light"
                     : "bg-neutral hover:bg-light"
@@ -147,7 +147,7 @@ export function TextCardSection({
                 aria-expanded={isOpen}
                 aria-controls={`${itemId}-panel`}
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center justify-between gap-3">
                   <div className="flex-1">
                     {isEditing ? (
                       <input
@@ -158,7 +158,7 @@ export function TextCardSection({
                           handleItemChange(index, "title", e.target.value)
                         }
                         onClick={(e) => e.stopPropagation()}
-                        className="text-lg font-semibold text-neutral-text bg-dark border border-gold-dark px-2 py-1  w-full"
+                        className="font-medium text-neutral-text bg-neutral border border-gold-dark px-2 py-1"
                       />
                     ) : (
                       <h3 className="text-lg font-semibold text-neutral-text">
@@ -174,14 +174,14 @@ export function TextCardSection({
                           handleRemoveItem(index);
                         }}
                         variant="danger"
-                        className="p-1"
+                        className="p-1 flex items-center justify-center"
                         title="Delete item"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <X className="h-3 w-3" />
                       </PreviewActionButton>
                     )}
                     <ChevronDown
-                      className={`h-4 w-4  flex-shrink-0 ${
+                      className={`h-4 w-4 flex-shrink-0 ${
                         isOpen ? "rotate-180 text-gold-neutral" : ""
                       }`}
                     />
@@ -192,7 +192,7 @@ export function TextCardSection({
               {isOpen && (
                 <div
                   id={`${itemId}-panel`}
-                  className="bg-neutral border-2 border-t-0 border-gold-dark p-4 flex flex-col gap-4"
+                  className="bg-neutral border-2 border-t-0 border-gold-dark p-3 flex flex-col gap-3"
                 >
                   {isEditing ? (
                     <textarea
@@ -201,7 +201,7 @@ export function TextCardSection({
                       onChange={(e) =>
                         handleItemChange(index, "content", e.target.value)
                       }
-                      className="w-full text-sm text-neutral-text bg-dark border border-gold-dark p-2  min-h-20"
+                      className="w-full text-sm text-neutral-text bg-dark border border-gold-dark p-2 min-h-16"
                     />
                   ) : (
                     <p className="text-sm text-gold-light">{it.content}</p>

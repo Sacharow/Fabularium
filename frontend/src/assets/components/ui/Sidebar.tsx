@@ -18,18 +18,26 @@ import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import CreateEntityModal from "./CreateEntityModal";
 import { useAuth } from "../../../context/AuthContext";
+import { characterService } from "../../../services/characterService";
+import { campaignService } from "../../../services/campaignService";
 
 function Sidebar() {
   const { user, isAuthenticated } = useAuth();
   const location = useLocation();
+  const isCharacterContext =
+    location.pathname.startsWith("/characters") ||
+    location.pathname.startsWith("/character/") ||
+    location.pathname.startsWith("/preview/character");
+  const isCampaignContext =
+    location.pathname.startsWith("/campaigns") ||
+    location.pathname.startsWith("/preview/campaign");
   const onResourcesPage = location.pathname === "/resources";
   const onCharacterPreviewPage =
     location.pathname === "/preview/character" ||
     location.pathname.startsWith("/character/");
-  const onCampaignPreviewPage = location.pathname === "/preview/campaign";
-  const canCreateNew =
-    location.pathname.startsWith("/characters") ||
-    location.pathname.startsWith("/campaigns");
+  const onCampaignPreviewPage =
+    location.pathname.startsWith("/preview/campaign");
+  const canCreateNew = isCharacterContext || isCampaignContext;
   const activeResourceSection = location.hash.replace("#", "") || "backgrounds";
   const activeCharacterSection = location.hash.replace("#", "") || "general";
   const activeCampaignSection = location.hash.replace("#", "") || "general";
@@ -130,54 +138,72 @@ function Sidebar() {
           </NavLink>
           {onCampaignPreviewPage && (
             <div className="flex flex-col gap-2 pl-6 border-l-2 border-neutral-text">
-              <Link
-                to="/preview/campaign#general"
-                className={innerButtonClass(
-                  activeCampaignSection === "general",
-                )}
-              >
-                <Scroll className="w-4 h-4" />
-                <span className="text-sm">GENERAL</span>
-              </Link>
-              <Link
-                to="/preview/campaign#locations"
-                className={innerButtonClass(
-                  activeCampaignSection === "locations",
-                )}
-              >
-                <Component className="w-4 h-4" />
-                <span className="text-sm">LOCATIONS</span>
-              </Link>
-              <Link
-                to="/preview/campaign#npcs"
-                className={innerButtonClass(activeCampaignSection === "npcs")}
-              >
-                <User className="w-4 h-4" />
-                <span className="text-sm">NPCS</span>
-              </Link>
-              <Link
-                to="/preview/campaign#quests"
-                className={innerButtonClass(activeCampaignSection === "quests")}
-              >
-                <Star className="w-4 h-4" />
-                <span className="text-sm">QUESTS</span>
-              </Link>
-              <Link
-                to="/preview/campaign#notes"
-                className={innerButtonClass(activeCampaignSection === "notes")}
-              >
-                <BookOpen className="w-4 h-4" />
-                <span className="text-sm">NOTES</span>
-              </Link>
-              <Link
-                to="/preview/campaign#players"
-                className={innerButtonClass(
-                  activeCampaignSection === "players",
-                )}
-              >
-                <UsersIcon className="w-4 h-4" />
-                <span className="text-sm">PLAYERS</span>
-              </Link>
+              {(() => {
+                const campaignPreviewBase = location.pathname.startsWith(
+                  "/preview/campaign",
+                )
+                  ? location.pathname
+                  : "/preview/campaign";
+
+                return (
+                  <>
+                    <Link
+                      to={`${campaignPreviewBase}#general`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "general",
+                      )}
+                    >
+                      <Scroll className="w-4 h-4" />
+                      <span className="text-sm">GENERAL</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#locations`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "locations",
+                      )}
+                    >
+                      <Component className="w-4 h-4" />
+                      <span className="text-sm">LOCATIONS</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#npcs`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "npcs",
+                      )}
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="text-sm">NPCS</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#quests`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "quests",
+                      )}
+                    >
+                      <Star className="w-4 h-4" />
+                      <span className="text-sm">QUESTS</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#notes`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "notes",
+                      )}
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span className="text-sm">NOTES</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#players`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "players",
+                      )}
+                    >
+                      <UsersIcon className="w-4 h-4" />
+                      <span className="text-sm">PLAYERS</span>
+                    </Link>
+                  </>
+                );
+              })()}
             </div>
           )}
           <NavLink
@@ -254,10 +280,14 @@ function SidebarCreateButton({ canCreateNew }: { canCreateNew: boolean }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
-  const kind: "character" | "campaign" = location.pathname.startsWith(
-    "/characters",
-  )
+  const isCharacterContext =
+    location.pathname.startsWith("/characters") ||
+    location.pathname.startsWith("/character/") ||
+    location.pathname.startsWith("/preview/character");
+
+  const kind: "character" | "campaign" = isCharacterContext
     ? "character"
     : "campaign";
 
@@ -265,28 +295,56 @@ function SidebarCreateButton({ canCreateNew }: { canCreateNew: boolean }) {
     <>
       <button
         type="button"
-        disabled={!canCreateNew}
-        aria-disabled={!canCreateNew}
-        onClick={() => canCreateNew && setOpen(true)}
+        disabled={!canCreateNew || isCreating}
+        aria-disabled={!canCreateNew || isCreating}
+        onClick={() => canCreateNew && !isCreating && setOpen(true)}
         className={`p-2 my-2 w-full border-2 ${
-          canCreateNew
+          canCreateNew && !isCreating
             ? "border-gold-neutral bg-dark hover:bg-gold-neutral cursor-pointer text-neutral-text"
             : "border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed"
         }`}
       >
-        <p>CREATE NEW</p>
+        <p>{isCreating ? "CREATING..." : "CREATE NEW"}</p>
       </button>
 
       <CreateEntityModal
         kind={kind}
         open={open}
-        onClose={() => setOpen(false)}
-        onCreate={(title) => {
-          setOpen(false);
-          // Mock redirect: go to the preview general section
-          if (kind === "character") navigate("/preview/character#general");
-          else navigate("/preview/campaign#general");
-          console.log("Created (from sidebar):", kind, title);
+        onClose={() => {
+          if (!isCreating) {
+            setOpen(false);
+          }
+        }}
+        onCreate={async (title) => {
+          const safeTitle =
+            title.trim() ||
+            (kind === "character" ? "New Character" : "New Campaign");
+
+          setIsCreating(true);
+          try {
+            if (kind === "character") {
+              const created = await characterService.createCharacter({
+                name: safeTitle,
+              });
+              setOpen(false);
+              navigate(`/character/${created.id}#general`);
+              return;
+            }
+
+            const created = await campaignService.createCampaign({
+              name: safeTitle,
+              description: "No description yet",
+            });
+            setOpen(false);
+            navigate(`/preview/campaign/${created.id}#general`);
+          } catch (err) {
+            const message =
+              err instanceof Error ? err.message : `Failed to create ${kind}`;
+            console.error(`Failed to create ${kind}:`, err);
+            window.alert(message);
+          } finally {
+            setIsCreating(false);
+          }
         }}
       />
     </>

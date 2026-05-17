@@ -5,22 +5,24 @@ import type { PlayersContent } from "./types";
 
 interface Props {
   content?: PlayersContent;
+  campaignKey?: string;
+  onGenerateJoinCode?: () => void;
 }
 
-export function PlayersSection({ content }: Props) {
+export function PlayersSection({
+  content,
+  campaignKey,
+  onGenerateJoinCode,
+}: Props) {
   const data = content ?? { dm: null, players: [] };
   const [copied, setCopied] = useState(false);
 
   const handleCopyCampaignKey = () => {
-    const key = "CAMPAIGN-KEY-12345";
+    const key = campaignKey || "";
+    if (!key) return;
     navigator.clipboard.writeText(key);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleGenerateNew = () => {
-    // Mockup - no functionality yet
-    console.log("Generate new campaign key");
   };
 
   return (
@@ -41,7 +43,7 @@ export function PlayersSection({ content }: Props) {
             <p className="text-xs uppercase tracking-widest text-gray-light">
               Campaign Key
             </p>
-            <p className="text-sm text-neutral-text">CAMPAIGN-KEY-12345</p>
+            <p className="text-sm text-neutral-text">{campaignKey || "—"}</p>
           </div>
           <div className="flex items-center gap-2">
             <PreviewActionButton
@@ -50,15 +52,17 @@ export function PlayersSection({ content }: Props) {
               className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
               icon={<Copy className="h-4 w-4" />}
               title={copied ? "Copied!" : "Copy campaign key"}
+              disabled={!campaignKey}
             >
               {copied ? "Copied" : "Copy"}
             </PreviewActionButton>
             <PreviewActionButton
-              onClick={handleGenerateNew}
+              onClick={() => onGenerateJoinCode?.()}
               variant="ghost"
               className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
               icon={<RefreshCw className="h-4 w-4" />}
               title="Generate new campaign key"
+              disabled={!onGenerateJoinCode}
             >
               Generate
             </PreviewActionButton>

@@ -75,7 +75,7 @@ const listCharacterSections = async (userId) => {
       campaign: { select: { name: true } },
       combat: { select: { hp: true, ac: true, speed: true } },
     },
-    orderBy: { updatedAt: "desc" },
+    orderBy: { name: "asc" },
   });
 
   return mapCharactersToList(characters);

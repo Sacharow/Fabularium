@@ -5,12 +5,15 @@ const z = require("zod");
 const createCampaignSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
+  currentSession: z.number().int().optional(),
 });
 
 const updateCampaignSchema = z.object({
   id: z.string(),
   name: z.string().min(1).optional(),
   description: z.string().min(1).optional(),
+  photo: z.string().optional(),
+  currentSession: z.number().int().optional(),
 });
 
 const generateJoinCodeSchema = z.object({
@@ -88,8 +91,8 @@ const mapSchema = z.object({
 });
 
 const missionNpcSchema = z.object({
-    MissionId: z.string().min(1),
-    npcId: z.string().min(1)
+  MissionId: z.string().min(1),
+  npcId: z.string().min(1),
 });
 
 module.exports = {

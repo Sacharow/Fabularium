@@ -36,10 +36,19 @@ const openApiSpec = {
   ],
   tags: [
     { name: "Users", description: "Authentication and user endpoints" },
-    { name: "Characters", description: "Character CRUD for authenticated user" },
+    {
+      name: "Characters",
+      description: "Character CRUD for authenticated user",
+    },
     { name: "Campaigns", description: "Campaign management" },
-    { name: "Campaign Content", description: "Locations, maps, missions and notes" },
-    { name: "Campaign NPC", description: "NPC and mission-NPC relation endpoints" },
+    {
+      name: "Campaign Content",
+      description: "Locations, maps, missions and notes",
+    },
+    {
+      name: "Campaign NPC",
+      description: "NPC and mission-NPC relation endpoints",
+    },
     { name: "System", description: "RPG catalog resources" },
     { name: "Misc", description: "Public helper endpoints" },
   ],
@@ -55,7 +64,8 @@ const openApiSpec = {
         type: "apiKey",
         in: "cookie",
         name: "refresh_token",
-        description: "HttpOnly refresh cookie used by /api/users/refresh endpoint.",
+        description:
+          "HttpOnly refresh cookie used by /api/users/refresh endpoint.",
       },
     },
     schemas: {
@@ -165,6 +175,7 @@ const openApiSpec = {
         properties: {
           name: { type: "string", minLength: 1 },
           description: { type: "string", minLength: 1 },
+          currentSession: { type: "integer", default: 0 },
         },
       },
       CampaignUpdateInput: {
@@ -172,6 +183,7 @@ const openApiSpec = {
         properties: {
           name: { type: "string", minLength: 1 },
           description: { type: "string", minLength: 1 },
+          currentSession: { type: "integer" },
         },
       },
       JoinCampaignInput: {
@@ -506,7 +518,8 @@ const openApiSpec = {
       post: {
         tags: ["Users"],
         summary: "Login user",
-        description: "Accepts either { name, password } or { email, password }. Sets auth cookies.",
+        description:
+          "Accepts either { name, password } or { email, password }. Sets auth cookies.",
         requestBody: {
           required: true,
           content: {
@@ -682,7 +695,10 @@ const openApiSpec = {
         summary: "Update campaign by id",
         security: cookieSecurity,
         parameters: [pathParam("id", "Campaign id")],
-        requestBody: jsonRequest("#/components/schemas/CampaignUpdateInput", false),
+        requestBody: jsonRequest(
+          "#/components/schemas/CampaignUpdateInput",
+          false,
+        ),
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
           400: { $ref: "#/components/responses/BadRequest" },
@@ -828,7 +844,10 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Get location",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("locationId", "Location id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("locationId", "Location id"),
+        ],
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
           401: { $ref: "#/components/responses/Unauthorized" },
@@ -840,8 +859,14 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Update location",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("locationId", "Location id")],
-        requestBody: jsonRequest("#/components/schemas/LocationUpdateInput", false),
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("locationId", "Location id"),
+        ],
+        requestBody: jsonRequest(
+          "#/components/schemas/LocationUpdateInput",
+          false,
+        ),
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
           400: { $ref: "#/components/responses/BadRequest" },
@@ -854,7 +879,10 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Delete location",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("locationId", "Location id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("locationId", "Location id"),
+        ],
         responses: {
           204: { $ref: "#/components/responses/NoContent" },
           401: { $ref: "#/components/responses/Unauthorized" },
@@ -895,7 +923,10 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Get map",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("mapId", "Map id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("mapId", "Map id"),
+        ],
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
           401: { $ref: "#/components/responses/Unauthorized" },
@@ -907,7 +938,10 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Update map",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("mapId", "Map id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("mapId", "Map id"),
+        ],
         requestBody: jsonRequest("#/components/schemas/MapUpdateInput", false),
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
@@ -921,7 +955,10 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Delete map",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("mapId", "Map id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("mapId", "Map id"),
+        ],
         responses: {
           204: { $ref: "#/components/responses/NoContent" },
           401: { $ref: "#/components/responses/Unauthorized" },
@@ -951,8 +988,14 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Update mission",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("missionId", "Mission id")],
-        requestBody: jsonRequest("#/components/schemas/MissionUpdateInput", false),
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("missionId", "Mission id"),
+        ],
+        requestBody: jsonRequest(
+          "#/components/schemas/MissionUpdateInput",
+          false,
+        ),
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
           400: { $ref: "#/components/responses/BadRequest" },
@@ -965,7 +1008,10 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Delete mission",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("missionId", "Mission id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("missionId", "Mission id"),
+        ],
         responses: {
           204: { $ref: "#/components/responses/NoContent" },
           401: { $ref: "#/components/responses/Unauthorized" },
@@ -995,7 +1041,10 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Update note",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("noteId", "Note id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("noteId", "Note id"),
+        ],
         requestBody: jsonRequest("#/components/schemas/NoteUpdateInput", false),
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
@@ -1009,7 +1058,10 @@ const openApiSpec = {
         tags: ["Campaign Content"],
         summary: "Delete note",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("noteId", "Note id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("noteId", "Note id"),
+        ],
         responses: {
           204: { $ref: "#/components/responses/NoContent" },
           401: { $ref: "#/components/responses/Unauthorized" },
@@ -1057,7 +1109,10 @@ const openApiSpec = {
       get: {
         tags: ["Campaign NPC"],
         summary: "Get campaign NPC",
-        parameters: [pathParam("id", "Campaign id"), pathParam("npcId", "NPC id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("npcId", "NPC id"),
+        ],
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
           404: { $ref: "#/components/responses/NotFound" },
@@ -1068,7 +1123,10 @@ const openApiSpec = {
         tags: ["Campaign NPC"],
         summary: "Update campaign NPC",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("npcId", "NPC id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("npcId", "NPC id"),
+        ],
         requestBody: jsonRequest("#/components/schemas/NpcUpdateInput", false),
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
@@ -1082,7 +1140,10 @@ const openApiSpec = {
         tags: ["Campaign NPC"],
         summary: "Delete campaign NPC",
         security: cookieSecurity,
-        parameters: [pathParam("id", "Campaign id"), pathParam("npcId", "NPC id")],
+        parameters: [
+          pathParam("id", "Campaign id"),
+          pathParam("npcId", "NPC id"),
+        ],
         responses: {
           204: { $ref: "#/components/responses/NoContent" },
           401: { $ref: "#/components/responses/Unauthorized" },
@@ -1118,7 +1179,10 @@ const openApiSpec = {
       get: {
         tags: ["Campaign NPC"],
         summary: "Get mission-NPC link",
-        parameters: [pathParam("MissionId", "Mission id"), pathParam("npcId", "NPC id")],
+        parameters: [
+          pathParam("MissionId", "Mission id"),
+          pathParam("npcId", "NPC id"),
+        ],
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
           404: { $ref: "#/components/responses/NotFound" },
@@ -1129,7 +1193,10 @@ const openApiSpec = {
         tags: ["Campaign NPC"],
         summary: "Update mission-NPC link",
         security: cookieSecurity,
-        parameters: [pathParam("MissionId", "Mission id"), pathParam("npcId", "NPC id")],
+        parameters: [
+          pathParam("MissionId", "Mission id"),
+          pathParam("npcId", "NPC id"),
+        ],
         requestBody: jsonRequest("#/components/schemas/MissionNpcInput", false),
         responses: {
           200: { $ref: "#/components/responses/OkObject" },
@@ -1143,7 +1210,10 @@ const openApiSpec = {
         tags: ["Campaign NPC"],
         summary: "Delete mission-NPC link",
         security: cookieSecurity,
-        parameters: [pathParam("MissionId", "Mission id"), pathParam("npcId", "NPC id")],
+        parameters: [
+          pathParam("MissionId", "Mission id"),
+          pathParam("npcId", "NPC id"),
+        ],
         responses: {
           204: { $ref: "#/components/responses/NoContent" },
           401: { $ref: "#/components/responses/Unauthorized" },
@@ -1181,8 +1251,16 @@ const systemResources = [
   { resource: "classes", schema: "ClassInput", singular: "class" },
   { resource: "subclasses", schema: "SubclassInput", singular: "subclass" },
   { resource: "subraces", schema: "SubraceInput", singular: "subrace" },
-  { resource: "race-abilities", schema: "RaceAbilityInput", singular: "race ability" },
-  { resource: "subrace-abilities", schema: "SubraceAbilityInput", singular: "subrace ability" },
+  {
+    resource: "race-abilities",
+    schema: "RaceAbilityInput",
+    singular: "race ability",
+  },
+  {
+    resource: "subrace-abilities",
+    schema: "SubraceAbilityInput",
+    singular: "subrace ability",
+  },
   { resource: "spells", schema: "SpellInput", singular: "spell" },
   { resource: "items", schema: "ItemInput", singular: "item" },
   { resource: "features", schema: "FeatureInput", singular: "feature" },

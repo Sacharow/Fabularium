@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -11,7 +5,405 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_URL_ONLINE")
+  url      = env("POSTGRES_URL_ONLINE")
+}
+
+model Users {
+  id                    String      @id @default(uuid())
+  email                 String      @unique
+  role                  Role        @default(user)
+  passwordHashed        String?
+  name                  String
+  createdAt             DateTime    @default(now())
+  provider              String      @default("local")
+  providerId            String?     @unique
+  updatedAt             DateTime    @updatedAt
+  bio                   String      @default("")
+  campaigns_owned       Campaign[]  @relation("CampaignOwner")
+  characters            Character[]
+  campaigns_contributed Campaign[]  @relation("CampaignContributors")
+}
+
+model Character {
+  id                 String                   @id @default(uuid())
+  name               String
+  ownerId            String
+  campaignId         String?
+  level              Int                      @default(1)
+  xp                 Int                      @default(0)
+  background         String?
+  alignment          String?
+  inspiration        Boolean                  @default(false)
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  bonds              String?
+  flaws              String?
+  ideals             String?
+  personalityTraits  String?
+  icon               String?
+  image              String?
+  race               String?
+  class              String?
+  subrace            String?
+  subclass           String?
+  campaign           Campaign?                @relation(fields: [campaignId], references: [id])
+  owner              Users                    @relation(fields: [ownerId], references: [id])
+  combat             CharacterCombatStats?
+  currency           CharacterCurrency?
+  characterEventLogs CharacterEventLog[]
+  features           CharacterFeature[]
+  knownSpells        CharacterKnownSpell[]
+  preparedSpells     CharacterPreparedSpell[]
+  proficiencies      CharacterProficiency[]
+  saves              CharacterSaves?
+  skills             CharacterSkill[]
+  spellSlots         CharacterSpellSlot[]
+  stats              CharacterStats?
+  inventoryItems     InventoryItem[]
+}
+
+model CharacterStats {
+  characterId String    @id
+  str         Int       @default(10)
+  dex         Int       @default(10)
+  con         Int       @default(10)
+  int         Int       @default(10)
+  wis         Int       @default(10)
+  cha         Int       @default(10)
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+model CharacterSaves {
+  characterId   String    @id
+  strProficient Boolean   @default(false)
+  dexProficient Boolean   @default(false)
+  conProficient Boolean   @default(false)
+  intProficient Boolean   @default(false)
+  wisProficient Boolean   @default(false)
+  chaProficient Boolean   @default(false)
+  character     Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+model CharacterSkill {
+  id          String    @id @default(uuid())
+  characterId String
+  name        String
+  proficient  Boolean   @default(false)
+  expertise   Boolean   @default(false)
+  bonus       Int?
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+model CharacterProficiency {
+  id          String    @id @default(uuid())
+  characterId String
+  type        String
+  name        String
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+model CharacterCombatStats {
+  characterId       String    @id
+  hp                Int       @default(0)
+  hpMax             Int       @default(0)
+  ac                Int?
+  initiative        Int?
+  speed             Int?
+  hitDiceType       Int?
+  hitDiceCurrent    Int?
+  hitDiceTotal      Int?
+  deathSavesSuccess Int       @default(0)
+  deathSavesFail    Int       @default(0)
+  passivePerception Int?
+  size              Size?
+  character         Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+model Item {
+  id             String          @id @default(uuid())
+  name           String          @unique
+  type           String
+  description    String?
+  weight         Float?
+  value          Int?
+  properties     String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  inventoryItems InventoryItem[]
+}
+
+model InventoryItem {
+  id          String    @id @default(uuid())
+  characterId String
+  itemId      String
+  quantity    Int       @default(1)
+  equipped    Boolean   @default(false)
+  notes       String?
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  item        Item      @relation(fields: [itemId], references: [id])
+}
+
+model Spell {
+  id          String                   @id @default(uuid())
+  name        String                   @unique
+  level       Int
+  school      String?
+  castingTime String?
+  range       String?
+  components  String?
+  duration    String?
+  description String?
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+  knownBy     CharacterKnownSpell[]
+  preparedBy  CharacterPreparedSpell[]
+}
+
+model CharacterKnownSpell {
+  id             String    @id @default(uuid())
+  characterId    String
+  spellId        String
+  learnedAtLevel Int?
+  character      Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  spell          Spell     @relation(fields: [spellId], references: [id])
+}
+
+model CharacterPreparedSpell {
+  id          String    @id @default(uuid())
+  characterId String
+  spellId     String
+  preparedAt  DateTime  @default(now())
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  spell       Spell     @relation(fields: [spellId], references: [id])
+}
+
+model CharacterSpellSlot {
+  id          String    @id @default(uuid())
+  characterId String
+  spellLevel  Int
+  maxSlots    Int       @default(0)
+  usedSlots   Int       @default(0)
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+model Feature {
+  id                String             @id @default(uuid())
+  name              String
+  description       String?
+  sourceType        String?
+  sourceId          String?
+  characterFeatures CharacterFeature[]
+}
+
+model CharacterFeature {
+  id              String    @id @default(uuid())
+  characterId     String
+  featureId       String
+  acquiredAtLevel Int?
+  notes           String?
+  character       Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  feature         Feature   @relation(fields: [featureId], references: [id])
+}
+
+model Race {
+  id            String        @id @default(uuid())
+  name          String        @unique
+  description   String?
+  speed         Int?
+  languages     String?
+  size          Size?
+  raceAbilities RaceAbility[]
+  subRaces      SubRace[]
+}
+
+model SubRace {
+  id               String           @id @default(uuid())
+  parentRaceId     String
+  name             String           @unique
+  description      String?
+  parentRace       Race             @relation(fields: [parentRaceId], references: [id])
+  subRaceAbilities SubRaceAbility[]
+}
+
+model RaceAbility {
+  id          String  @id @default(uuid())
+  raceId      String
+  name        String  @unique
+  description String?
+  race        Race    @relation(fields: [raceId], references: [id])
+}
+
+model SubRaceAbility {
+  id          String  @id @default(uuid())
+  subRaceId   String
+  name        String
+  description String?
+  subRace     SubRace @relation(fields: [subRaceId], references: [id])
+}
+
+model Class {
+  id           String             @id @default(uuid())
+  name         String             @unique
+  hitDie       Int
+  spellcasting Boolean            @default(false)
+  description  String?
+  savingThrows String[]
+  progressions ClassProgression[]
+  subclasses   Subclass[]
+}
+
+model Subclass {
+  id          String  @id @default(uuid())
+  classId     String
+  name        String  @unique
+  description String?
+  class       Class   @relation(fields: [classId], references: [id])
+}
+
+model ClassProgression {
+  id         String  @id @default(uuid())
+  classId    String
+  level      Int
+  features   String?
+  hpPerLevel Int
+  spellSlots Json?
+  class      Class   @relation(fields: [classId], references: [id])
+}
+
+model CharacterCurrency {
+  characterId String    @id
+  gp          Int       @default(0)
+  sp          Int       @default(0)
+  ep          Int       @default(0)
+  cp          Int       @default(0)
+  pp          Int       @default(0)
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+model Feat {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+}
+
+model CharacterEventLog {
+  id          String    @id @default(uuid())
+  characterId String
+  type        String
+  payload     Json?
+  createdAt   DateTime  @default(now())
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+model Campaign {
+  id           String      @id @default(uuid())
+  name         String
+  description  String
+  joinCode     String
+  ownerId      String
+  photo        String?
+  currentSession Int        @default(0)
+  owner        Users       @relation("CampaignOwner", fields: [ownerId], references: [id])
+  characters   Character[]
+  locations    Location[]
+  maps         Map[]
+  missions     Mission[]
+  npcs         NPC[]
+  notes        Note[]
+  contributors Users[]     @relation("CampaignContributors")
+}
+
+model Note {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  author      String
+  date        DateTime
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+}
+
+model Map {
+  id          String   @id @default(uuid())
+  file        String
+  name        String
+  description String
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+}
+
+model Mission {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  campaignId  String
+  status      MissionStatus
+  locationId  String?
+  campaign    Campaign      @relation(fields: [campaignId], references: [id])
+  location    Location?     @relation(fields: [locationId], references: [id])
+  missionNpcs MissionNpc[]
+}
+
+model Location {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  campaignId  String
+  campaign    Campaign  @relation(fields: [campaignId], references: [id])
+  missions    Mission[]
+  npcs        NPC[]     @relation("LocationToNPC")
+}
+
+model NPC {
+  id          String       @id @default(uuid())
+  name        String
+  description String
+  campaignId  String
+  missionNpcs MissionNpc[]
+  campaign    Campaign     @relation(fields: [campaignId], references: [id])
+  locations   Location[]   @relation("LocationToNPC")
+}
+
+model MissionNpc {
+  MissionId String
+  npcId     String
+  mission   Mission @relation(fields: [MissionId], references: [id])
+  npc       NPC     @relation(fields: [npcId], references: [id])
+
+  @@id([MissionId, npcId])
+}
+
+model Monster {
+  id                    String   @id @default(uuid())
+  apiId                 String   @unique
+  name                  String
+  size                  Size?
+  type                  String
+  subtype               String?
+  alignment             String?
+  armorClass            Int?
+  hitPoints             Int?
+  hitDice               String?
+  speed                 Json?
+  stats                 Json?
+  actions               Json?
+  legendaryActions      Json?
+  specialAbilities      Json?
+  languages             String?
+  challengeRating       Float?
+  xp                    Int?
+  senses                Json?
+  damageImmunities      String?
+  conditionImmunities   String?
+  damageResistances     String?
+  damageVulnerabilities String?
+  savingThrows          Json?
+  skills                Json?
+  reactions             Json?
+  environment           String?
+  image                 String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }
 
 enum Role {
@@ -40,468 +432,8 @@ enum Alignment {
   neutral_evil
 }
 
-model Users {
-  id             String    @id @default(uuid())
-  name           String
-  bio            String    @default("")
-  email          String    @unique
-  passwordHashed String?   // null gdy OAuth < -- dpdać później
-  provider       String    @default("local")
-  providerId     String?   @unique
-
-  role           Role @default(user)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  characters     Character[]
-  campaigns_owned      Campaign[] @relation(name: "CampaignOwner")
-  campaigns_contributed Campaign[] @relation(name: "CampaignContributors")
-
-}
-
-
-model Character {
-  id           String    @id @default(uuid())
-  name         String
-  image        String?
-  icon         String?
-  ownerId      String
-  owner        Users      @relation(fields: [ownerId], references: [id])
-  campaignId   String?
-  campaign     Campaign? @relation(fields: [campaignId], references: [id])
-  race         String?
-  subrace      String?
-
-  class        String?
-  subclass     String?
-
-  level        Int       @default(1)
-  xp           Int       @default(0)
-  background   String?
-  alignment    String?
-  inspiration  Boolean   @default(false)
-
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  personalityTraits String?
-  ideals            String?
-  bonds             String?
-  flaws             String?
-
-  stats            CharacterStats?
-  saves            CharacterSaves?
-  skills           CharacterSkill[]
-  combat           CharacterCombatStats?
-  proficiencies    CharacterProficiency[]
-  features         CharacterFeature[]
-  inventoryItems   InventoryItem[]
-  knownSpells      CharacterKnownSpell[]
-  preparedSpells   CharacterPreparedSpell[]
-  spellSlots       CharacterSpellSlot[]
-  currency         CharacterCurrency?
-
-  characterEventLogs CharacterEventLog[]
-
-
-}
-
-
-model CharacterStats {
-  characterId String  @id
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  str Int @default(10)
-  dex Int @default(10)
-  con Int @default(10)
-  int Int @default(10)
-  wis Int @default(10)
-  cha Int @default(10)
-}
-
-
-model CharacterSaves {
-  characterId String  @id
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  strProficient Boolean @default(false)
-  dexProficient Boolean @default(false)
-  conProficient Boolean @default(false)
-  intProficient Boolean @default(false)
-  wisProficient Boolean @default(false)
-  chaProficient Boolean @default(false)
-}
-
-
-model CharacterSkill {
-  id          String   @id @default(uuid())
-  characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  name        String
-  proficient  Boolean  @default(false)
-  expertise   Boolean  @default(false)
-  bonus       Int?
-}
-
-model CharacterProficiency {
-  id          String   @id @default(uuid())
-  characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  type        String
-  name        String
-}
-
-
-model CharacterCombatStats {
-  characterId     String @id
-  character       Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  hp              Int    @default(0)
-  hpMax           Int    @default(0)
-  ac              Int? 
-  initiative      Int?
-  speed           Int? 
-  hitDiceType     Int?
-  hitDiceCurrent  Int?
-  hitDiceTotal    Int?
-  size      Size?
-  deathSavesSuccess Int @default(0)
-  deathSavesFail    Int @default(0)
-  passivePerception Int?
-}
-
-model Item {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  type        String 
-  description String?
-  weight      Float?
-  value       Int? 
-  properties  String? 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  inventoryItems InventoryItem[]
-}
-
-model InventoryItem {
-  id          String   @id @default(uuid())
-  characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  itemId      String
-  item        Item     @relation(fields: [itemId], references: [id])
-
-  quantity    Int      @default(1)
-  equipped    Boolean  @default(false)
-  notes       String?
-}
-
-
-model Spell {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  level       Int
-  school      String?
-  castingTime String?
-  range       String?
-  components  String?
-  duration    String?
-  description String?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  knownBy     CharacterKnownSpell[]
-  preparedBy  CharacterPreparedSpell[]
-}
-
-model CharacterKnownSpell {
-  id          String   @id @default(uuid())
-  characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  spellId     String
-  spell       Spell     @relation(fields: [spellId], references: [id])
-
-  learnedAtLevel Int?
-}
-
-model CharacterPreparedSpell {
-  id          String   @id @default(uuid())
-  characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  spellId     String
-  spell       Spell     @relation(fields: [spellId], references: [id])
-
-  preparedAt  DateTime @default(now())
-}
-
-
-model CharacterSpellSlot {
-  id          String   @id @default(uuid())
-  characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  spellLevel  Int    
-  maxSlots    Int    @default(0)
-  usedSlots   Int    @default(0)
-}
-
-
-model Feature {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  sourceType  String?
-  sourceId    String?
-
-  characterFeatures CharacterFeature[]
-}
-
-model CharacterFeature {
-  id          String   @id @default(uuid())
-  characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  featureId   String
-  feature     Feature   @relation(fields: [featureId], references: [id])
-
-  acquiredAtLevel Int?
-  notes       String?
-}
-
-model Race {
-  id        String @id @default(uuid())
-  name      String @unique
-  description String?
-  size      Size?
-  subRaces  SubRace[]
-  speed     Int?
-  languages String?
-  raceAbilities RaceAbility[]
-}
-
-model SubRace {
-  id        String @id @default(uuid())
-  parentRaceId String
-  parentRace Race @relation(fields: [parentRaceId], references: [id])
-  name      String @unique
-  description String?
-  subRaceAbilities SubRaceAbility[]
-}
-
-model RaceAbility {
-  id      String @id @default(uuid())
-  raceId  String
-  race    Race   @relation(fields: [raceId], references: [id])
-  name    String   @unique
-  description String?
-}
-
-model SubRaceAbility {
-  id        String @id @default(uuid())
-  subRaceId String
-  subRace   SubRace @relation(fields: [subRaceId], references: [id])
-  name      String
-  description String?
-}
-
-
-model Class {
-  id        String @id @default(uuid())
-  name      String @unique
-  hitDie    Int
-  savingThrows String[]
-  spellcasting Boolean @default(false)
-  description String?
-  subclasses Subclass[]
-  progressions ClassProgression[]
-
-}
-
-model Subclass {
-  id        String @id @default(uuid())
-  classId   String
-  class     Class  @relation(fields: [classId], references: [id])
-  name      String @unique
-  description String?
-
-}
-
-model ClassProgression {
-  id        String @id @default(uuid())
-  classId   String
-  class     Class  @relation(fields: [classId], references: [id])
-
-  level     Int
-  features  String?
-  hpPerLevel Int
-  spellSlots Json?
-}
-
-
-model CharacterCurrency {
-  characterId String @id
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-
-  gp Int @default(0)
-  sp Int @default(0)
-  ep Int @default(0)
-  cp Int @default(0)
-  pp Int @default(0)
-}
-
-model Feat {
-  id          String @id @default(uuid())
-    name        String   @unique
-  description String?
-}
-
-
-model CharacterEventLog {
-  id          String @id @default(uuid())
-  characterId String
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  type        String
-  payload     Json?
-  createdAt   DateTime @default(now())
-}
-
-model Campaign {
-  id     String @id @default(uuid())
-  name   String
-  description String
-  joinCode String
-  photo String?
-
-  owner   Users   @relation(name: "CampaignOwner", fields: [ownerId], references: [id])
-  ownerId String
-
-  contributors Users[] @relation(name: "CampaignContributors")
-  characters Character[]
-  missions Mission[]
-  notes Note[]
-  maps Map[]
-  locations Location[]
-  npcs NPC[]
-}
-
 enum MissionStatus {
   pending
   in_progress
   completed
 }
-
-
-
-model Note {
-  id     String @id @default(uuid())
-  name   String
-  description String
-  author String
-  date   DateTime
-
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String
-}
-
-model Map {
-  id     String @id @default(uuid())
-  file   String
-  name   String
-  description String
-
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String
-}
-
-model Mission {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  status      MissionStatus
-
-  locationId  String?
-  location    Location? @relation(fields: [locationId], references: [id])
-
-  campaignId  String
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-
-  missionNpcs MissionNpc[]
-}
-
-model Location {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-
-  campaignId  String
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-
-  npcs        NPC[]
-  missions    Mission[]
-}
-
-
-model NPC {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-
-  campaignId  String
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-
-  locations   Location[]
-
-  missionNpcs MissionNpc[]
-}
-
-model MissionNpc {
-  MissionId String
-  mission   Mission @relation(fields: [MissionId], references: [id])
-  npcId     String
-  npc       NPC     @relation(fields: [npcId], references: [id])
-
-  @@id([MissionId, npcId])
-}
-
-model Monster {
-  id        String   @id @default(uuid())
-  apiId     String   @unique
-  name      String
-  size      Size?
-  type      String
-  subtype   String?
-  alignment String?
-  armorClass Int?
-  
-  hitPoints Int?
-  hitDice   String?
-  speed     Json?
-  stats     Json?
-  actions   Json?
-  legendaryActions Json?
-  specialAbilities Json?
-  languages String?
-  challengeRating Float?
-  xp        Int?
-  senses    Json?
-  damageImmunities String?
-  conditionImmunities String?
-  damageResistances String?
-  damageVulnerabilities String?
-  savingThrows Json?
-  skills    Json?
-  reactions Json?
-  environment String?
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-
-
