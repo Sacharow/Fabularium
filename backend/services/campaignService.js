@@ -15,7 +15,9 @@ const makeJoinCode = async () => {
     }
   }
 
-  throw new Error("Could not generate unique join code after multiple attempts");
+  throw new Error(
+    "Could not generate unique join code after multiple attempts",
+  );
 };
 
 const createCampaignForOwner = async (campaignData, ownerId) => {
@@ -25,6 +27,7 @@ const createCampaignForOwner = async (campaignData, ownerId) => {
     data: {
       name: campaignData.name,
       description: campaignData.description,
+      currentSession: campaignData.currentSession,
       ownerId,
       joinCode,
     },
@@ -35,6 +38,7 @@ const createCampaignForOwner = async (campaignData, ownerId) => {
 const listCampaigns = async () => {
   return prisma.campaign.findMany({
     include: { owner: true, contributors: true },
+    orderBy: { name: "asc" },
   });
 };
 
@@ -45,11 +49,26 @@ const getCampaignById = async (id) => {
       owner: true,
       contributors: true,
       characters: true,
-      missions: { include: { location: true } },
+      missions: {
+        include: {
+          missionLocations: { include: { location: true } },
+          missionNpcs: { include: { npc: true } },
+        },
+      },
       notes: true,
       maps: true,
-      locations: { include: { npcs: true } },
-      npcs: true,
+      locations: {
+        include: {
+          npcs: true,
+          missionLocations: { include: { mission: true } },
+        },
+      },
+      npcs: {
+        include: {
+          locations: true,
+          missionNpcs: { include: { mission: true } },
+        },
+      },
     },
   });
 };
@@ -67,6 +86,8 @@ const updateCampaignById = async (id, data) => {
     data: {
       name: data.name,
       description: data.description,
+      photo: data.photo,
+      currentSession: data.currentSession,
     },
   });
 };
@@ -131,6 +152,7 @@ const listContributorsByCampaignId = async (id) => {
 const listCharactersByCampaignId = async (id) => {
   return prisma.character.findMany({
     where: { campaignId: id },
+    orderBy: { name: "asc" },
   });
 };
 
@@ -142,20 +164,52 @@ const getCampaignWithContributorsById = async (id) => {
 };
 
 const createLocation = async (data) => {
-  return prisma.location.create({ data });
+  return prisma.location.create({
+    data: {
+      name: data.name,
+      description: data.description,
+      campaignId: data.campaignId,
+      ...(Array.isArray(data.linkedNpcIds)
+        ? {
+            npcs: {
+              connect: data.linkedNpcIds.map((npcId) => ({ id: npcId })),
+            },
+          }
+        : {}),
+      ...(Array.isArray(data.linkedMissionIds)
+        ? {
+            missionLocations: {
+              create: data.linkedMissionIds.map((missionId) => ({
+                mission: { connect: { id: missionId } },
+              })),
+            },
+          }
+        : {}),
+    },
+    include: {
+      missionLocations: { include: { mission: true } },
+      npcs: true,
+    },
+  });
 };
 
 const listCampaignLocationsByCampaignId = async (campaignId) => {
   return prisma.location.findMany({
     where: { campaignId },
-    include: { npcs: true, missions: true },
+    include: {
+      missionLocations: { include: { mission: true } },
+      npcs: true,
+    },
   });
 };
 
 const getLocationById = async (id) => {
   return prisma.location.findUnique({
     where: { id },
-    include: { npcs: true, missions: true },
+    include: {
+      missionLocations: { include: { mission: true } },
+      npcs: true,
+    },
   });
 };
 
@@ -166,13 +220,35 @@ const getLocationByIdBasic = async (id) => {
 };
 
 const updateLocationById = async (id, data) => {
+  const updateData = {
+    name: data.name,
+    description: data.description,
+  };
+
+  // Handle linked NPCs (M-to-M)
+  if (data.linkedNpcIds) {
+    updateData.npcs = {
+      set: data.linkedNpcIds.map((npcId) => ({ id: npcId })),
+    };
+  }
+
+  // Handle linked missions (M-to-M)
+  if (data.linkedMissionIds) {
+    updateData.missionLocations = {
+      deleteMany: {},
+      create: data.linkedMissionIds.map((missionId) => ({
+        mission: { connect: { id: missionId } },
+      })),
+    };
+  }
+
   return prisma.location.update({
     where: { id },
-    data: {
-      name: data.name,
-      description: data.description,
+    data: updateData,
+    include: {
+      missionLocations: { include: { mission: true } },
+      npcs: true,
     },
-    include: { npcs: true, missions: true },
   });
 };
 
@@ -214,19 +290,47 @@ const createMission = async (data) => {
 const getMissionById = async (id) => {
   return prisma.mission.findUnique({
     where: { id },
+    include: {
+      missionLocations: { include: { location: true } },
+      missionNpcs: { include: { npc: true } },
+    },
   });
 };
 
 const updateMissionById = async (id, data) => {
+  const updateData = {
+    title: data.title,
+    description: data.description,
+    status: data.status,
+  };
+
+  // Handle linked locations (M-to-M)
+  if (data.linkedLocationIds) {
+    updateData.missionLocations = {
+      deleteMany: {},
+      create: data.linkedLocationIds.map((locationId) => ({
+        location: { connect: { id: locationId } },
+      })),
+    };
+  }
+
+  // Handle linked NPCs (M-to-M)
+  if (data.linkedNpcIds) {
+    updateData.missionNpcs = {
+      deleteMany: {},
+      create: data.linkedNpcIds.map((npcId) => ({
+        npc: { connect: { id: npcId } },
+      })),
+    };
+  }
+
   return prisma.mission.update({
     where: { id },
-    data: {
-      title: data.title,
-      description: data.description,
-      status: data.status,
-      locationId: data.locationId,
+    data: updateData,
+    include: {
+      missionLocations: { include: { location: true } },
+      missionNpcs: { include: { npc: true } },
     },
-    include: { location: true },
   });
 };
 
@@ -259,7 +363,36 @@ const deleteNoteById = async (id) => {
 };
 
 const createNPC = async (data) => {
-  return prisma.nPC.create({ data });
+  return prisma.nPC.create({
+    data: {
+      name: data.name,
+      description: data.description,
+      campaignId: data.campaignId,
+      ...(Array.isArray(data.linkedLocationIds)
+        ? {
+            locations: {
+              connect: data.linkedLocationIds.map((locationId) => ({
+                id: locationId,
+              })),
+            },
+          }
+        : {}),
+      ...(Array.isArray(data.linkedMissionIds)
+        ? {
+            missionNpcs: {
+              create: data.linkedMissionIds.map((missionId) => ({
+                mission: { connect: { id: missionId } },
+              })),
+            },
+          }
+        : {}),
+    },
+    include: {
+      campaign: true,
+      locations: true,
+      missionNpcs: { include: { mission: true } },
+    },
+  });
 };
 
 const listNPCs = async () => {
@@ -289,15 +422,35 @@ const getNPCOwnerForUpdateById = async (id) => {
 };
 
 const updateNPCById = async (id, data) => {
+  const updateData = {
+    name: data.name,
+    description: data.description,
+  };
+
+  // Handle linked locations (M-to-M)
+  if (data.linkedLocationIds) {
+    updateData.locations = {
+      set: data.linkedLocationIds.map((locationId) => ({ id: locationId })),
+    };
+  }
+
+  // Handle linked missions (M-to-M)
+  if (data.linkedMissionIds) {
+    updateData.missionNpcs = {
+      deleteMany: {},
+      create: data.linkedMissionIds.map((missionId) => ({
+        mission: { connect: { id: missionId } },
+      })),
+    };
+  }
+
   return prisma.nPC.update({
     where: { id },
-    data: {
-      name: data.name,
-      description: data.description,
-    },
+    data: updateData,
     include: {
       campaign: true,
       locations: true,
+      missionNpcs: { include: { mission: true } },
     },
   });
 };

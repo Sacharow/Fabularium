@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Scroll, User, Dumbbell, Wand2, Backpack, Zap } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { characterService } from "../../../services/characterService";
 import {
   GeneralSection,
   PersonalSection,
@@ -11,6 +12,7 @@ import {
   type PersonalSectionContent,
   type PersonalDetail,
   type PersonalNote,
+  type SkillDetail,
   type StatSectionContent,
   type AccordionItem,
   type CharacterSection,
@@ -278,83 +280,932 @@ const mockCharacter = {
   ] as AccordionItem[],
 };
 
-const sections: CharacterSection[] = [
+void mockCharacter;
+
+type AbilityKey = "str" | "dex" | "con" | "int" | "wis" | "cha";
+type SpellLevelEntry = {
+  name: string;
+  description: string;
+};
+type SpellLevelPayloadEntry = SpellLevelEntry | string;
+
+type CharacterViewData = {
+  id: string;
+  name: string;
+  level: number;
+  xp?: number;
+  inspiration?: boolean;
+  profBonus?: number;
+  characterClass?: string;
+  characterRace?: string;
+  characterSubrace?: string;
+  characterSubclass?: string;
+  abilityScores?: Partial<Record<AbilityKey, number>>;
+  abilityProf?: string[];
+  stats?: Array<{ name: string; value: number }>;
+  skillProf?: string[];
+  skillExpertise?: string[];
+  equipment?: Array<{
+    name: string;
+    type?: string;
+    description?: string;
+    weight?: number | null;
+  }>;
+  features?: string[];
+  money?: Record<string, number>;
+  background?: string | null;
+  alignment?: string | null;
+  personalityTraits?: string | null;
+  ideals?: string | null;
+  bonds?: string | null;
+  flaws?: string | null;
+  initiativeBonus?: number | null;
+  speed?: number | null;
+  hitDice?: number | null;
+  hitPointsMax?: number | null;
+  hitPointsCurrent?: number | null;
+  armorClass?: number | null;
+  passivePerception?: number | null;
+  knownSpells?: string[];
+  preparedSpells?: string[];
+  spellsByLevel?: Partial<
+    Record<
+      `level${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`,
+      SpellLevelPayloadEntry[]
+    >
+  >;
+};
+
+const abilityOrder: Array<{ key: AbilityKey; label: string }> = [
+  { key: "str", label: "Strength" },
+  { key: "dex", label: "Dexterity" },
+  { key: "con", label: "Constitution" },
+  { key: "int", label: "Intelligence" },
+  { key: "wis", label: "Wisdom" },
+  { key: "cha", label: "Charisma" },
+];
+
+const skillGroups: Record<AbilityKey, string[]> = {
+  str: ["Athletics"],
+  dex: ["Acrobatics", "Sleight of Hand", "Stealth"],
+  con: [],
+  int: ["Arcana", "History", "Investigation", "Nature", "Religion"],
+  wis: ["Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
+  cha: ["Deception", "Intimidation", "Performance", "Persuasion"],
+};
+
+const formatModifier = (value: number) => `${value >= 0 ? "+" : ""}${value}`;
+
+const calculateModifier = (score: number) => Math.floor((score - 10) / 2);
+
+const splitCharacterName = (name: string) => {
+  const parts = name.trim().split("-");
+
+  return {
+    firstName: parts[0] || "",
+    lastName: parts[1] || "",
+    nickname: parts[2] || "",
+  };
+};
+
+const buildFeatures = (features: string[] = []): AccordionItem[] => [
   {
-    key: "general",
-    label: "General",
-    icon: Scroll,
-    intro: "Core information and vital statistics.",
-    content: mockCharacter.general,
-  },
-  {
-    key: "personal",
-    label: "Personal",
-    icon: User,
-    intro: "Personality, background, and distinguishing features.",
-    content: mockCharacter.personal,
-  },
-  {
-    key: "stats",
-    label: "Stats",
-    icon: Dumbbell,
-    intro: "Ability scores, skills, and saving throws.",
-    content: mockCharacter.stats,
-  },
-  {
-    key: "features",
-    label: "Features",
-    icon: Zap,
-    intro: "Class features, racial abilities, feats, and special traits.",
-    content: mockCharacter.features,
-  },
-  {
-    key: "spells",
-    label: "Spells",
-    icon: Wand2,
-    intro: "Prepared spells and spell slots.",
-    content: mockCharacter.spells,
-  },
-  {
-    key: "inventory",
-    label: "Inventory",
-    icon: Backpack,
-    intro: "Equipment, items, and magical treasures.",
-    content: mockCharacter.inventory,
+    title: "Character Features",
+    content:
+      features.length > 0
+        ? `${features.length} feature${features.length === 1 ? "" : "s"}`
+        : "No features recorded",
+    subitems:
+      features.length > 0
+        ? features.map((feature) => ({
+            title: feature,
+            content: "Feature detail unavailable",
+          }))
+        : undefined,
   },
 ];
 
-const sectionKeys = sections.map((section) => section.key);
+const spellLevelLabels: string[] = [
+  "0th Level Spells",
+  "1st Level Spells",
+  "2nd Level Spells",
+  "3rd Level Spells",
+  "4th Level Spells",
+  "5th Level Spells",
+  "6th Level Spells",
+  "7th Level Spells",
+  "8th Level Spells",
+  "9th Level Spells",
+];
+
+const normalizeSpellsByLevel = (
+  spellsByLevel: CharacterViewData["spellsByLevel"],
+): Record<string, SpellLevelEntry[]> => {
+  const normalized = Object.fromEntries(
+    Array.from({ length: 10 }, (_, level) => [
+      `level${level}`,
+      [] as SpellLevelEntry[],
+    ]),
+  ) as Record<string, SpellLevelEntry[]>;
+
+  if (!spellsByLevel) {
+    return normalized;
+  }
+
+  Object.entries(spellsByLevel).forEach(([key, value]) => {
+    if (!(key in normalized)) {
+      return;
+    }
+
+    const parsed = (Array.isArray(value) ? value : []).map((spell) => {
+      if (typeof spell === "string") {
+        const name = spell.trim();
+        return name ? { name, description: "" } : null;
+      }
+
+      if (spell && typeof spell === "object") {
+        const name = String(spell.name || "").trim();
+        if (!name) {
+          return null;
+        }
+
+        return {
+          name,
+          description:
+            typeof spell.description === "string" ? spell.description : "",
+        };
+      }
+
+      return null;
+    });
+
+    normalized[key] = parsed.filter(
+      (spell): spell is SpellLevelEntry => spell !== null,
+    );
+  });
+
+  return normalized;
+};
+
+const buildSpells = (
+  spellsByLevel: CharacterViewData["spellsByLevel"],
+  knownSpells: string[] = [],
+  preparedSpells: string[] = [],
+): AccordionItem[] => {
+  const normalized = normalizeSpellsByLevel(spellsByLevel);
+  const hasAnyBucketedSpells = Object.values(normalized).some(
+    (levelSpells) => levelSpells.length > 0,
+  );
+
+  // Fallback for legacy payloads that do not expose level buckets.
+  if (knownSpells.length > 0 && !hasAnyBucketedSpells) {
+    normalized.level0 = Array.from(new Set(knownSpells)).map((name) => ({
+      name,
+      description: "",
+    }));
+  }
+
+  if (preparedSpells.length > 0 && !hasAnyBucketedSpells) {
+    normalized.level1 = Array.from(new Set(preparedSpells)).map((name) => ({
+      name,
+      description: "",
+    }));
+  }
+
+  return Array.from({ length: 10 }, (_, level) => {
+    const levelKey = `level${level}`;
+    const spells = normalized[levelKey] || [];
+
+    return {
+      title: spellLevelLabels[level],
+      content:
+        spells.length > 0
+          ? `${spells.length} spell${spells.length === 1 ? "" : "s"}`
+          : "No spells recorded",
+      subitems: spells.map((spell) => ({
+        title: spell.name,
+        content: spell.description || "",
+      })),
+    };
+  });
+};
+
+const buildInventory = (
+  equipment: CharacterViewData["equipment"] = [],
+  money: Record<string, number> = {},
+): AccordionItem[] => {
+  const currencyEntries = ["cp", "sp", "ep", "gp", "pp"]
+    .map((currency) => ({
+      currency,
+      amount: money[currency] ?? 0,
+    }))
+    .map((entry) => ({
+      title: entry.currency.toUpperCase(),
+      content: `${entry.amount}`,
+    }));
+
+  return [
+    {
+      title: "Equipped Items",
+      content:
+        equipment.length > 0
+          ? `${equipment.length} equipped`
+          : "No equipped items recorded",
+      subitems:
+        equipment.length > 0
+          ? equipment.map((item) => ({
+              title: item.name,
+              content: item.description || "No description provided",
+              type: item.type || "Equipment",
+              weight: item.weight ?? undefined,
+            }))
+          : undefined,
+    },
+    {
+      title: "Currency",
+      content: "5 coin types",
+      subitems: currencyEntries,
+    },
+  ];
+};
+
+const buildCharacterSections = (
+  character: CharacterViewData,
+): CharacterSection[] => {
+  const proficiencyBonus =
+    character.profBonus ?? 2 + Math.floor((character.level - 1) / 4);
+  const splitName = splitCharacterName(character.name);
+
+  const getAbilityScore = (abilityKey: AbilityKey) => {
+    const scoreFromObject = character.abilityScores?.[abilityKey];
+
+    if (typeof scoreFromObject === "number") {
+      return scoreFromObject;
+    }
+
+    const matchingStat = character.stats?.find(
+      (stat) => stat.name === abilityKey,
+    );
+
+    return matchingStat?.value ?? 10;
+  };
+
+  const generalSection: StatDetail[] = [
+    { name: "Name", value: splitName.firstName || "-" },
+    { name: "Last Name", value: splitName.lastName || "-" },
+    { name: "Nickname", value: splitName.nickname || "-" },
+    { name: "Level", value: character.level },
+    { name: "Experience", value: character.xp ?? 0 },
+    { name: "Class", value: character.characterClass || "-" },
+    { name: "Subclass", value: character.characterSubclass || "-" },
+    { name: "Race", value: character.characterRace || "-" },
+    { name: "Subrace", value: character.characterSubrace || "-" },
+    { name: "Hit Points", value: character.hitPointsCurrent ?? "-" },
+    { name: "Armor Class", value: character.armorClass ?? "-" },
+    {
+      name: "Speed",
+      value: character.speed != null ? `${character.speed} ft.` : "-",
+    },
+    {
+      name: "Inspiration",
+      value: character.inspiration ? "Yes" : "No",
+    },
+    { name: "Proficiency Bonus", value: formatModifier(proficiencyBonus) },
+  ];
+
+  const personalSection: PersonalSectionContent = {
+    details: [
+      { label: "Personality", value: character.personalityTraits || "-" },
+      { label: "Ideals", value: character.ideals || "-" },
+      { label: "Bonds", value: character.bonds || "-" },
+      { label: "Flaws", value: character.flaws || "-" },
+      { label: "Alignment", value: character.alignment || "-" },
+      { label: "Languages", value: "-" },
+      { label: "Height", value: "-" },
+      { label: "Weight", value: "-" },
+      { label: "Eye Color", value: "-" },
+      { label: "Hair Color", value: "-" },
+      { label: "Skin Color", value: "-" },
+      { label: "Age", value: "-" },
+    ],
+    backstory: character.background || "",
+    notes: [],
+  };
+
+  const statsSection: StatSectionContent = {
+    proficiencyBonus: formatModifier(proficiencyBonus),
+    abilities: abilityOrder.map((ability) => {
+      const score = getAbilityScore(ability.key);
+      const modifier = calculateModifier(score);
+      const isSavingThrowProficient =
+        character.abilityProf?.includes(ability.key) || false;
+
+      const skills: SkillDetail[] = skillGroups[ability.key].map(
+        (skillName): SkillDetail => {
+          const distinction: SkillDetail["distinction"] =
+            character.skillExpertise?.includes(skillName)
+              ? "Expertise"
+              : character.skillProf?.includes(skillName)
+                ? "Proficiency"
+                : "Nothing";
+
+          const skillBonus =
+            modifier +
+            (distinction === "Expertise"
+              ? proficiencyBonus * 2
+              : distinction === "Proficiency"
+                ? proficiencyBonus
+                : 0);
+
+          return {
+            name: skillName,
+            modifier: formatModifier(skillBonus),
+            distinction,
+          };
+        },
+      );
+
+      return {
+        ability: ability.label,
+        score: String(score),
+        modifier: formatModifier(modifier),
+        savingThrow: formatModifier(
+          modifier + (isSavingThrowProficient ? proficiencyBonus : 0),
+        ),
+        savingThrowDistinction: isSavingThrowProficient
+          ? "Proficiency"
+          : "Nothing",
+        skills,
+      };
+    }),
+  };
+
+  return [
+    {
+      key: "general",
+      label: "General",
+      icon: Scroll,
+      intro: "Core information and vital statistics.",
+      content: generalSection,
+    },
+    {
+      key: "personal",
+      label: "Personal",
+      icon: User,
+      intro: "Personality, background, and distinguishing features.",
+      content: personalSection,
+    },
+    {
+      key: "stats",
+      label: "Stats",
+      icon: Dumbbell,
+      intro: "Ability scores, skills, and saving throws.",
+      content: statsSection,
+    },
+    {
+      key: "features",
+      label: "Features",
+      icon: Zap,
+      intro: "Class features, racial abilities, feats, and special traits.",
+      content: buildFeatures(character.features),
+    },
+    {
+      key: "spells",
+      label: "Spells",
+      icon: Wand2,
+      intro: "Spellbook grouped by spell level (0th to 9th).",
+      content: buildSpells(
+        character.spellsByLevel,
+        character.knownSpells,
+        character.preparedSpells,
+      ),
+    },
+    {
+      key: "inventory",
+      label: "Inventory",
+      icon: Backpack,
+      intro: "Equipment, items, and magical treasures.",
+      content: buildInventory(character.equipment, character.money),
+    },
+  ];
+};
+
+type CharacterUpdatePayload = {
+  name?: string;
+  level?: number;
+  xp?: number;
+  inspiration?: boolean;
+  background?: string | null;
+  alignment?: string | null;
+  personalityTraits?: string | null;
+  ideals?: string | null;
+  bonds?: string | null;
+  flaws?: string | null;
+  class?: string;
+  race?: string;
+  subclass?: string;
+  subrace?: string;
+  stats?: {
+    str: number;
+    dex: number;
+    con: number;
+    int: number;
+    wis: number;
+    cha: number;
+  };
+  saves?: {
+    strProficient: boolean;
+    dexProficient: boolean;
+    conProficient: boolean;
+    intProficient: boolean;
+    wisProficient: boolean;
+    chaProficient: boolean;
+  };
+  skills?: Array<{
+    name: string;
+    proficient: boolean;
+    expertise: boolean;
+    bonus?: number | null;
+  }>;
+  combat?: {
+    hp?: number;
+    hpMax?: number;
+    ac?: number | null;
+    initiative?: number | null;
+    speed?: number | null;
+    hitDiceType?: number | null;
+    hitDiceCurrent?: number | null;
+    hitDiceTotal?: number | null;
+    passivePerception?: number | null;
+  };
+  features?: string[];
+  knownSpells?: string[];
+  preparedSpells?: string[];
+  spellsByLevel?: Partial<
+    Record<`level${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`, SpellLevelEntry[]>
+  >;
+  equipment?: Array<{
+    name: string;
+    type?: string;
+    weight?: number;
+    description?: string;
+  }>;
+  money?: {
+    gp?: number;
+    sp?: number;
+    ep?: number;
+    cp?: number;
+    pp?: number;
+  };
+};
+
+const parseMaybeNumber = (value: string | number | undefined) => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : undefined;
+  }
+
+  const trimmedValue = value?.trim();
+  if (!trimmedValue || trimmedValue === "-") {
+    return undefined;
+  }
+
+  const parsedValue = Number(trimmedValue.replace(/[^0-9-]/g, ""));
+  return Number.isFinite(parsedValue) ? parsedValue : undefined;
+};
+
+const parseMaybeText = (value: string | number | undefined) => {
+  if (typeof value === "number") {
+    return String(value);
+  }
+
+  const trimmedValue = value?.trim();
+  if (!trimmedValue || trimmedValue === "-") {
+    return undefined;
+  }
+
+  return trimmedValue;
+};
+
+const extractAccordionSubitemTitles = (items: AccordionItem[]) =>
+  items.flatMap((item) =>
+    (item.subitems ?? [])
+      .map((subitem) => parseMaybeText(subitem.title))
+      .filter((title): title is string => Boolean(title)),
+  );
+
+const extractSpellLevelFromTitle = (title: string) => {
+  const match = title.match(/(\d)/);
+  if (!match) {
+    return null;
+  }
+
+  const level = Number(match[1]);
+  if (!Number.isInteger(level) || level < 0 || level > 9) {
+    return null;
+  }
+
+  return level;
+};
+
+const extractEquipmentItems = (items: AccordionItem[]) => {
+  return items.flatMap((item) =>
+    (item.subitems ?? [])
+      .map((subitem) => {
+        const name = parseMaybeText(subitem.title);
+        const description =
+          typeof subitem.content === "string" ? subitem.content : "";
+
+        return {
+          name: name || "",
+          type: subitem.type || "Equipment",
+          weight: subitem.weight,
+          description: description || "",
+        };
+      })
+      .filter((item) => Boolean(item.name)),
+  );
+};
+
+const getAccordionStringContent = (value: AccordionItem["content"]) =>
+  typeof value === "string" ? value : "";
+
+const parseCurrencySubitems = (currencyItems: AccordionItem | undefined) => {
+  const money: CharacterUpdatePayload["money"] = {};
+  (currencyItems?.subitems ?? []).forEach((subitem) => {
+    const currencyKey = subitem.title.trim().toLowerCase();
+    const amount = parseMaybeNumber(getAccordionStringContent(subitem.content));
+    if (typeof amount !== "number") {
+      return;
+    }
+
+    if (
+      currencyKey === "gp" ||
+      currencyKey === "sp" ||
+      currencyKey === "ep" ||
+      currencyKey === "cp" ||
+      currencyKey === "pp"
+    ) {
+      money[currencyKey] = amount;
+    }
+  });
+
+  return money;
+};
+
+const getDetailValue = (
+  content: StatDetail[] | PersonalSectionContent,
+  key: string,
+) => {
+  if (Array.isArray(content)) {
+    return content.find((item) => item.name === key)?.value;
+  }
+
+  return content.details.find((item) => item.label === key)?.value;
+};
+
+const buildCharacterUpdatePayload = (
+  sectionKey: CharacterSectionKey,
+  content: CharacterSection["content"],
+): CharacterUpdatePayload | null => {
+  switch (sectionKey) {
+    case "general": {
+      const generalContent = content as StatDetail[];
+      const firstName = parseMaybeText(getDetailValue(generalContent, "Name"));
+      const lastName = parseMaybeText(
+        getDetailValue(generalContent, "Last Name"),
+      );
+      const nickname = parseMaybeText(
+        getDetailValue(generalContent, "Nickname"),
+      );
+      const level = parseMaybeNumber(getDetailValue(generalContent, "Level"));
+      const xp = parseMaybeNumber(getDetailValue(generalContent, "Experience"));
+      const hp = parseMaybeNumber(getDetailValue(generalContent, "Hit Points"));
+      const armorClass = parseMaybeNumber(
+        getDetailValue(generalContent, "Armor Class"),
+      );
+      const speed = parseMaybeNumber(getDetailValue(generalContent, "Speed"));
+      const inspiration = parseMaybeText(
+        getDetailValue(generalContent, "Inspiration"),
+      );
+      const characterClass = parseMaybeText(
+        getDetailValue(generalContent, "Class"),
+      );
+      const characterRace = parseMaybeText(
+        getDetailValue(generalContent, "Race"),
+      );
+      const subclass = parseMaybeText(
+        getDetailValue(generalContent, "Subclass"),
+      );
+      const subrace = parseMaybeText(getDetailValue(generalContent, "Subrace"));
+
+      const payload: CharacterUpdatePayload = {};
+
+      if (firstName || lastName || nickname) {
+        const parts = [firstName, lastName, nickname].map((p) => p || "");
+        const builtName = parts
+          .join("-")
+          .replace(/^-+|-+$/g, "")
+          .trim();
+        if (builtName) {
+          payload.name = builtName;
+        }
+      }
+
+      if (typeof level === "number") {
+        payload.level = level;
+      }
+
+      if (typeof xp === "number") {
+        payload.xp = xp;
+      }
+
+      if (inspiration && inspiration.toLowerCase() === "yes") {
+        payload.inspiration = true;
+      } else if (inspiration && inspiration.toLowerCase() === "no") {
+        payload.inspiration = false;
+      }
+
+      if (characterClass && characterClass !== "-") {
+        payload.class = characterClass;
+      }
+
+      if (characterRace && characterRace !== "-") {
+        payload.race = characterRace;
+      }
+
+      if (subclass && subclass !== "-") {
+        payload.subclass = subclass;
+      }
+
+      if (subrace && subrace !== "-") {
+        payload.subrace = subrace;
+      }
+
+      if (
+        typeof hp === "number" ||
+        typeof armorClass === "number" ||
+        typeof speed === "number"
+      ) {
+        const combatData: any = {};
+        if (typeof hp === "number") {
+          combatData.hp = hp;
+          combatData.hpMax = hp;
+        }
+        if (typeof armorClass === "number") {
+          combatData.ac = armorClass;
+        }
+        if (typeof speed === "number") {
+          combatData.speed = speed;
+        }
+        payload.combat = combatData;
+      }
+
+      return Object.keys(payload).length > 0 ? payload : null;
+    }
+    case "personal": {
+      const personalContent = content as PersonalSectionContent;
+      return {
+        background: parseMaybeText(personalContent.backstory) ?? null,
+        alignment:
+          parseMaybeText(getDetailValue(personalContent, "Alignment")) ?? null,
+        personalityTraits:
+          parseMaybeText(getDetailValue(personalContent, "Personality")) ??
+          null,
+        ideals:
+          parseMaybeText(getDetailValue(personalContent, "Ideals")) ?? null,
+        bonds: parseMaybeText(getDetailValue(personalContent, "Bonds")) ?? null,
+        flaws: parseMaybeText(getDetailValue(personalContent, "Flaws")) ?? null,
+      };
+    }
+    case "stats": {
+      const statsContent = content as StatSectionContent;
+      const stats = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+      const saves = {
+        strProficient: false,
+        dexProficient: false,
+        conProficient: false,
+        intProficient: false,
+        wisProficient: false,
+        chaProficient: false,
+      };
+      const skills = statsContent.abilities.flatMap((ability) =>
+        ability.skills.map((skill) => ({
+          name: skill.name,
+          proficient:
+            skill.distinction === "Proficiency" ||
+            skill.distinction === "Expertise",
+          expertise: skill.distinction === "Expertise",
+          bonus: parseMaybeNumber(skill.modifier),
+        })),
+      );
+
+      statsContent.abilities.forEach((ability) => {
+        const abilityKey = ability.ability
+          .toLowerCase()
+          .slice(0, 3) as keyof typeof stats;
+        const score = parseMaybeNumber(ability.score);
+
+        if (typeof score === "number") {
+          stats[abilityKey] = score;
+        }
+
+        const saveKey = `${abilityKey}Proficient` as keyof typeof saves;
+        saves[saveKey] = ability.savingThrowDistinction === "Proficiency";
+      });
+
+      return {
+        stats,
+        saves,
+        skills,
+      };
+    }
+    case "features": {
+      const featureItems = content as AccordionItem[];
+      return {
+        features: extractAccordionSubitemTitles(featureItems),
+      };
+    }
+    case "spells": {
+      const spellItems = content as AccordionItem[];
+      const spellsByLevel = Array.from({ length: 10 }, (_, level) => ({
+        key: `level${level}`,
+        values: [] as SpellLevelEntry[],
+      })).reduce(
+        (acc, entry) => {
+          acc[entry.key] = entry.values;
+          return acc;
+        },
+        {} as Record<string, SpellLevelEntry[]>,
+      );
+
+      spellItems.forEach((item) => {
+        const parsedLevel = extractSpellLevelFromTitle(item.title);
+        if (parsedLevel == null) {
+          return;
+        }
+
+        const key = `level${parsedLevel}`;
+        const entries: SpellLevelEntry[] = (item.subitems ?? [])
+          .map((subitem) => {
+            const name = parseMaybeText(subitem.title);
+            if (!name) {
+              return null;
+            }
+
+            return {
+              name,
+              description:
+                typeof subitem.content === "string" ? subitem.content : "",
+            };
+          })
+          .filter((entry): entry is SpellLevelEntry => entry !== null);
+
+        const deduped = entries.filter(
+          (entry, index, arr) =>
+            arr.findIndex((itemEntry) => itemEntry.name === entry.name) ===
+            index,
+        );
+        spellsByLevel[key] = deduped;
+      });
+
+      const flattenedSpellNames = Array.from(
+        new Set(
+          Object.values(spellsByLevel)
+            .flat()
+            .map((spell) => spell.name),
+        ),
+      );
+
+      return {
+        spellsByLevel,
+        knownSpells: flattenedSpellNames,
+        preparedSpells: flattenedSpellNames,
+      };
+    }
+    case "inventory": {
+      const inventoryItems = content as AccordionItem[];
+      const equippedItems = inventoryItems.find((item) =>
+        item.title.toLowerCase().includes("equipped"),
+      );
+      const currencyItems = inventoryItems.find((item) =>
+        item.title.toLowerCase().includes("currency"),
+      );
+
+      return {
+        equipment: extractEquipmentItems(equippedItems ? [equippedItems] : []),
+        money: parseCurrencySubitems(currencyItems),
+      };
+    }
+    default:
+      return null;
+  }
+};
 
 function CharacterPreview() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { id: characterId } = useParams();
+  const [characterData, setCharacterData] = useState<CharacterViewData | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(Boolean(characterId));
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [activeSection, setActiveSection] =
     useState<CharacterSectionKey>("general");
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [editingSection, setEditingSection] =
     useState<CharacterSectionKey | null>(null);
+  const sections = useMemo(
+    () =>
+      characterId && characterData ? buildCharacterSections(characterData) : [],
+    [characterData, characterId],
+  );
+  const sectionKeys = useMemo(
+    () => sections.map((section) => section.key),
+    [sections],
+  );
   const [sectionContent, setSectionContent] = useState(
-    new Map(sections.map((s) => [s.key, s.content])),
+    new Map(sections.map((section) => [section.key, section.content])),
   );
 
-  const sectionFromHash = location.hash.replace("#", "") as CharacterSectionKey;
+  const sectionFromHash = location.hash.replace("#", "") as
+    | CharacterSectionKey
+    | "";
+  const routeBase = characterId
+    ? `/character/${characterId}`
+    : "/preview/character";
 
   useEffect(() => {
-    if (!sectionKeys.includes(sectionFromHash)) {
-      if (location.pathname === "/preview/character") {
-        navigate("/preview/character#general", { replace: true });
-      }
+    if (!characterId) {
+      setCharacterData(null);
+      setLoading(false);
+      setLoadError(null);
+      setSaveError(null);
       return;
     }
 
-    setActiveSection(sectionFromHash);
-  }, [location.pathname, location.hash, navigate, sectionFromHash]);
+    let isMounted = true;
+
+    const loadCharacter = async () => {
+      try {
+        setLoading(true);
+        const data = await characterService.getCharacterById(characterId);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setCharacterData(data);
+        setLoadError(null);
+      } catch (fetchError: any) {
+        if (!isMounted) {
+          return;
+        }
+
+        setCharacterData(null);
+        setLoadError(fetchError?.message || "Failed to load character");
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadCharacter();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [characterId]);
+
+  useEffect(() => {
+    setSectionContent(
+      new Map(sections.map((section) => [section.key, section.content])),
+    );
+    setExpandedItems(new Set());
+    setEditingSection(null);
+  }, [sections]);
+
+  useEffect(() => {
+    if (
+      !sectionFromHash ||
+      !sectionKeys.includes(sectionFromHash as CharacterSectionKey)
+    ) {
+      navigate(`${routeBase}#general`, { replace: true });
+      return;
+    }
+
+    setActiveSection(sectionFromHash as CharacterSectionKey);
+  }, [location.hash, navigate, routeBase, sectionFromHash, sectionKeys]);
 
   const currentSection =
     sections.find((section) => section.key === activeSection) ?? sections[0];
 
-  const currentContent =
-    sectionContent.get(activeSection) ?? currentSection.content;
+  const currentContent = currentSection
+    ? (sectionContent.get(activeSection) ?? currentSection.content)
+    : undefined;
 
   const toggleItem = (itemId: string) => {
     setExpandedItems((prev) => {
@@ -376,9 +1227,98 @@ function CharacterPreview() {
     }
   };
 
-  const handleContentChange = (newContent: CharacterSection["content"]) => {
+  const handleContentChange = async (
+    newContent: CharacterSection["content"],
+  ) => {
+    const previousContent = sectionContent.get(activeSection);
     setSectionContent((prev) => new Map(prev).set(activeSection, newContent));
+    setSaveError(null);
+
+    if (!characterId) {
+      return;
+    }
+
+    const payload = buildCharacterUpdatePayload(activeSection, newContent);
+    if (!payload) {
+      console.log("⏭️  No payload to send for section:", activeSection);
+      return;
+    }
+
+    console.log(
+      "🔄 Sending character update payload for section:",
+      activeSection,
+    );
+    console.log("📋 Payload details:", JSON.stringify(payload, null, 2));
+
+    try {
+      setIsSaving(true);
+      // Send update to server but don't wait for/refetch full character data
+      // This keeps the UI responsive with optimistic updates
+      await characterService.editCharacter(characterId, payload);
+      console.log("✅ Character saved successfully");
+    } catch (saveError: any) {
+      console.error("❌ Save error:", saveError);
+      console.error("📋 Error details:", saveError?.message);
+      setSaveError(saveError?.message || "Failed to save character changes");
+      if (previousContent) {
+        setSectionContent((prev) =>
+          new Map(prev).set(activeSection, previousContent),
+        );
+      }
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (characterId && loading) {
+    return (
+      <div className="min-h-screen ml-64 bg-dark px-6 py-10 text-gray-light flex items-center justify-center">
+        Loading character...
+      </div>
+    );
+  }
+
+  if (!characterId) {
+    return (
+      <div className="min-h-screen ml-64 bg-dark px-6 py-10 text-neutral-text flex items-center justify-center">
+        <div className="max-w-xl w-full border-2 border-gold-neutral bg-neutral p-6 flex flex-col gap-4">
+          <h1 className="text-2xl font-bold tracking-widest">
+            CHARACTER VIEW NEEDS AN ID
+          </h1>
+          <p className="text-sm text-gray-light">
+            Open a character from the character list to use this layout.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate("/characters")}
+            className="self-start border border-gold-neutral bg-dark px-4 py-2 text-sm uppercase tracking-widest hover:bg-light"
+          >
+            Back to Characters
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (characterId && loadError) {
+    return (
+      <div className="min-h-screen ml-64 bg-dark px-6 py-10 text-neutral-text flex items-center justify-center">
+        <div className="max-w-xl w-full border-2 border-gold-neutral bg-neutral p-6 flex flex-col gap-4">
+          <h1 className="text-2xl font-bold tracking-widest">
+            CHARACTER NOT AVAILABLE
+          </h1>
+          <p className="text-sm text-gray-light">{loadError}</p>
+          <button
+            type="button"
+            onClick={() => navigate("/characters")}
+            className="self-start border border-gold-neutral bg-dark px-4 py-2 text-sm uppercase tracking-widest hover:bg-light"
+          >
+            Back to Characters
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const renderSection = () => {
     const baseProps = {
@@ -412,12 +1352,27 @@ function CharacterPreview() {
           />
         );
       case "features":
+        return (
+          <AccordionSection
+            {...baseProps}
+            content={currentContent as AccordionItem[]}
+            sectionType="features"
+          />
+        );
       case "spells":
+        return (
+          <AccordionSection
+            {...baseProps}
+            content={currentContent as AccordionItem[]}
+            sectionType="spells"
+          />
+        );
       case "inventory":
         return (
           <AccordionSection
             {...baseProps}
             content={currentContent as AccordionItem[]}
+            sectionType="equipment"
           />
         );
       default:
@@ -429,10 +1384,33 @@ function CharacterPreview() {
     <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex flex-col gap-12">
       {/* Header */}
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-widest">CHARACTER SHEET</h1>
+        <h1 className="text-3xl font-bold tracking-widest">
+          {characterData?.name ?? "CHARACTER SHEET"}
+        </h1>
+        {characterData && (
+          <p className="text-sm text-gold-light uppercase tracking-widest">
+            Level {characterData.level}
+            {characterData.characterClass
+              ? ` · ${characterData.characterClass}`
+              : ""}
+            {characterData.characterRace
+              ? ` · ${characterData.characterRace}`
+              : ""}
+          </p>
+        )}
         <p className="text-sm text-gray-light max-w-2xl">
-          {currentSection.intro}
+          {currentSection?.intro ?? "Core information and vital statistics."}
         </p>
+        {saveError && (
+          <div className="border border-error bg-red-950/40 px-4 py-3 text-sm text-error">
+            {saveError}
+          </div>
+        )}
+        {isSaving && (
+          <p className="text-xs uppercase tracking-widest text-gold-light">
+            Saving character changes...
+          </p>
+        )}
       </div>
 
       {/* Content Area */}

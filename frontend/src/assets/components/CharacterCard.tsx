@@ -2,6 +2,7 @@ import { ArrowRight, Diamond } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 function CharacterCard({
+  id,
   name,
   level,
   race,
@@ -10,6 +11,7 @@ function CharacterCard({
   speed,
   armorClass,
   connectedCampaign,
+  campaignId,
 }: {
   name?: string;
   level?: number;
@@ -19,28 +21,37 @@ function CharacterCard({
   speed?: number;
   armorClass?: number;
   connectedCampaign?: string;
+  campaignId?: string;
+  id?: string;
 }) {
   const navigate = useNavigate();
+  const characterPath = id ? `/character/${id}` : "/preview/character";
+  const connectedCampaignPath = campaignId
+    ? `/preview/campaign/${campaignId}`
+    : "/preview/campaign";
+  const displayName = name?.replace(/-/g, " ").replace(/\s+/g, " ").trim();
 
   return (
     <div
       role="link"
       tabIndex={0}
-      onClick={() => navigate("/preview/character")}
+      onClick={() => navigate(characterPath)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          navigate("/preview/character");
+          navigate(characterPath);
         }
       }}
-      className="bg-neutral w-full flex flex-col gap-8 text-neutral-text border-2 border-gold-neutral p-4 hover:scale-105 cursor-pointer"
+      className="bg-neutral w-full flex flex-col justify-between gap-8 text-neutral-text border-2 border-gold-neutral p-4 hover:scale-105 cursor-pointer"
     >
       {/* UPPER SECTION */}
       <div>
-        <div className="flex flex-row justify-between items-center">
-          <p className="text-lg tracking-widest uppercase">{name}</p>
-          <p className="border border-gold-neutral bg-dark p-2">
-            Level: {level}
+        <div className="flex flex-row justify-between items-center gap-2">
+          <p className="text-lg tracking-widest uppercase">
+            {displayName || name}
+          </p>
+          <p className="border border-gold-neutral bg-dark p-2 text-center">
+            Lv: {level}
           </p>
         </div>
         <p className="px-4">{race}</p>
@@ -67,16 +78,27 @@ function CharacterCard({
         </div>
       </div>
       {/* LOWER SECTION */}
-      <div className="flex flex-row items-center justify-between hover:bg-light hover:border-l-8 hover:border-gold-neutral p-2">
+      <div
+        className={`flex flex-row items-center justify-between p-2 ${
+          connectedCampaign
+            ? "hover:bg-light hover:border-l-8 hover:border-gold-neutral"
+            : "opacity-50 cursor-not-allowed"
+        }`}
+        aria-disabled={!connectedCampaign}
+      >
         <Diamond size={18} className="text-gold-neutral" />
-        <NavLink
-          to="/preview/campaign"
-          className="ml-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          View {connectedCampaign}
-          <ArrowRight size={18} className="inline ml-1 text-gold-neutral" />
-        </NavLink>
+        {connectedCampaign ? (
+          <NavLink
+            to={connectedCampaignPath}
+            className="ml-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            View {connectedCampaign}
+            <ArrowRight size={18} className="inline ml-1 text-gold-neutral" />
+          </NavLink>
+        ) : (
+          <div className="ml-2 text-gray-light">No campaign connected</div>
+        )}
       </div>
     </div>
   );

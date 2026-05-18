@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { useAuth } from "../../context/AuthContext";
 
 const profileSchema = z.object({
   username: z
@@ -15,22 +16,44 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 function Profile() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("Rundal Zed");
-  const [bio, setBio] = useState(
-    "Adventurer, lore seeker, occasional DM. Keep your profile short and sweet.",
-  );
+  const { user, isLoading, isAuthenticated, updateUser, logout } = useAuth();
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<
     Partial<Record<keyof ProfileFormData, string>>
   >({});
 
-  // Placeholder data — replace with real data when available
-  const email = "rundal@example.com";
-  const maskedPassword = "*****";
-  const charactersCreated = 7;
-  const dmCampaigns = 2;
-  const playerCampaigns = 3;
-  const totalCampaigns = dmCampaigns + playerCampaigns;
+  useEffect(() => {
+    if (user?.name) {
+      setUsername(user.name);
+    }
+    if (typeof user?.bio === "string") {
+      setBio(user.bio);
+    }
+  }, [user?.bio, user?.name]);
+
+  const email = user?.email ?? "Not available";
+  const role = user?.role ?? "User";
+  const joinedAt = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "Not available";
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen ml-64 bg-dark px-6 py-10 text-gray-light flex items-center justify-center">
+        Loading profile...
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/sign-in" replace />;
+  }
 
   return (
     <div className="min-h-screen ml-64 bg-dark text-neutral-text px-6 py-10 lg:px-10">
@@ -42,9 +65,8 @@ function Profile() {
           </div>
           <button
             className="h-9 border border-gold-neutral bg-neutral px-4 text-sm tracking-wide hover:bg-gold-neutral cursor-pointer"
-            onClick={() => {
+            onClick={async () => {
               if (editing) {
-                // Validate on save
                 const result = profileSchema.safeParse({ username, bio });
                 if (!result.success) {
                   const fieldErrors = result.error.flatten().fieldErrors;
@@ -54,6 +76,7 @@ function Profile() {
                   });
                   return;
                 }
+                await updateUser({ name: username.trim(), bio: bio.trim() });
                 setErrors({});
               } else {
                 setErrors({});
@@ -83,7 +106,7 @@ function Profile() {
                 </p>
                 {!editing ? (
                   <p className="mt-2 text-lg font-bold tracking-wide">
-                    {username}
+                    {username || "Not available"}
                   </p>
                 ) : (
                   <>
@@ -107,12 +130,28 @@ function Profile() {
               </div>
             </div>
 
+            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+              <div>
+                <p className="text-xs tracking-widest text-gray-light">ROLE</p>
+                <p className="mt-2 text-sm uppercase tracking-widest text-gold-light">
+                  {role}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs tracking-widest text-gray-light">
+                  MEMBER SINCE
+                </p>
+                <p className="mt-2 text-sm">{joinedAt}</p>
+              </div>
+            </div>
+
             <div className="mt-5 border-t border-gold-dark pt-5">
               <p className="text-xs tracking-widest text-gray-light">
                 PASSWORD
               </p>
               <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-                <p className="tracking-widest">{maskedPassword}</p>
+                <p className="tracking-widest">*****</p>
                 <button
                   className="h-8 border border-gold-neutral bg-dark px-3 text-xs tracking-wide hover:bg-gold-neutral cursor-pointer"
                   onClick={() => navigate("/reset-password")}
@@ -125,11 +164,13 @@ function Profile() {
             <div className="mt-5 border-t border-gold-dark pt-5">
               <p className="text-xs tracking-widest text-gray-light">ABOUT</p>
               {!editing ? (
-                <p className="mt-2 max-w-2xl text-sm text-gray-light">{bio}</p>
+                <p className="mt-2 max-w-2xl text-sm text-gray-light">
+                  {bio || "No bio added yet."}
+                </p>
               ) : (
                 <>
                   <textarea
-                    className="mt-2 min-h-28 w-full resize-none border border-gold-neutral bg-dark p-3 outline-none"
+                    className="mt-2 w-full min-h-48 resize-none border border-gold-neutral bg-dark p-3 outline-none"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                   />
@@ -145,24 +186,34 @@ function Profile() {
             <div className="border-2 border-gold-neutral bg-neutral p-5">
               <div className="pb-3">
                 <p className="text-xs uppercase tracking-widest text-gold-light">
-                  Stats
+                  Account
                 </p>
-                <h3 className="mt-2 text-lg font-semibold">Activity</h3>
+                <h3 className="mt-2 text-lg font-semibold">Summary</h3>
               </div>
               <hr className="border-gold-dark" />
 
               <div className="mt-4 flex flex-col gap-3">
                 <div className="border border-gold-dark bg-dark px-4 py-3">
                   <p className="text-xs uppercase tracking-widest text-gray-light">
-                    Characters
+                    Name
                   </p>
-                  <p className="mt-1 text-2xl font-bold">{charactersCreated}</p>
+                  <p className="mt-1 text-lg font-bold">
+                    {username || "Not available"}
+                  </p>
                 </div>
                 <div className="border border-gold-dark bg-dark px-4 py-3">
                   <p className="text-xs uppercase tracking-widest text-gray-light">
-                    Campaigns
+                    Email
                   </p>
-                  <p className="mt-1 text-2xl font-bold">{totalCampaigns}</p>
+                  <p className="mt-1 text-sm break-all">{email}</p>
+                </div>
+                <div className="border border-gold-dark bg-dark px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-gray-light">
+                    Role
+                  </p>
+                  <p className="mt-1 text-sm uppercase tracking-widest text-gold-light">
+                    {role}
+                  </p>
                 </div>
               </div>
             </div>
@@ -179,6 +230,24 @@ function Profile() {
                 onClick={() => navigate("/contact")}
               >
                 CONTACT / FEEDBACK
+              </button>
+            </div>
+
+            <div className="border-2 border-gold-neutral bg-neutral p-5">
+              <p className="text-xs uppercase tracking-widest text-gold-light">
+                Session
+              </p>
+              <p className="mt-2 text-sm text-gray-light">
+                Sign out of your account
+              </p>
+              <button
+                className="mt-4 h-9 w-full border border-error bg-dark px-3 text-xs tracking-wide hover:bg-error cursor-pointer"
+                onClick={async () => {
+                  await logout();
+                  navigate("/");
+                }}
+              >
+                LOGOUT
               </button>
             </div>
           </aside>

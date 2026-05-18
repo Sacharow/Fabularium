@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { z } from "zod";
 import { Mail, User, Eye, EyeOff } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 const signUpSchema = z
   .object({
@@ -12,7 +13,7 @@ const signUpSchema = z
     email: z.email().min(1, "Email is required").max(255, "Email is too long"),
     password: z
       .string()
-      .min(6, { message: "Password must be at least 6 characters long" })
+      .min(8, { message: "Password must be at least 8 characters long" })
       .max(255, { message: "Password is too long" }),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
@@ -22,6 +23,9 @@ const signUpSchema = z
   });
 
 const SignUp = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading, register, login, error, clearError } =
+    useAuth();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -50,8 +54,9 @@ const SignUp = () => {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    clearError();
 
     const result = signUpSchema.safeParse(formData);
 
@@ -68,8 +73,31 @@ const SignUp = () => {
       return;
     }
 
-    setFieldErrors({});
+    try {
+      await register({
+        name: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
+      await login({ email: formData.email, password: formData.password });
+      setFieldErrors({});
+      navigate("/profile", { replace: true });
+    } catch {
+      // Error is surfaced from auth context.
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="h-screen ml-64 bg-dark flex items-center justify-center px-6 text-gray-light">
+        Loading your session...
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/profile" replace />;
+  }
 
   return (
     <div className="h-screen ml-64 bg-dark flex items-center justify-center px-6">
@@ -195,6 +223,9 @@ const SignUp = () => {
             >
               SIGN UP
             </button>
+            {error ? (
+              <p className="text-sm text-error text-center">{error}</p>
+            ) : null}
           </form>
 
           <hr className="text-gold-neutral" />

@@ -25,9 +25,8 @@ const createLocation = async (req, res) => {
     const campaignId = req.params.id || data.campaignId;
     if (!campaignId)
       return res.status(400).json({ message: "campaignId is required" });
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     const userId = req.user?.id;
@@ -38,10 +37,23 @@ const createLocation = async (req, res) => {
       campaign.contributors.some((c) => c.id === userId);
     if (!isContributor) return res.status(403).json({ message: "Forbidden" });
 
+    const linkedNpcIds = Array.isArray(data.linkedNpcIds)
+      ? data.linkedNpcIds.filter(
+          (id) => typeof id === "string" && id.trim().length > 0,
+        )
+      : undefined;
+    const linkedMissionIds = Array.isArray(data.linkedMissionIds)
+      ? data.linkedMissionIds.filter(
+          (id) => typeof id === "string" && id.trim().length > 0,
+        )
+      : undefined;
+
     const created = await campaignService.createLocation({
       name: data.name,
       description: data.description ?? "",
       campaignId: campaignId,
+      linkedNpcIds,
+      linkedMissionIds,
     });
     return res.status(201).json(created);
   } catch (err) {
@@ -56,7 +68,8 @@ const listCampaignLocations = async (req, res) => {
     const id = req.params.id;
     if (!z.string().safeParse(id).success)
       return res.status(400).json({ message: "Invalid id" });
-    const locations = await campaignService.listCampaignLocationsByCampaignId(id);
+    const locations =
+      await campaignService.listCampaignLocationsByCampaignId(id);
     return res.status(200).json(locations);
   } catch (err) {
     return res.status(500).json({
@@ -109,9 +122,8 @@ const updateLocation = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -153,9 +165,8 @@ const deleteLocation = async (req, res) => {
     if (!z.string().safeParse(locationId).success)
       return res.status(400).json({ message: "Invalid location id" });
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -197,9 +208,8 @@ const createMission = async (req, res) => {
     )
       return res.status(400).json({ message: "title is required" });
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     const userId = req.user?.id;
@@ -241,9 +251,8 @@ const updateMission = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     const userId = req.user?.id;
@@ -281,9 +290,8 @@ const deleteMission = async (req, res) => {
     if (!z.string().safeParse(missionId).success)
       return res.status(400).json({ message: "Invalid mission id" });
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -319,9 +327,8 @@ const createNote = async (req, res) => {
     if (!data || typeof data.name !== "string" || data.name.trim().length === 0)
       return res.status(400).json({ message: "name is required" });
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     const user = req.user;
@@ -364,9 +371,8 @@ const updateNote = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -403,9 +409,8 @@ const deleteNote = async (req, res) => {
     if (!z.string().safeParse(noteId).success)
       return res.status(400).json({ message: "Invalid note id" });
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -446,9 +451,8 @@ const createMap = async (req, res) => {
         .json({ message: "Validation failed", errors: validated.error });
     }
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -526,9 +530,8 @@ const updateMap = async (req, res) => {
         .json({ message: "Validation failed", errors: parsed.error });
     }
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
@@ -565,9 +568,8 @@ const deleteMap = async (req, res) => {
     if (!z.string().safeParse(mapId).success)
       return res.status(400).json({ message: "Invalid map id" });
 
-    const campaign = await campaignService.getCampaignWithContributorsById(
-      campaignId,
-    );
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 

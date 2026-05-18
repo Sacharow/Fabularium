@@ -17,18 +17,33 @@ import {
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import CreateEntityModal from "./CreateEntityModal";
+import { useAuth } from "../../../context/AuthContext";
+import { characterService } from "../../../services/characterService";
+import { campaignService } from "../../../services/campaignService";
 
 function Sidebar() {
+  const { user, isAuthenticated } = useAuth();
   const location = useLocation();
-  const onResourcesPage = location.pathname === "/resources-new";
-  const onCharacterPreviewPage = location.pathname === "/preview/character";
-  const onCampaignPreviewPage = location.pathname === "/preview/campaign";
-  const canCreateNew =
+  const isCharacterContext =
     location.pathname.startsWith("/characters") ||
-    location.pathname.startsWith("/campaigns");
+    location.pathname.startsWith("/character/") ||
+    location.pathname.startsWith("/preview/character");
+  const isCampaignContext =
+    location.pathname.startsWith("/campaigns") ||
+    location.pathname.startsWith("/preview/campaign");
+  const onResourcesPage = location.pathname === "/resources";
+  const onCharacterPreviewPage =
+    location.pathname === "/preview/character" ||
+    location.pathname.startsWith("/character/");
+  const onCampaignPreviewPage =
+    location.pathname.startsWith("/preview/campaign");
+  const canCreateNew = isCharacterContext || isCampaignContext;
   const activeResourceSection = location.hash.replace("#", "") || "backgrounds";
   const activeCharacterSection = location.hash.replace("#", "") || "general";
   const activeCampaignSection = location.hash.replace("#", "") || "general";
+  const characterPreviewBase = location.pathname.startsWith("/character/")
+    ? location.pathname
+    : "/preview/character";
 
   const topNavClass = (isActive: boolean) =>
     `${buttonStyle} ${isActive ? "bg-light border-l-8 border-gold-neutral" : ""}`;
@@ -41,7 +56,7 @@ function Sidebar() {
       {/* UPPER SECTION */}
       <div className="flex flex-col gap-2">
         <NavLink
-          to="/hub"
+          to="/"
           className="text-2xl text-gold-neutral font-bold tracking-widest hover:text-gold-light"
         >
           <h1>FABULARIUM</h1>
@@ -52,7 +67,7 @@ function Sidebar() {
         <hr className="text-neutral-text" />
         <div className="flex flex-col gap-2">
           <NavLink
-            to="/characters-new"
+            to="/characters"
             className={({ isActive }) => topNavClass(isActive)}
           >
             <User />
@@ -61,7 +76,7 @@ function Sidebar() {
           {onCharacterPreviewPage && (
             <div className="flex flex-col gap-2 pl-6 border-l-2 border-neutral-text">
               <Link
-                to="/preview/character#general"
+                to={`${characterPreviewBase}#general`}
                 className={innerButtonClass(
                   activeCharacterSection === "general",
                 )}
@@ -70,7 +85,7 @@ function Sidebar() {
                 <span className="text-sm">GENERAL</span>
               </Link>
               <Link
-                to="/preview/character#personal"
+                to={`${characterPreviewBase}#personal`}
                 className={innerButtonClass(
                   activeCharacterSection === "personal",
                 )}
@@ -79,14 +94,14 @@ function Sidebar() {
                 <span className="text-sm">PERSONAL</span>
               </Link>
               <Link
-                to="/preview/character#stats"
+                to={`${characterPreviewBase}#stats`}
                 className={innerButtonClass(activeCharacterSection === "stats")}
               >
                 <Dumbbell className="w-4 h-4" />
                 <span className="text-sm">STATS</span>
               </Link>
               <Link
-                to="/preview/character#features"
+                to={`${characterPreviewBase}#features`}
                 className={innerButtonClass(
                   activeCharacterSection === "features",
                 )}
@@ -95,7 +110,7 @@ function Sidebar() {
                 <span className="text-sm">FEATURES</span>
               </Link>
               <Link
-                to="/preview/character#spells"
+                to={`${characterPreviewBase}#spells`}
                 className={innerButtonClass(
                   activeCharacterSection === "spells",
                 )}
@@ -104,7 +119,7 @@ function Sidebar() {
                 <span className="text-sm">SPELLS</span>
               </Link>
               <Link
-                to="/preview/character#inventory"
+                to={`${characterPreviewBase}#inventory`}
                 className={innerButtonClass(
                   activeCharacterSection === "inventory",
                 )}
@@ -115,7 +130,7 @@ function Sidebar() {
             </div>
           )}
           <NavLink
-            to="/campaigns-new"
+            to="/campaigns"
             className={({ isActive }) => topNavClass(isActive)}
           >
             <Anvil />
@@ -123,58 +138,85 @@ function Sidebar() {
           </NavLink>
           {onCampaignPreviewPage && (
             <div className="flex flex-col gap-2 pl-6 border-l-2 border-neutral-text">
-              <Link
-                to="/preview/campaign#general"
-                className={innerButtonClass(
-                  activeCampaignSection === "general",
-                )}
-              >
-                <Scroll className="w-4 h-4" />
-                <span className="text-sm">GENERAL</span>
-              </Link>
-              <Link
-                to="/preview/campaign#locations"
-                className={innerButtonClass(
-                  activeCampaignSection === "locations",
-                )}
-              >
-                <Component className="w-4 h-4" />
-                <span className="text-sm">LOCATIONS</span>
-              </Link>
-              <Link
-                to="/preview/campaign#npcs"
-                className={innerButtonClass(activeCampaignSection === "npcs")}
-              >
-                <User className="w-4 h-4" />
-                <span className="text-sm">NPCS</span>
-              </Link>
-              <Link
-                to="/preview/campaign#quests"
-                className={innerButtonClass(activeCampaignSection === "quests")}
-              >
-                <Star className="w-4 h-4" />
-                <span className="text-sm">QUESTS</span>
-              </Link>
-              <Link
-                to="/preview/campaign#notes"
-                className={innerButtonClass(activeCampaignSection === "notes")}
-              >
-                <BookOpen className="w-4 h-4" />
-                <span className="text-sm">NOTES</span>
-              </Link>
-              <Link
-                to="/preview/campaign#players"
-                className={innerButtonClass(
-                  activeCampaignSection === "players",
-                )}
-              >
-                <UsersIcon className="w-4 h-4" />
-                <span className="text-sm">PLAYERS</span>
-              </Link>
+              {(() => {
+                const campaignPreviewBase = location.pathname.startsWith(
+                  "/preview/campaign",
+                )
+                  ? location.pathname
+                  : "/preview/campaign";
+
+                return (
+                  <>
+                    <Link
+                      to={`${campaignPreviewBase}#general`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "general",
+                      )}
+                    >
+                      <Scroll className="w-4 h-4" />
+                      <span className="text-sm">GENERAL</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#locations`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "locations",
+                      )}
+                    >
+                      <Component className="w-4 h-4" />
+                      <span className="text-sm">LOCATIONS</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#npcs`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "npcs",
+                      )}
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="text-sm">NPCS</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#quests`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "quests",
+                      )}
+                    >
+                      <Star className="w-4 h-4" />
+                      <span className="text-sm">QUESTS</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#characters`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "characters",
+                      )}
+                    >
+                      <UsersIcon className="w-4 h-4" />
+                      <span className="text-sm">CHARACTERS</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#notes`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "notes",
+                      )}
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span className="text-sm">NOTES</span>
+                    </Link>
+                    <Link
+                      to={`${campaignPreviewBase}#players`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "players",
+                      )}
+                    >
+                      <UsersIcon className="w-4 h-4" />
+                      <span className="text-sm">PLAYERS</span>
+                    </Link>
+                  </>
+                );
+              })()}
             </div>
           )}
           <NavLink
-            to="/resources-new"
+            to="/resources"
             className={({ isActive }) => topNavClass(isActive)}
           >
             <Component />
@@ -183,7 +225,7 @@ function Sidebar() {
           {onResourcesPage && (
             <div className="flex flex-col gap-2 pl-6 border-l-2 border-neutral-text">
               <Link
-                to="/resources-new#backgrounds"
+                to="/resources#backgrounds"
                 className={innerButtonClass(
                   activeResourceSection === "backgrounds",
                 )}
@@ -192,7 +234,7 @@ function Sidebar() {
                 <span className="text-sm">BACKGROUNDS</span>
               </Link>
               <Link
-                to="/resources-new#classes"
+                to="/resources#classes"
                 className={innerButtonClass(
                   activeResourceSection === "classes",
                 )}
@@ -201,21 +243,21 @@ function Sidebar() {
                 <span className="text-sm">CLASSES</span>
               </Link>
               <Link
-                to="/resources-new#feats"
+                to="/resources#feats"
                 className={innerButtonClass(activeResourceSection === "feats")}
               >
                 <Star className="w-4 h-4" />
                 <span className="text-sm">FEATS</span>
               </Link>
               <Link
-                to="/resources-new#races"
+                to="/resources#races"
                 className={innerButtonClass(activeResourceSection === "races")}
               >
                 <UsersIcon className="w-4 h-4" />
                 <span className="text-sm">RACES</span>
               </Link>
               <Link
-                to="/resources-new#spells"
+                to="/resources#spells"
                 className={innerButtonClass(activeResourceSection === "spells")}
               >
                 <Wand className="w-4 h-4" />
@@ -228,9 +270,15 @@ function Sidebar() {
       {/* DOWN SECTION */}
       <div className="flex flex-col gap-2">
         <hr className="text-neutral-text" />
-        <NavLink to="/profile-new" className={buttonStyle}>
+        <NavLink
+          to={isAuthenticated ? "/profile" : "/sign-in"}
+          className={buttonStyle}
+          title={isAuthenticated ? user?.name : "Sign In"}
+        >
           <UserCircle />
-          <p>PROFILE</p>
+          <p className="min-w-0 flex-1 truncate">
+            {isAuthenticated && user?.name ? user.name : "SIGN IN"}
+          </p>
         </NavLink>
       </div>
     </div>
@@ -241,10 +289,14 @@ function SidebarCreateButton({ canCreateNew }: { canCreateNew: boolean }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
-  const kind: "character" | "campaign" = location.pathname.startsWith(
-    "/characters",
-  )
+  const isCharacterContext =
+    location.pathname.startsWith("/characters") ||
+    location.pathname.startsWith("/character/") ||
+    location.pathname.startsWith("/preview/character");
+
+  const kind: "character" | "campaign" = isCharacterContext
     ? "character"
     : "campaign";
 
@@ -252,28 +304,56 @@ function SidebarCreateButton({ canCreateNew }: { canCreateNew: boolean }) {
     <>
       <button
         type="button"
-        disabled={!canCreateNew}
-        aria-disabled={!canCreateNew}
-        onClick={() => canCreateNew && setOpen(true)}
+        disabled={!canCreateNew || isCreating}
+        aria-disabled={!canCreateNew || isCreating}
+        onClick={() => canCreateNew && !isCreating && setOpen(true)}
         className={`p-2 my-2 w-full border-2 ${
-          canCreateNew
+          canCreateNew && !isCreating
             ? "border-gold-neutral bg-dark hover:bg-gold-neutral cursor-pointer text-neutral-text"
             : "border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed"
         }`}
       >
-        <p>CREATE NEW</p>
+        <p>{isCreating ? "CREATING..." : "CREATE NEW"}</p>
       </button>
 
       <CreateEntityModal
         kind={kind}
         open={open}
-        onClose={() => setOpen(false)}
-        onCreate={(title) => {
-          setOpen(false);
-          // Mock redirect: go to the preview general section
-          if (kind === "character") navigate("/preview/character#general");
-          else navigate("/preview/campaign#general");
-          console.log("Created (from sidebar):", kind, title);
+        onClose={() => {
+          if (!isCreating) {
+            setOpen(false);
+          }
+        }}
+        onCreate={async (title) => {
+          const safeTitle =
+            title.trim() ||
+            (kind === "character" ? "New Character" : "New Campaign");
+
+          setIsCreating(true);
+          try {
+            if (kind === "character") {
+              const created = await characterService.createCharacter({
+                name: safeTitle,
+              });
+              setOpen(false);
+              navigate(`/character/${created.id}#general`);
+              return;
+            }
+
+            const created = await campaignService.createCampaign({
+              name: safeTitle,
+              description: "No description yet",
+            });
+            setOpen(false);
+            navigate(`/preview/campaign/${created.id}#general`);
+          } catch (err) {
+            const message =
+              err instanceof Error ? err.message : `Failed to create ${kind}`;
+            console.error(`Failed to create ${kind}:`, err);
+            window.alert(message);
+          } finally {
+            setIsCreating(false);
+          }
         }}
       />
     </>

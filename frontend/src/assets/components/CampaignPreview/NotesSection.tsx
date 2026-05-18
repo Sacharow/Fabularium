@@ -123,16 +123,13 @@ export function NotesSection({
 
           return (
             <div key={itemId} className="flex flex-col">
-              <button
-                type="button"
+              <div
                 onClick={() => toggleItem(itemId)}
-                className={`w-full p-4 text-left cursor-pointer border-2 border-gold-neutral  ${
-                  isOpen
-                    ? "bg-light hover:bg-gray-light"
-                    : "bg-neutral hover:bg-light"
-                }`}
+                role="button"
                 aria-expanded={isOpen}
-                aria-controls={`${itemId}-panel`}
+                className={`w-full p-4 text-left border-2 border-gold-neutral cursor-pointer hover:bg-light ${
+                  isOpen ? "bg-light" : "bg-neutral"
+                }`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
@@ -167,14 +164,17 @@ export function NotesSection({
                         <Trash2 className="h-3 w-3" />
                       </PreviewActionButton>
                     )}
-                    <ChevronDown
-                      className={`h-4 w-4  flex-shrink-0 ${
-                        isOpen ? "rotate-180 text-gold-neutral" : ""
-                      }`}
-                    />
+                    <div
+                      className={`p-1 rounded ${isOpen ? "text-gold-neutral" : "text-neutral-text"}`}
+                      aria-hidden
+                    >
+                      <ChevronDown
+                        className={`h-4 w-4 flex-shrink-0 ${isOpen ? "rotate-180" : ""}`}
+                      />
+                    </div>
                   </div>
                 </div>
-              </button>
+              </div>
 
               {isOpen && (
                 <div

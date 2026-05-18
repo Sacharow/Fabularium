@@ -4,8 +4,6 @@ import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 
 const createEntitySchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
-  theme: z.string().trim().optional(),
-  players: z.number().int().min(1).optional().or(z.literal("")),
 });
 
 type CreateEntityFormData = z.infer<typeof createEntitySchema>;
@@ -24,8 +22,6 @@ export default function CreateEntityModal({
   onCreate,
 }: Props) {
   const [title, setTitle] = useState("");
-  const [theme, setTheme] = useState("");
-  const [players, setPlayers] = useState<number | "">("");
   const [errors, setErrors] = useState<
     Partial<Record<keyof CreateEntityFormData, string>>
   >({});
@@ -54,39 +50,6 @@ export default function CreateEntityModal({
               }
             />
           </div>
-
-          {kind === "campaign" && (
-            <>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs uppercase tracking-widest text-gray-light">
-                  Theme
-                </label>
-                <input
-                  value={theme}
-                  onChange={(e) => setTheme(e.target.value)}
-                  className="bg-dark border border-gold-dark p-2 text-neutral-text"
-                  placeholder="Campaign theme (optional)"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-xs uppercase tracking-widest text-gray-light">
-                  Players
-                </label>
-                <input
-                  value={players}
-                  onChange={(e) =>
-                    setPlayers(
-                      e.target.value === "" ? "" : Number(e.target.value),
-                    )
-                  }
-                  className="bg-dark border border-gold-dark p-2 text-neutral-text"
-                  placeholder="Number of players (optional)"
-                  type="number"
-                />
-              </div>
-            </>
-          )}
         </div>
 
         {errors.title && (
@@ -105,21 +68,12 @@ export default function CreateEntityModal({
             onClick={() => {
               const result = createEntitySchema.safeParse({
                 title,
-                theme: kind === "campaign" ? theme : undefined,
-                players:
-                  kind === "campaign"
-                    ? players === ""
-                      ? undefined
-                      : players
-                    : undefined,
               });
 
               if (!result.success) {
                 const fieldErrors = result.error.flatten().fieldErrors;
                 setErrors({
                   title: fieldErrors.title?.[0],
-                  theme: fieldErrors.theme?.[0],
-                  players: fieldErrors.players?.[0],
                 });
                 return;
               }
