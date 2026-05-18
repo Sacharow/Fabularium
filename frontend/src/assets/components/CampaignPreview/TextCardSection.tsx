@@ -68,7 +68,31 @@ export function TextCardSection({
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
     );
   };
-
+  const handleLinkedItemsChange = (
+    index: number,
+    itemType: "locations" | "npcs" | "missions",
+    itemId: string,
+    checked: boolean,
+  ) => {
+    setEditedItems((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        const fieldName =
+          itemType === "locations"
+            ? "linkedLocationIds"
+            : itemType === "missions"
+              ? "linkedMissionIds"
+              : "linkedNpcIds";
+        const current = item[fieldName] ?? [];
+        return {
+          ...item,
+          [fieldName]: checked
+            ? [...current, itemId]
+            : current.filter((id) => id !== itemId),
+        };
+      }),
+    );
+  };
   const handleAddItem = () => {
     setEditedItems((prev) => [
       ...prev,
@@ -85,6 +109,29 @@ export function TextCardSection({
   };
 
   const currentItems = isEditing ? editedItems : items;
+
+  const renderLinkCheckbox = (
+    checked: boolean,
+    onChange: (checked: boolean) => void,
+    label: string,
+    key: string,
+  ) => (
+    <label
+      key={key}
+      className="group flex items-center gap-2 cursor-pointer text-sm text-neutral-text"
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="peer sr-only"
+      />
+      <span className="h-4 w-4 border-2 border-gold-dark bg-dark inline-flex items-center justify-center transition-colors peer-checked:bg-gold-neutral peer-checked:border-gold-neutral peer-focus-visible:outline-2 peer-focus-visible:outline-gold-light group-hover:border-gold-neutral">
+        <Check className="h-3 w-3 text-dark opacity-0 transition-opacity peer-checked:opacity-100" />
+      </span>
+      <span>{label}</span>
+    </label>
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -158,7 +205,7 @@ export function TextCardSection({
                           handleItemChange(index, "title", e.target.value)
                         }
                         onClick={(e) => e.stopPropagation()}
-                        className="font-medium text-neutral-text bg-neutral border border-gold-dark px-2 py-1"
+                        className="font-medium text-neutral-text bg-dark border border-gold-dark px-2 py-1"
                       />
                     ) : (
                       <h3 className="text-lg font-semibold text-neutral-text">
@@ -195,14 +242,95 @@ export function TextCardSection({
                   className="bg-neutral border-2 border-t-0 border-gold-dark p-3 flex flex-col gap-3"
                 >
                   {isEditing ? (
-                    <textarea
-                      value={it.content}
-                      placeholder="Item description"
-                      onChange={(e) =>
-                        handleItemChange(index, "content", e.target.value)
-                      }
-                      className="w-full text-sm text-neutral-text bg-dark border border-gold-dark p-2 min-h-16"
-                    />
+                    <>
+                      <textarea
+                        value={it.content}
+                        placeholder="Item description"
+                        onChange={(e) =>
+                          handleItemChange(index, "content", e.target.value)
+                        }
+                        className="w-full text-sm text-neutral-text bg-dark border border-gold-dark p-2 min-h-16"
+                      />
+
+                      {/* Linked Locations (edit mode) */}
+                      {it.allLocations && it.allLocations.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          <p className="text-xs uppercase tracking-widest text-gray-light">
+                            Link Locations
+                          </p>
+                          <div className="flex flex-col gap-1 bg-dark p-2 border border-gold-dark rounded">
+                            {it.allLocations.map((location) =>
+                              renderLinkCheckbox(
+                                (it.linkedLocationIds ?? []).includes(
+                                  location.id,
+                                ),
+                                (isChecked) =>
+                                  handleLinkedItemsChange(
+                                    index,
+                                    "locations",
+                                    location.id,
+                                    isChecked,
+                                  ),
+                                location.title,
+                                location.id,
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Linked NPCs (edit mode) */}
+                      {it.allNpcs && it.allNpcs.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          <p className="text-xs uppercase tracking-widest text-gray-light">
+                            Link NPCs
+                          </p>
+                          <div className="flex flex-col gap-1 bg-dark p-2 border border-gold-dark rounded">
+                            {it.allNpcs.map((npc) =>
+                              renderLinkCheckbox(
+                                (it.linkedNpcIds ?? []).includes(npc.id),
+                                (isChecked) =>
+                                  handleLinkedItemsChange(
+                                    index,
+                                    "npcs",
+                                    npc.id,
+                                    isChecked,
+                                  ),
+                                npc.title,
+                                npc.id,
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Linked Quests (edit mode) */}
+                      {it.allMissions && it.allMissions.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          <p className="text-xs uppercase tracking-widest text-gray-light">
+                            Link Quests
+                          </p>
+                          <div className="flex flex-col gap-1 bg-dark p-2 border border-gold-dark rounded">
+                            {it.allMissions.map((mission) =>
+                              renderLinkCheckbox(
+                                (it.linkedMissionIds ?? []).includes(
+                                  mission.id,
+                                ),
+                                (isChecked) =>
+                                  handleLinkedItemsChange(
+                                    index,
+                                    "missions",
+                                    mission.id,
+                                    isChecked,
+                                  ),
+                                mission.title,
+                                mission.id,
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <p className="text-sm text-gold-light">{it.content}</p>
                   )}

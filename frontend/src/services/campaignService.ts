@@ -18,6 +18,12 @@ export type CampaignSectionItemPayload = {
   content: string;
 };
 
+export type CampaignSectionItemWithLinks = CampaignSectionItemPayload & {
+  linkedNpcIds?: string[];
+  linkedLocationIds?: string[];
+  linkedMissionIds?: string[];
+};
+
 export type CampaignNpcPayload = CampaignSectionItemPayload & {
   campaignId?: string;
 };
@@ -57,12 +63,17 @@ export const campaignService = {
     if (!res.ok) throw new Error("Failed to update campaign");
     return res.json();
   },
-  async createLocation(id: string, data: CampaignSectionItemPayload) {
+  async createLocation(id: string, data: CampaignSectionItemWithLinks) {
     const res = await fetch(`${API_URL}/api/campaigns/${id}/locations`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ name: data.title, description: data.content }),
+      body: JSON.stringify({
+        name: data.title,
+        description: data.content,
+        linkedNpcIds: (data as any).linkedNpcIds,
+        linkedMissionIds: (data as any).linkedMissionIds,
+      }),
     });
     if (!res.ok) throw new Error("Failed to create location");
     return res.json();
@@ -70,7 +81,7 @@ export const campaignService = {
   async updateLocation(
     campaignId: string,
     locationId: string,
-    data: CampaignSectionItemPayload,
+    data: CampaignSectionItemWithLinks,
   ) {
     const res = await fetch(
       `${API_URL}/api/campaigns/${campaignId}/locations/${locationId}`,
@@ -78,7 +89,12 @@ export const campaignService = {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ name: data.title, description: data.content }),
+        body: JSON.stringify({
+          name: data.title,
+          description: data.content,
+          linkedNpcIds: (data as any).linkedNpcIds,
+          linkedMissionIds: (data as any).linkedMissionIds,
+        }),
       },
     );
     if (!res.ok) throw new Error("Failed to update location");
@@ -97,7 +113,13 @@ export const campaignService = {
     }
     return true;
   },
-  async createNPC(id: string, data: CampaignNpcPayload) {
+  async createNPC(
+    id: string,
+    data: CampaignNpcPayload & {
+      linkedLocationIds?: string[];
+      linkedMissionIds?: string[];
+    },
+  ) {
     const res = await fetch(`${API_URL}/api/campaigns/${id}/npcs`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -106,6 +128,8 @@ export const campaignService = {
         campaignId: data.campaignId ?? id,
         name: data.title,
         description: data.content,
+        linkedLocationIds: (data as any).linkedLocationIds,
+        linkedMissionIds: (data as any).linkedMissionIds,
       }),
     });
     if (!res.ok) throw new Error("Failed to create NPC");
@@ -114,7 +138,7 @@ export const campaignService = {
   async updateNPC(
     campaignId: string,
     npcId: string,
-    data: CampaignSectionItemPayload,
+    data: CampaignSectionItemWithLinks,
   ) {
     const res = await fetch(
       `${API_URL}/api/campaigns/${campaignId}/npcs/${npcId}`,
@@ -122,7 +146,12 @@ export const campaignService = {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ name: data.title, description: data.content }),
+        body: JSON.stringify({
+          name: data.title,
+          description: data.content,
+          linkedLocationIds: (data as any).linkedLocationIds,
+          linkedMissionIds: (data as any).linkedMissionIds,
+        }),
       },
     );
     if (!res.ok) throw new Error("Failed to update NPC");
@@ -141,12 +170,17 @@ export const campaignService = {
     }
     return true;
   },
-  async createMission(id: string, data: CampaignSectionItemPayload) {
+  async createMission(id: string, data: CampaignSectionItemWithLinks) {
     const res = await fetch(`${API_URL}/api/campaigns/${id}/missions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ title: data.title, description: data.content }),
+      body: JSON.stringify({
+        title: data.title,
+        description: data.content,
+        linkedNpcIds: (data as any).linkedNpcIds,
+        linkedLocationIds: (data as any).linkedLocationIds,
+      }),
     });
     if (!res.ok) throw new Error("Failed to create quest");
     return res.json();
@@ -154,7 +188,7 @@ export const campaignService = {
   async updateMission(
     campaignId: string,
     missionId: string,
-    data: CampaignSectionItemPayload,
+    data: CampaignSectionItemWithLinks,
   ) {
     const res = await fetch(
       `${API_URL}/api/campaigns/${campaignId}/missions/${missionId}`,
@@ -162,7 +196,12 @@ export const campaignService = {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ title: data.title, description: data.content }),
+        body: JSON.stringify({
+          title: data.title,
+          description: data.content,
+          linkedNpcIds: (data as any).linkedNpcIds,
+          linkedLocationIds: (data as any).linkedLocationIds,
+        }),
       },
     );
     if (!res.ok) throw new Error("Failed to update quest");

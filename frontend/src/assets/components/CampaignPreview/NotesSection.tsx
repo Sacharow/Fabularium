@@ -124,7 +124,10 @@ export function NotesSection({
           return (
             <div key={itemId} className="flex flex-col">
               <div
-                className={`w-full p-4 text-left border-2 border-gold-neutral ${
+                onClick={() => toggleItem(itemId)}
+                role="button"
+                aria-expanded={isOpen}
+                className={`w-full p-4 text-left border-2 border-gold-neutral cursor-pointer hover:bg-light ${
                   isOpen ? "bg-light" : "bg-neutral"
                 }`}
               >
@@ -150,7 +153,8 @@ export function NotesSection({
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {isEditing && (
                       <PreviewActionButton
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           handleRemoveNote(index);
                         }}
                         variant="danger"
@@ -160,22 +164,14 @@ export function NotesSection({
                         <Trash2 className="h-3 w-3" />
                       </PreviewActionButton>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => toggleItem(itemId)}
-                      className={`p-1 cursor-pointer rounded hover:bg-light ${
-                        isOpen ? "text-gold-neutral" : "text-neutral-text"
-                      }`}
-                      aria-expanded={isOpen}
-                      aria-controls={`${itemId}-panel`}
-                      title={isOpen ? "Collapse note" : "Expand note"}
+                    <div
+                      className={`p-1 rounded ${isOpen ? "text-gold-neutral" : "text-neutral-text"}`}
+                      aria-hidden
                     >
                       <ChevronDown
-                        className={`h-4 w-4 flex-shrink-0 ${
-                          isOpen ? "rotate-180" : ""
-                        }`}
+                        className={`h-4 w-4 flex-shrink-0 ${isOpen ? "rotate-180" : ""}`}
                       />
-                    </button>
+                    </div>
                   </div>
                 </div>
               </div>

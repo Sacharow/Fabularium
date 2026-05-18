@@ -32,12 +32,16 @@ const npcSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
   campaignId: z.string().optional(),
+  linkedLocationIds: z.array(z.string()).optional(),
+  linkedMissionIds: z.array(z.string()).optional(),
 });
 
 const updateNPCSchema = z.object({
   id: z.string(),
   name: z.string().min(1).optional(),
   description: z.string().min(1).optional(),
+  linkedLocationIds: z.array(z.string()).optional(),
+  linkedMissionIds: z.array(z.string()).optional(),
 });
 
 const locationSchema = z.object({
@@ -49,6 +53,8 @@ const updateLocationSchema = z.object({
   id: z.string(),
   name: z.string().min(1).optional(),
   description: z.string().optional(),
+  linkedNpcIds: z.array(z.string()).optional(),
+  linkedMissionIds: z.array(z.string()).optional(),
 });
 
 const missionSchema = z.object({
@@ -63,7 +69,8 @@ const updateMissionSchema = z.object({
   title: z.string().min(1).optional(),
   description: z.string().optional(),
   status: z.enum(["pending", "in_progress", "completed"]).optional(),
-  locationId: z.string().optional(),
+  linkedLocationIds: z.array(z.string()).optional(),
+  linkedNpcIds: z.array(z.string()).optional(),
 });
 
 const noteSchema = z.object({

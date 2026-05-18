@@ -31,7 +31,11 @@ const addNPC = async (req, res) => {
       return res.status(403).json({ message: "Forbidden, not yours campaign" });
     }
 
-    const addedNpc = await campaignService.createNPC(validated.data);
+    const addedNpc = await campaignService.createNPC({
+      ...validated.data,
+      linkedLocationIds: validated.data.linkedLocationIds,
+      linkedMissionIds: validated.data.linkedMissionIds,
+    });
     return res.status(201).json(addedNpc);
   } catch (er) {
     return res

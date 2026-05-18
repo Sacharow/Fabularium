@@ -333,25 +333,24 @@ model Map {
 }
 
 model Mission {
-  id          String        @id @default(uuid())
-  title       String
-  description String
-  campaignId  String
-  status      MissionStatus
-  locationId  String?
-  campaign    Campaign      @relation(fields: [campaignId], references: [id])
-  location    Location?     @relation(fields: [locationId], references: [id])
-  missionNpcs MissionNpc[]
+  id               String           @id @default(uuid())
+  title            String
+  description      String
+  campaignId       String
+  status           MissionStatus
+  campaign         Campaign         @relation(fields: [campaignId], references: [id])
+  missionNpcs      MissionNpc[]
+  missionLocations MissionLocation[]
 }
 
 model Location {
-  id          String    @id @default(uuid())
-  name        String
-  description String
-  campaignId  String
-  campaign    Campaign  @relation(fields: [campaignId], references: [id])
-  missions    Mission[]
-  npcs        NPC[]     @relation("LocationToNPC")
+  id               String           @id @default(uuid())
+  name             String
+  description      String
+  campaignId       String
+  campaign         Campaign         @relation(fields: [campaignId], references: [id])
+  missionLocations MissionLocation[]
+  npcs             NPC[]            @relation("LocationToNPC")
 }
 
 model NPC {
@@ -367,10 +366,19 @@ model NPC {
 model MissionNpc {
   MissionId String
   npcId     String
-  mission   Mission @relation(fields: [MissionId], references: [id])
-  npc       NPC     @relation(fields: [npcId], references: [id])
+  mission   Mission @relation(fields: [MissionId], references: [id], onDelete: Cascade)
+  npc       NPC     @relation(fields: [npcId], references: [id], onDelete: Cascade)
 
   @@id([MissionId, npcId])
+}
+
+model MissionLocation {
+  MissionId  String
+  LocationId String
+  mission    Mission  @relation(fields: [MissionId], references: [id], onDelete: Cascade)
+  location   Location @relation(fields: [LocationId], references: [id], onDelete: Cascade)
+
+  @@id([MissionId, LocationId])
 }
 
 model Monster {

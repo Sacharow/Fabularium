@@ -13,6 +13,12 @@ export interface TextCard {
   section1Items?: RelatedItem[];
   section2Title?: string;
   section2Items?: RelatedItem[];
+  linkedLocationIds?: string[];
+  linkedNpcIds?: string[];
+  linkedMissionIds?: string[];
+  allLocations?: RelatedItem[];
+  allNpcs?: RelatedItem[];
+  allMissions?: RelatedItem[];
 }
 
 export interface NoteItem {
@@ -28,6 +34,7 @@ export interface PlayersContent {
 
 export type CampaignSectionKey =
   | "general"
+  | "characters"
   | "locations"
   | "npcs"
   | "quests"

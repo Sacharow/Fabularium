@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { campaignService } from "../../../services/campaignService";
+import { CharacterSection } from "../../components/CampaignPreview/CharacterSection";
 import { GeneralSection } from "../../components/CampaignPreview/GeneralSection";
 import { TextCardSection } from "../../components/CampaignPreview/TextCardSection";
 import { NotesSection } from "../../components/CampaignPreview/NotesSection";
@@ -21,6 +22,15 @@ type CampaignRecord = {
   photo?: string | null;
   owner?: { id: string; name: string } | null;
   contributors?: Array<{ id: string; name: string }>;
+  characters?: Array<{
+    id: string;
+    name: string;
+    level?: number;
+    race?: string | null;
+    class?: string | null;
+    subclass?: string | null;
+    campaignId?: string | null;
+  }>;
   missions?: Array<{
     id: string;
     title: string;
@@ -28,6 +38,9 @@ type CampaignRecord = {
     locationId?: string | null;
     location?: { id: string; name: string } | null;
     missionNpcs?: Array<{ npc?: { id: string; name: string } | null }>;
+    missionLocations?: Array<{
+      location?: { id: string; name: string } | null;
+    }>;
   }>;
   notes?: Array<{
     id: string;
@@ -39,7 +52,9 @@ type CampaignRecord = {
     name: string;
     description: string;
     npcs?: Array<{ id: string; name: string }>;
-    missions?: Array<{ id: string; title: string }>;
+    missionLocations?: Array<{
+      mission?: { id: string; title: string } | null;
+    }>;
   }>;
   npcs?: Array<{
     id: string;
@@ -62,9 +77,10 @@ const toRelatedItems = (
 
 const buildSectionContent = (campaign: CampaignRecord) => {
   const locations: TextCard[] = (campaign.locations ?? []).map((location) => {
-    const relatedMissions = (campaign.missions ?? []).filter(
-      (mission) => mission.locationId === location.id,
-    );
+    const relatedMissions = (location.missionLocations ?? []).map((entry) => ({
+      id: entry.mission?.id ?? "",
+      title: entry.mission?.title ?? "Untitled",
+    }));
 
     return {
       id: location.id,
@@ -74,6 +90,12 @@ const buildSectionContent = (campaign: CampaignRecord) => {
       section1Items: toRelatedItems(location.npcs ?? []),
       section2Title: "Related Quests",
       section2Items: toRelatedItems(relatedMissions),
+      linkedNpcIds: (location.npcs ?? []).map((n) => n.id),
+      linkedMissionIds: (location.missionLocations ?? [])
+        .map((entry) => entry.mission?.id ?? "")
+        .filter(Boolean),
+      allNpcs: toRelatedItems(campaign.npcs ?? []),
+      allMissions: toRelatedItems(campaign.missions ?? []),
     };
   });
 
@@ -90,6 +112,12 @@ const buildSectionContent = (campaign: CampaignRecord) => {
         title: entry.mission?.title ?? "Untitled",
       })),
     ),
+    linkedLocationIds: (npc.locations ?? []).map((l) => l.id),
+    linkedMissionIds: (npc.missionNpcs ?? [])
+      .map((entry) => entry.mission?.id ?? "")
+      .filter(Boolean),
+    allLocations: toRelatedItems(campaign.locations ?? []),
+    allMissions: toRelatedItems(campaign.missions ?? []),
   }));
 
   const quests: TextCard[] = (campaign.missions ?? []).map((mission) => ({
@@ -103,8 +131,21 @@ const buildSectionContent = (campaign: CampaignRecord) => {
         title: entry.npc?.name ?? "Untitled",
       })),
     ),
-    section2Title: "Related Location",
-    section2Items: mission.location ? toRelatedItems([mission.location]) : [],
+    section2Title: "Related Locations",
+    section2Items: toRelatedItems(
+      (mission.missionLocations ?? []).map((entry: any) => ({
+        id: entry.location?.id ?? "",
+        title: entry.location?.name ?? "Untitled",
+      })),
+    ),
+    linkedNpcIds: (mission.missionNpcs ?? [])
+      .map((m) => m.npc?.id ?? "")
+      .filter(Boolean),
+    linkedLocationIds: (mission.missionLocations ?? [])
+      .map((m: any) => m.location?.id ?? "")
+      .filter(Boolean),
+    allLocations: toRelatedItems(campaign.locations ?? []),
+    allNpcs: toRelatedItems(campaign.npcs ?? []),
   }));
 
   const notes: NoteItem[] = (campaign.notes ?? []).map((note) => ({
@@ -136,6 +177,7 @@ const buildSectionContent = (campaign: CampaignRecord) => {
         campaignKey: campaign.joinCode,
       },
     ],
+    ["characters", campaign.characters ?? []],
     ["locations", locations],
     ["npcs", npcs],
     ["quests", quests],
@@ -160,18 +202,40 @@ const getEditableItemsForSection = (
         id: location.id,
         title: location.name,
         content: location.description,
+        // linked ids
+        linkedNpcIds: (location.npcs ?? []).map((n) => n.id),
+        linkedMissionIds: (location.missionLocations ?? [])
+          .map((entry) => entry.mission?.id ?? "")
+          .filter(Boolean),
+        // all options
+        allNpcs: toRelatedItems(campaign.npcs ?? []),
+        allMissions: toRelatedItems(campaign.missions ?? []),
       }));
     case "npcs":
       return (campaign.npcs ?? []).map((npc) => ({
         id: npc.id,
         title: npc.name,
         content: npc.description,
+        linkedLocationIds: (npc.locations ?? []).map((l) => l.id),
+        linkedMissionIds: (npc.missionNpcs ?? [])
+          .map((entry) => entry.mission?.id ?? "")
+          .filter(Boolean),
+        allLocations: toRelatedItems(campaign.locations ?? []),
+        allMissions: toRelatedItems(campaign.missions ?? []),
       }));
     case "quests":
       return (campaign.missions ?? []).map((mission) => ({
         id: mission.id,
         title: mission.title,
         content: mission.description,
+        linkedNpcIds: (mission.missionNpcs ?? [])
+          .map((m) => m.npc?.id ?? "")
+          .filter(Boolean),
+        linkedLocationIds: (mission.missionLocations ?? [])
+          .map((m) => m.location?.id ?? "")
+          .filter(Boolean),
+        allLocations: toRelatedItems(campaign.locations ?? []),
+        allNpcs: toRelatedItems(campaign.npcs ?? []),
       }));
     case "notes":
       return (campaign.notes ?? []).map((note) => ({
@@ -275,10 +339,21 @@ function CampaignPreviewView() {
       const deleteOps: Promise<unknown>[] = [];
 
       editedItems.forEach((item) => {
-        const payload = {
+        const payload: any = {
           title: item.title,
           content: item.content,
         };
+
+        // include linked ids when present
+        if ((item as any).linkedNpcIds) {
+          payload.linkedNpcIds = (item as any).linkedNpcIds;
+        }
+        if ((item as any).linkedLocationIds) {
+          payload.linkedLocationIds = (item as any).linkedLocationIds;
+        }
+        if ((item as any).linkedMissionIds) {
+          payload.linkedMissionIds = (item as any).linkedMissionIds;
+        }
 
         if (item.id.startsWith("new-")) {
           switch (section) {
@@ -524,6 +599,18 @@ function CampaignPreviewView() {
               handleContentChange("general", newContent)
             }
             onDeleteCampaign={handleDeleteCampaign}
+          />
+        );
+      case "characters":
+        return (
+          <CharacterSection
+            characters={
+              (sectionContent.get(
+                "characters",
+              ) as CampaignRecord["characters"]) ?? []
+            }
+            campaignId={campaignId}
+            onRefreshCampaign={refreshCampaign}
           />
         );
       case "locations":

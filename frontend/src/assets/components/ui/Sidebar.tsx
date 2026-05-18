@@ -184,6 +184,15 @@ function Sidebar() {
                       <span className="text-sm">QUESTS</span>
                     </Link>
                     <Link
+                      to={`${campaignPreviewBase}#characters`}
+                      className={innerButtonClass(
+                        activeCampaignSection === "characters",
+                      )}
+                    >
+                      <UsersIcon className="w-4 h-4" />
+                      <span className="text-sm">CHARACTERS</span>
+                    </Link>
+                    <Link
                       to={`${campaignPreviewBase}#notes`}
                       className={innerButtonClass(
                         activeCampaignSection === "notes",
