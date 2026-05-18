@@ -8,6 +8,7 @@ import {
   Users,
   WandSparkles,
 } from "lucide-react";
+import { resourceService } from "../../services/resourceService";
 import { useLocation, useNavigate } from "react-router-dom";
 
 type ResourceSectionKey =
@@ -40,26 +41,7 @@ const sections: ResourceSection[] = [
     icon: BookOpen,
     intro: "Identity, origin, and the first thing a character leaves behind.",
     summary: "Classic D&D backgrounds with roleplaying hooks and features.",
-    items: [
-      {
-        name: "Acolyte",
-        meta: "faith / service",
-        body: "You have spent your life in the service of a temple to a specific god or pantheon, learning rites and finding a small community.",
-        tags: ["Shelter of the Faithful", "Religion", "Insight"],
-      },
-      {
-        name: "Criminal",
-        meta: "underworld / stealth",
-        body: "A background of illicit work, contacts in the streets, and a readiness for deception or breaking the law when needed.",
-        tags: ["Stealth", "Deception", "Criminal Contact"],
-      },
-      {
-        name: "Sage",
-        meta: "learned / lore",
-        body: "Years of scholarly study grant you knowledge of lore, libraries, and the patience to pursue arcane or obscure answers.",
-        tags: ["Research", "History", "Arcana"],
-      },
-    ],
+    items: [],
   },
   {
     key: "classes",
@@ -68,26 +50,7 @@ const sections: ResourceSection[] = [
     intro:
       "The combat role, magical style, or calling that shapes every choice.",
     summary: "Core D&D classes showing archetypal roles and playstyles.",
-    items: [
-      {
-        name: "Fighter",
-        meta: "martial / versatile",
-        body: "A master of weapons and battlefield tactics, able to take many forms from a heavily armored defender to a nimble duelist.",
-        tags: ["Fighting Style", "Second Wind", "Action Surge"],
-      },
-      {
-        name: "Wizard",
-        meta: "arcane / learned",
-        body: "A student of spellcraft who prepares spells from a spellbook, offering broad magical utility and powerful area effects.",
-        tags: ["Spellbook", "Arcane Recovery", "Rituals"],
-      },
-      {
-        name: "Rogue",
-        meta: "stealth / precision",
-        body: "A cunning opportunist specialized in sneaking, striking fragile targets, and skill expertise.",
-        tags: ["Sneak Attack", "Expertise", "Thieves' Tools"],
-      },
-    ],
+    items: [],
   },
   {
     key: "feats",
@@ -96,26 +59,7 @@ const sections: ResourceSection[] = [
     intro:
       "Small, distinct upgrades that sharpen a build without changing its identity.",
     summary: "Popular D&D feats that alter combat, skills, or survivability.",
-    items: [
-      {
-        name: "Sharpshooter",
-        meta: "ranged / damage",
-        body: "Ignore cover penalties, take a -5 to hit for +10 damage at range, and increase effective range for ranged attacks.",
-        tags: ["Ranged", "Damage", "Precision"],
-      },
-      {
-        name: "Great Weapon Master",
-        meta: "melee / damage",
-        body: "Deal extra damage on a heavy weapon critical or when you reduce a creature to 0 HP; take -5 to hit for +10 damage option.",
-        tags: ["Heavy", "Damage", "Critical"],
-      },
-      {
-        name: "Alert",
-        meta: "initiative / awareness",
-        body: "You gain a +5 bonus to initiative and can't be surprised while conscious.",
-        tags: ["Initiative", "Perception", "Surprise"],
-      },
-    ],
+    items: [],
   },
   {
     key: "races",
@@ -124,26 +68,7 @@ const sections: ResourceSection[] = [
     intro:
       "Species, peoples, or ancestries that define physiology and culture.",
     summary: "Standard D&D ancestries with defining traits and flavor.",
-    items: [
-      {
-        name: "Human",
-        meta: "versatile / adaptable",
-        body: "Versatile and ambitious, humans appear in every walk of life and gain extra skill and proficiencies.",
-        tags: ["Bonus Feat (variant)", "Extra Skill", "Flexible"],
-      },
-      {
-        name: "Elf",
-        meta: "dexterous / perceptive",
-        body: "Graceful and long-lived, elves have keen senses, fey ancestry, and natural proficiency with perception.",
-        tags: ["Darkvision", "Fey Ancestry", "Keen Senses"],
-      },
-      {
-        name: "Dwarf",
-        meta: "stout / resilient",
-        body: "Hardy and tradition-minded, dwarves resist poison and excel at smithing and stonecraft.",
-        tags: ["Dwarven Resilience", "Stonecunning", "Constitution"],
-      },
-    ],
+    items: [],
   },
   {
     key: "spells",
@@ -151,72 +76,7 @@ const sections: ResourceSection[] = [
     icon: WandSparkles,
     intro: "Practical magical effects presented as fast, readable entries.",
     summary: "Classic D&D spells with level, school, and typical uses.",
-    items: [
-      {
-        name: "Magic Missile",
-        meta: "1st-level / evocation",
-        school: "Evocation",
-        level: "1",
-        body: "Creates three glowing darts of magical force that automatically hit and deal force damage.",
-        tags: ["Auto-hit", "Force", "Reliable damage"],
-      },
-      {
-        name: "Fireball",
-        meta: "3rd-level / evocation",
-        school: "Evocation",
-        level: "3",
-        body: "A bright streak flashes to a point you choose then blossoms with a low roar into an explosion of flame.",
-        tags: ["Area damage", "Save for half", "Burst"],
-      },
-      {
-        name: "Cure Wounds",
-        meta: "1st-level / evocation",
-        school: "Evocation",
-        level: "1",
-        body: "A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier.",
-        tags: ["Healing", "Touch", "Short Rest synergy"],
-      },
-      {
-        name: "Prestidigitation",
-        meta: "cantrip / transmutation",
-        school: "Transmutation",
-        level: "Cantrip",
-        body: "A minor magical trick that novice spellcasters use for flavor — cleaning, flavoring, or creating tiny sensory effects.",
-        tags: ["Utility", "Cantrip", "Flavor"],
-      },
-      {
-        name: "Shield",
-        meta: "1st-level / abjuration",
-        school: "Abjuration",
-        level: "1",
-        body: "An invisible barrier of magical force appears and grants +5 AC until the start of your next turn.",
-        tags: ["Reaction", "Defense", "AC"],
-      },
-      {
-        name: "Invisibility",
-        meta: "2nd-level / illusion",
-        school: "Illusion",
-        level: "2",
-        body: "A creature you touch becomes invisible until the spell ends or until they attack or cast a spell.",
-        tags: ["Stealth", "Utility", "Tactical"],
-      },
-      {
-        name: "Detect Magic",
-        meta: "1st-level / divination (ritual)",
-        school: "Divination",
-        level: "1",
-        body: "For the duration, you sense the presence of magic within 30 feet of you and can see its auras.",
-        tags: ["Ritual", "Sensing", "Utility"],
-      },
-      {
-        name: "Thunderwave",
-        meta: "1st-level / evocation",
-        school: "Evocation",
-        level: "1",
-        body: "A wave of thunderous force sweeps out from you, damaging and pushing creatures within range.",
-        tags: ["Area", "Knockback", "Force"],
-      },
-    ],
+    items: [],
   },
 ];
 
@@ -261,27 +121,169 @@ function Resources() {
     sections.find((section) => section.key === activeSection) ?? sections[0];
   const CurrentIcon = currentSection.icon;
 
+  const [items, setItems] = useState<ResourceSection["items"]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [spellQuery, setSpellQuery] = useState("");
+
+  const extractText = (val: any) => {
+    if (!val) return "";
+    if (Array.isArray(val))
+      return val
+        .map((v) =>
+          typeof v === "string" ? v : v.desc || v.entry || v.name || "",
+        )
+        .filter(Boolean)
+        .join("\n\n");
+    if (typeof val === "string") return val;
+    if (typeof val === "object")
+      return val.desc || val.entry || val.name || JSON.stringify(val);
+    return String(val);
+  };
+
+  const formatItem = (raw: any, sectionKey: ResourceSectionKey) => {
+    const name = raw.name || raw.index || "";
+    let meta = "";
+    let school: string | undefined = undefined;
+    let level: string | number | undefined = undefined;
+    const body = extractText(
+      raw.desc ||
+        raw.entries ||
+        raw.description ||
+        raw.entry ||
+        raw.entries?.map?.((e: any) => e.entry) ||
+        raw,
+    );
+
+    const tags: string[] = [];
+
+    if (sectionKey === "spells") {
+      school = raw.school?.name || raw.school || undefined;
+      level = raw.level;
+      const levelLabel =
+        level === 0 ? "Cantrip" : level ? `Level ${level}` : "";
+      meta = `${levelLabel}${school ? ` • ${school}` : ""}`.trim();
+      if (school) tags.push(school);
+      if (level !== undefined)
+        tags.push(level === 0 ? "Cantrip" : String(level));
+    } else if (sectionKey === "classes") {
+      meta = raw.hit_die
+        ? `Hit Die d${raw.hit_die}`
+        : raw.subclass
+          ? raw.subclass
+          : "";
+      if (Array.isArray(raw.subclasses))
+        tags.push(
+          ...raw.subclasses.map((s: any) => s.name || s.index).slice(0, 3),
+        );
+    } else if (sectionKey === "races") {
+      meta = raw.alignment || raw.size || "";
+      if (Array.isArray(raw.traits))
+        tags.push(...raw.traits.map((t: any) => t.name || t.index).slice(0, 3));
+    } else if (sectionKey === "backgrounds") {
+      if (Array.isArray(raw.starting_proficiencies))
+        tags.push(
+          ...raw.starting_proficiencies
+            .map((p: any) => p.name || p.index)
+            .slice(0, 3),
+        );
+      meta = raw.skill_proficiencies
+        ? raw.skill_proficiencies.map((s: any) => s.name).join(", ")
+        : "";
+    } else if (sectionKey === "feats") {
+      meta = raw.prerequisite ? extractText(raw.prerequisite) : "";
+    }
+
+    return {
+      name,
+      meta,
+      school,
+      level,
+      body,
+      tags,
+    } as ResourceSection["items"][number];
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchSection = async () => {
+      setLoading(true);
+      setError(null);
+      setItems([]);
+
+      try {
+        let base: any[] = [];
+        switch (activeSection) {
+          case "classes":
+            base = await resourceService.getClasses();
+            break;
+          case "races":
+            base = await resourceService.getRaces();
+            break;
+          case "spells":
+            base = await resourceService.getSpells();
+            break;
+          case "backgrounds":
+            base = await resourceService.getBackgrounds();
+            break;
+          case "feats":
+            base = await resourceService.getFeats();
+            break;
+          default:
+            base = [];
+        }
+
+        if (cancelled) return;
+
+        const detailed = await resourceService.getResourcesWithDetails(
+          activeSection,
+          base,
+        );
+        if (cancelled) return;
+
+        const formatted = detailed.map((d) => formatItem(d, activeSection));
+        setItems(formatted);
+      } catch (e: any) {
+        console.error("Error loading resources:", e);
+        if (!cancelled) setError("Failed to load resources");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchSection();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeSection]);
+
   // derive items when viewing spells — sort by the active mode (Name / Level / School)
   const itemsToRender =
     activeSection === "spells"
-      ? [...currentSection.items].sort((a, b) => {
-          if (spellFilterMode === "Name") return a.name.localeCompare(b.name);
+      ? [...items]
+          .sort((a, b) => {
+            if (spellFilterMode === "Name") return a.name.localeCompare(b.name);
 
-          if (spellFilterMode === "School")
-            return (a.school || "").localeCompare(b.school || "");
+            if (spellFilterMode === "School")
+              return (a.school || "").localeCompare(b.school || "");
 
-          // Level: treat 'Cantrip' as 0, otherwise parse numeric level
-          const parseLevel = (lvl: string | number | undefined) => {
-            if (lvl === undefined) return 999;
-            const s = String(lvl).toLowerCase();
-            if (s === "cantrip") return 0;
-            const n = parseInt(s, 10);
-            return Number.isNaN(n) ? 999 : n;
-          };
+            // Level: treat 'Cantrip' as 0, otherwise parse numeric level
+            const parseLevel = (lvl: string | number | undefined) => {
+              if (lvl === undefined) return 999;
+              const s = String(lvl).toLowerCase();
+              if (s === "cantrip") return 0;
+              const n = parseInt(s, 10);
+              return Number.isNaN(n) ? 999 : n;
+            };
 
-          return parseLevel(a.level) - parseLevel(b.level);
-        })
-      : currentSection.items;
+            return parseLevel(a.level) - parseLevel(b.level);
+          })
+          .filter((it) =>
+            it.name.toLowerCase().includes(spellQuery.toLowerCase()),
+          )
+      : items;
 
   const handleToggleItem = (itemName: string) => {
     setActiveItem((currentItem) =>
@@ -319,8 +321,25 @@ function Resources() {
                 <span className="font-semibold">FILTER:</span>
                 <span className="tracking-widest">{spellFilterMode}</span>
               </button>
+
+              <div className="ml-2">
+                <input
+                  type="search"
+                  value={spellQuery}
+                  onChange={(e) => setSpellQuery(e.target.value)}
+                  placeholder="Search spells..."
+                  className="px-3 py-3 bg-neutral border-2 border-gold-neutral text-sm text-neutral-text placeholder:text-gold-light focus:outline-none"
+                  aria-label="Search spells"
+                />
+              </div>
             </div>
           )}
+          {loading && <div className="p-4">Loading...</div>}
+          {error && <div className="p-4 text-red-400">{error}</div>}
+          {!loading && itemsToRender.length === 0 && (
+            <div className="p-4 text-sm text-gold-light">No results</div>
+          )}
+
           {itemsToRender.map((item) => {
             const isOpen = activeItem === item.name;
 
