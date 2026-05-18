@@ -13,11 +13,12 @@ const {
   removeContributor,
   listContributors,
   listCampaignCharacters,
+  disconnectCampaignCharacter,
 } = require("../../controllers/campaignControllers");
 const { auth } = require("../../middleware/safety");
 
 router.get("/", getCampaigns);
-router.get("/:id", getCampaignById);
+router.get("/:id", auth, getCampaignById);
 router.post("/", auth, createCampaign);
 router.put("/:id", auth, updateCampaign);
 router.delete("/:id", auth, deleteCampaign);
@@ -30,5 +31,10 @@ router.post("/:id/contributors", auth, addContributor);
 router.delete("/:id/contributors", auth, removeContributor);
 
 router.get("/:id/characters", auth, listCampaignCharacters);
+router.delete(
+  "/:id/characters/:characterId",
+  auth,
+  disconnectCampaignCharacter,
+);
 
 module.exports = router;

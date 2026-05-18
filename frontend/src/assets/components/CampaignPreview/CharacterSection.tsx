@@ -2,13 +2,16 @@ import { useEffect, useMemo, useState } from "react";
 import { CampaignModal } from "../ui/CampaignModal";
 import { ArrowRight, Link2, Plus, RefreshCw, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 import { characterService } from "../../../services/characterService";
+import { campaignService } from "../../../services/campaignService";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 
 type CampaignCharacter = {
   id: string;
   name: string;
   level?: number;
+  ownerId?: string | null;
   race?: string | null;
   class?: string | null;
   subclass?: string | null;
@@ -26,20 +29,26 @@ type OwnedCharacter = CampaignCharacter & {
 
 interface Props {
   campaignId?: string;
+  campaignOwnerId?: string;
   characters?: CampaignCharacter[];
   onRefreshCampaign?: () => void | Promise<void>;
 }
 
 export function CharacterSection({
   campaignId,
+  campaignOwnerId,
   characters = [],
   onRefreshCampaign,
 }: Props) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [disconnectingCharacterId, setDisconnectingCharacterId] = useState<
+    string | null
+  >(null);
   const [createName, setCreateName] = useState("New Character");
   const [createError, setCreateError] = useState<string | null>(null);
   const [connectError, setConnectError] = useState<string | null>(null);
@@ -54,6 +63,39 @@ export function CharacterSection({
       ),
     [campaignId, ownedCharacters],
   );
+
+  const currentUserId = user?.id;
+
+  const canDisconnectCharacter = (character: CampaignCharacter) =>
+    Boolean(
+      currentUserId &&
+        (character.ownerId === currentUserId ||
+          campaignOwnerId === currentUserId),
+    );
+
+  const handleDisconnectCharacter = async (character: CampaignCharacter) => {
+    if (!campaignId || !currentUserId) {
+      return;
+    }
+
+    setDisconnectingCharacterId(character.id);
+
+    try {
+      if (character.ownerId === currentUserId) {
+        await characterService.editCharacter(character.id, {
+          campaignId: null,
+        });
+      } else {
+        await campaignService.disconnectCharacter(campaignId, character.id);
+      }
+
+      await onRefreshCampaign?.();
+    } catch (err) {
+      console.error("Failed to disconnect character", err);
+    } finally {
+      setDisconnectingCharacterId(null);
+    }
+  };
 
   useEffect(() => {
     if (isCreateOpen) {
@@ -190,7 +232,7 @@ export function CharacterSection({
               key={character.id}
               className="border-2 border-gold-neutral bg-neutral p-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 <div className="border border-gold-dark bg-dark p-2 text-gold-neutral">
                   <User className="h-5 w-5" />
                 </div>
@@ -207,6 +249,21 @@ export function CharacterSection({
               </div>
 
               <div className="flex items-center gap-2">
+                {canDisconnectCharacter(character) && (
+                  <PreviewActionButton
+                    onClick={() => {
+                      void handleDisconnectCharacter(character);
+                    }}
+                    variant="danger"
+                    className="!bg-dark !text-neutral-text hover:!bg-error"
+                    title="Disconnect this character from the campaign"
+                    disabled={disconnectingCharacterId === character.id}
+                  >
+                    {disconnectingCharacterId === character.id
+                      ? "Disconnecting..."
+                      : "Disconnect"}
+                  </PreviewActionButton>
+                )}
                 <PreviewActionButton
                   onClick={() => navigate(`/character/${character.id}`)}
                   variant="ghost"

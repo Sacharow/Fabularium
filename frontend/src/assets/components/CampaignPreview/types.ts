@@ -9,6 +9,7 @@ export interface TextCard {
   id: string;
   title: string;
   content: string;
+  isPublic?: boolean;
   section1Title?: string;
   section1Items?: RelatedItem[];
   section2Title?: string;

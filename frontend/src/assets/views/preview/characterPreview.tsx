@@ -334,6 +334,10 @@ type CharacterViewData = {
       SpellLevelPayloadEntry[]
     >
   >;
+  // Optional metadata returned from the API
+  campaignId?: string | null;
+  isOwner?: boolean;
+  isCampaignOwner?: boolean;
 };
 
 const abilityOrder: Array<{ key: AbilityKey; label: string }> = [
@@ -1327,6 +1331,7 @@ function CharacterPreview() {
       isEditMode: editingSection === activeSection,
       onEditModeChange: handleEditModeChange,
       onContentChange: handleContentChange,
+      isOwner: characterData?.isOwner === true,
     };
 
     switch (activeSection) {

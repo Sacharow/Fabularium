@@ -47,10 +47,16 @@ const getCharacterById = async (req, res) => {
     if (!user?.id) return res.status(401).json({ message: "Unauthorized" });
     const { id } = req.params;
 
-    const { error, character } = await getCharacterSectionById(id, user.id);
+    const { error, character, isOwner } = await getCharacterSectionById(
+      id,
+      user.id,
+    );
     if (error) return res.status(error.status).json({ message: error.message });
 
-    return res.status(200).json(character);
+    // Include ownership flag so frontend can enable editing if appropriate
+    const payload = { ...character, isOwner };
+
+    return res.status(200).json(payload);
   } catch (err) {
     return res
       .status(500)

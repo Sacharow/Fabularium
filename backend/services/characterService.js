@@ -252,7 +252,7 @@ const updateOwnedCharacter = async (characterId, userId, data) => {
         class: data.class ?? data.classId ?? undefined,
         subclass: data.subclass ?? data.subclassId ?? undefined,
         subrace: data.subrace ?? data.subraceId ?? undefined,
-        campaignId: data.campaignId ?? undefined,
+        campaignId: data.campaignId === undefined ? undefined : data.campaignId,
         personalityTraits: data.personalityTraits ?? undefined,
         ideals: data.ideals ?? undefined,
         bonds: data.bonds ?? undefined,

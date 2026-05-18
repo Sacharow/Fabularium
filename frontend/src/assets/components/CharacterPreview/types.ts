@@ -77,4 +77,5 @@ export interface CharacterSectionProps {
   isEditMode?: boolean;
   onEditModeChange?: (isEditing: boolean) => void;
   onContentChange?: (newContent: CharacterSection["content"]) => void;
+  isOwner?: boolean;
 }

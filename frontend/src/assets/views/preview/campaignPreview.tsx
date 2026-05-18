@@ -26,6 +26,7 @@ type CampaignRecord = {
     id: string;
     name: string;
     level?: number;
+    ownerId?: string | null;
     race?: string | null;
     class?: string | null;
     subclass?: string | null;
@@ -35,6 +36,7 @@ type CampaignRecord = {
     id: string;
     title: string;
     description: string;
+    isPublic?: boolean;
     locationId?: string | null;
     location?: { id: string; name: string } | null;
     missionNpcs?: Array<{ npc?: { id: string; name: string } | null }>;
@@ -51,6 +53,7 @@ type CampaignRecord = {
     id: string;
     name: string;
     description: string;
+    isPublic?: boolean;
     npcs?: Array<{ id: string; name: string }>;
     missionLocations?: Array<{
       mission?: { id: string; title: string } | null;
@@ -60,6 +63,7 @@ type CampaignRecord = {
     id: string;
     name: string;
     description: string;
+    isPublic?: boolean;
     locations?: Array<{ id: string; name: string }>;
     missionNpcs?: Array<{ mission?: { id: string; title: string } | null }>;
   }>;
@@ -86,6 +90,7 @@ const buildSectionContent = (campaign: CampaignRecord) => {
       id: location.id,
       title: location.name,
       content: location.description,
+      isPublic: location.isPublic ?? true,
       section1Title: "Related NPCs",
       section1Items: toRelatedItems(location.npcs ?? []),
       section2Title: "Related Quests",
@@ -103,6 +108,7 @@ const buildSectionContent = (campaign: CampaignRecord) => {
     id: npc.id,
     title: npc.name,
     content: npc.description,
+    isPublic: npc.isPublic ?? true,
     section1Title: "Related Locations",
     section1Items: toRelatedItems(npc.locations ?? []),
     section2Title: "Related Quests",
@@ -124,6 +130,7 @@ const buildSectionContent = (campaign: CampaignRecord) => {
     id: mission.id,
     title: mission.title,
     content: mission.description,
+    isPublic: mission.isPublic ?? true,
     section1Title: "Related NPCs",
     section1Items: toRelatedItems(
       (mission.missionNpcs ?? []).map((entry) => ({
@@ -202,6 +209,7 @@ const getEditableItemsForSection = (
         id: location.id,
         title: location.name,
         content: location.description,
+        isPublic: location.isPublic ?? true,
         // linked ids
         linkedNpcIds: (location.npcs ?? []).map((n) => n.id),
         linkedMissionIds: (location.missionLocations ?? [])
@@ -216,6 +224,7 @@ const getEditableItemsForSection = (
         id: npc.id,
         title: npc.name,
         content: npc.description,
+        isPublic: npc.isPublic ?? true,
         linkedLocationIds: (npc.locations ?? []).map((l) => l.id),
         linkedMissionIds: (npc.missionNpcs ?? [])
           .map((entry) => entry.mission?.id ?? "")
@@ -228,6 +237,7 @@ const getEditableItemsForSection = (
         id: mission.id,
         title: mission.title,
         content: mission.description,
+        isPublic: mission.isPublic ?? true,
         linkedNpcIds: (mission.missionNpcs ?? [])
           .map((m) => m.npc?.id ?? "")
           .filter(Boolean),
@@ -557,6 +567,56 @@ function CampaignPreviewView() {
     await refreshCampaign();
   };
 
+  const handleToggleSectionVisibility = async (
+    section: "locations" | "npcs" | "quests",
+    itemId: string,
+    isPublic: boolean,
+  ) => {
+    if (!campaignId) {
+      return;
+    }
+
+    if (section === "locations") {
+      await campaignService.toggleLocationVisibility(
+        campaignId,
+        itemId,
+        isPublic,
+      );
+    } else if (section === "npcs") {
+      await campaignService.toggleNPCVisibility(campaignId, itemId, isPublic);
+    } else {
+      await campaignService.toggleMissionVisibility(
+        campaignId,
+        itemId,
+        isPublic,
+      );
+    }
+
+    if (!campaign) {
+      return;
+    }
+
+    const nextCampaign: CampaignRecord = {
+      ...campaign,
+      locations: (campaign.locations ?? []).map((location) =>
+        section === "locations" && location.id === itemId
+          ? { ...location, isPublic }
+          : location,
+      ),
+      npcs: (campaign.npcs ?? []).map((npc) =>
+        section === "npcs" && npc.id === itemId ? { ...npc, isPublic } : npc,
+      ),
+      missions: (campaign.missions ?? []).map((mission) =>
+        section === "quests" && mission.id === itemId
+          ? { ...mission, isPublic }
+          : mission,
+      ),
+    };
+
+    setCampaign(nextCampaign);
+    setSectionContent(buildSectionContent(nextCampaign));
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex items-center justify-center">
@@ -599,6 +659,7 @@ function CampaignPreviewView() {
               handleContentChange("general", newContent)
             }
             onDeleteCampaign={handleDeleteCampaign}
+            campaignOwnerId={campaign?.owner?.id}
           />
         );
       case "characters":
@@ -610,6 +671,7 @@ function CampaignPreviewView() {
               ) as CampaignRecord["characters"]) ?? []
             }
             campaignId={campaignId}
+            campaignOwnerId={campaign?.owner?.id}
             onRefreshCampaign={refreshCampaign}
           />
         );
@@ -625,6 +687,10 @@ function CampaignPreviewView() {
             onContentChange={(newContent) =>
               handleContentChange("locations", newContent)
             }
+            onToggleVisibility={(itemId, isPublic) =>
+              handleToggleSectionVisibility("locations", itemId, isPublic)
+            }
+            campaignOwnerId={campaign?.owner?.id}
           />
         );
       case "npcs":
@@ -639,6 +705,10 @@ function CampaignPreviewView() {
             onContentChange={(newContent) =>
               handleContentChange("npcs", newContent)
             }
+            onToggleVisibility={(itemId, isPublic) =>
+              handleToggleSectionVisibility("npcs", itemId, isPublic)
+            }
+            campaignOwnerId={campaign?.owner?.id}
           />
         );
       case "quests":
@@ -653,6 +723,10 @@ function CampaignPreviewView() {
             onContentChange={(newContent) =>
               handleContentChange("quests", newContent)
             }
+            onToggleVisibility={(itemId, isPublic) =>
+              handleToggleSectionVisibility("quests", itemId, isPublic)
+            }
+            campaignOwnerId={campaign?.owner?.id}
           />
         );
       case "notes":
@@ -681,6 +755,7 @@ function CampaignPreviewView() {
             onGenerateJoinCode={() => {
               void handleGenerateJoinCode();
             }}
+            campaignOwnerId={campaign?.owner?.id}
           />
         );
       default:

@@ -69,6 +69,11 @@ const getNPCById = async (req, res) => {
     if (!npc || npc.campaignId !== campaignId) {
       return res.status(404).json({ message: "NPC not found" });
     }
+
+    const viewerId = req.user?.id;
+    if (npc.isPublic === false && viewerId !== npc.campaign.ownerId)
+      return res.status(404).json({ message: "NPC not found" });
+
     return res.status(200).json(npc);
   } catch (err) {
     return res
@@ -143,12 +148,55 @@ const listCampaignNPCs = async (req, res) => {
     if (!z.string().safeParse(id).success) {
       return res.status(400).json({ message: "Invalid id" });
     }
-    const npcs = await campaignService.listCampaignNPCsByCampaignId(id);
+    const viewerId = req.user?.id;
+    const npcs = await campaignService.listCampaignNPCsByCampaignId(
+      id,
+      viewerId,
+    );
     return res.status(200).json(npcs);
   } catch (err) {
     return res
       .status(500)
       .json({ message: "Failed to list campaign NPCs", error: String(err) });
+  }
+};
+
+const toggleNPCVisibility = async (req, res) => {
+  try {
+    const campaignId = req.params.id;
+    const npcId = req.params.npcId;
+    const data = req.body;
+
+    if (!z.string().safeParse(campaignId).success)
+      return res.status(400).json({ message: "Invalid campaign id" });
+    if (!z.string().safeParse(npcId).success)
+      return res.status(400).json({ message: "Invalid npc id" });
+
+    const campaign =
+      await campaignService.getCampaignWithContributorsById(campaignId);
+    if (!campaign)
+      return res.status(404).json({ message: "Campaign not found" });
+
+    const user = req.user;
+    if (!user?.id) return res.status(401).json({ message: "Unauthorized" });
+    if (campaign.ownerId !== user.id)
+      return res.status(403).json({ message: "Forbidden" });
+
+    if (typeof data.isPublic !== "boolean")
+      return res.status(400).json({ message: "isPublic boolean required" });
+
+    const npc = await campaignService.getNPCById(npcId);
+    if (!npc || npc.campaignId !== campaignId)
+      return res.status(404).json({ message: "NPC not found in campaign" });
+
+    const updated = await campaignService.updateNPCById(npcId, {
+      isPublic: data.isPublic,
+    });
+    return res.status(200).json(updated);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Failed to toggle NPC visibility", error: err });
   }
 };
 
@@ -239,6 +287,7 @@ module.exports = {
   updateNPC,
   deleteNPC,
   listCampaignNPCs,
+  toggleNPCVisibility,
   getAllMissionNpcs,
   getMissionNpcById,
   createMissionNpc,

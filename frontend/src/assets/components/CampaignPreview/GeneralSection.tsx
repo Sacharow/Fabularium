@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import { z } from "zod";
 import { Check, X, Copy, Trash, Upload, X as XIcon } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
@@ -10,7 +11,8 @@ export function GeneralSection({
   onEditModeChange,
   onContentChange,
   onDeleteCampaign,
-}: CampaignSectionInteractiveProps) {
+  campaignOwnerId,
+}: CampaignSectionInteractiveProps & { campaignOwnerId?: string }) {
   const info = content as {
     title?: string;
     description?: string;
@@ -105,6 +107,8 @@ export function GeneralSection({
   };
 
   const currentInfo = isEditing ? editedInfo : info;
+  const { user } = useAuth();
+  const isOwner = user?.id && campaignOwnerId && user.id === campaignOwnerId;
 
   return (
     <div className="flex flex-col gap-6">
@@ -132,7 +136,7 @@ export function GeneralSection({
                 Cancel
               </PreviewActionButton>
             </>
-          ) : (
+          ) : isOwner ? (
             <PreviewActionButton
               onClick={handleEdit}
               variant="ghost"
@@ -140,15 +144,17 @@ export function GeneralSection({
             >
               Edit
             </PreviewActionButton>
+          ) : null}
+          {isOwner && (
+            <PreviewActionButton
+              onClick={() => setShowDeleteModal(true)}
+              variant="danger"
+              icon={<Trash className="h-4 w-4" />}
+              title="Delete campaign"
+            >
+              Delete
+            </PreviewActionButton>
           )}
-          <PreviewActionButton
-            onClick={() => setShowDeleteModal(true)}
-            variant="danger"
-            icon={<Trash className="h-4 w-4" />}
-            title="Delete campaign"
-          >
-            Delete
-          </PreviewActionButton>
         </div>
       </div>
 

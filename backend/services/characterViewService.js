@@ -56,12 +56,11 @@ const getCharacterSectionById = async (characterId, userId) => {
     return { error: { status: 404, message: "Character not found" } };
   }
 
-  if (character.ownerId !== userId) {
-    return { error: { status: 403, message: "Forbidden" } };
-  }
+  const isOwner = character.ownerId === userId;
 
   return {
     character: mapCharacterToSection(character),
+    isOwner,
   };
 };
 

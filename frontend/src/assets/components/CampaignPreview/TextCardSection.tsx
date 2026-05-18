@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import { ChevronDown, Check, X, Plus } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 import type { TextCard } from "./types";
@@ -9,6 +10,7 @@ interface Props {
   isEditMode?: boolean;
   onEditModeChange?: (isEditing: boolean) => void;
   onContentChange?: (newItems: TextCard[]) => void;
+  onToggleVisibility?: (itemId: string, isPublic: boolean) => Promise<void>;
 }
 
 export function TextCardSection({
@@ -17,10 +19,15 @@ export function TextCardSection({
   isEditMode = false,
   onEditModeChange,
   onContentChange,
-}: Props) {
+  onToggleVisibility,
+  campaignOwnerId,
+}: Props & { campaignOwnerId?: string }) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [isEditing, setIsEditing] = useState(isEditMode);
   const [editedItems, setEditedItems] = useState<TextCard[]>(items);
+  const [togglingItemId, setTogglingItemId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const isOwner = user?.id && campaignOwnerId && user.id === campaignOwnerId;
 
   const toggleItem = (itemId: string) => {
     setExpandedItems((prev) => {
@@ -108,6 +115,19 @@ export function TextCardSection({
     setEditedItems((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleToggleVisibility = async (item: TextCard) => {
+    if (!onToggleVisibility) {
+      return;
+    }
+
+    setTogglingItemId(item.id);
+    try {
+      await onToggleVisibility(item.id, !(item.isPublic ?? true));
+    } finally {
+      setTogglingItemId(null);
+    }
+  };
+
   const currentItems = isEditing ? editedItems : items;
 
   const renderLinkCheckbox = (
@@ -157,7 +177,7 @@ export function TextCardSection({
                 Cancel
               </PreviewActionButton>
             </>
-          ) : (
+          ) : isOwner ? (
             <PreviewActionButton
               onClick={handleEdit}
               variant="ghost"
@@ -165,7 +185,7 @@ export function TextCardSection({
             >
               Edit
             </PreviewActionButton>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -208,12 +228,49 @@ export function TextCardSection({
                         className="font-medium text-neutral-text bg-dark border border-gold-dark px-2 py-1"
                       />
                     ) : (
-                      <h3 className="text-lg font-semibold text-neutral-text">
-                        {it.title}
-                      </h3>
+                      <div className="flex items-center justify-between gap-3">
+                        <h3 className="text-lg font-semibold text-neutral-text">
+                          {it.title}
+                        </h3>
+                        {isOwner && (
+                          <div
+                            className="!bg-dark border-2 border-gold-neutral text-neutral-text w-24 px-2 py-1 text-xs font-semibold uppercase tracking-widest flex items-center justify-center"
+                            aria-label={
+                              (it.isPublic ?? true)
+                                ? "Public visibility"
+                                : "Private visibility"
+                            }
+                            title={
+                              (it.isPublic ?? true)
+                                ? "Public visibility"
+                                : "Private visibility"
+                            }
+                          >
+                            <span className="w-full text-center">
+                              {(it.isPublic ?? true) ? "PUBLIC" : "PRIVATE"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    {isEditing && isOwner && onToggleVisibility && (
+                      <PreviewActionButton
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await handleToggleVisibility(it);
+                        }}
+                        variant="ghost"
+                        className="relative z-10 !bg-dark hover:!bg-gold-neutral w-24 justify-center px-2 py-1 text-xs"
+                        title="Toggle PUBLIC visibility"
+                        disabled={togglingItemId === it.id}
+                      >
+                        <span className="w-full text-center text-xs">
+                          {(it.isPublic ?? true) ? "PUBLIC" : "PRIVATE"}
+                        </span>
+                      </PreviewActionButton>
+                    )}
                     {isEditing && (
                       <PreviewActionButton
                         onClick={(e) => {
@@ -221,7 +278,7 @@ export function TextCardSection({
                           handleRemoveItem(index);
                         }}
                         variant="danger"
-                        className="p-1 flex items-center justify-center"
+                        className="relative z-10 !bg-dark hover:!bg-error p-1 flex items-center justify-center self-stretch"
                         title="Delete item"
                       >
                         <X className="h-3 w-3" />
@@ -388,7 +445,7 @@ export function TextCardSection({
         {currentItems.length === 0 && (
           <p className="text-sm text-gray-neutral">None</p>
         )}
-        {isEditing && (
+        {isEditing && isOwner && (
           <PreviewActionButton
             onClick={handleAddItem}
             variant="primary"

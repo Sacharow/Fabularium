@@ -42,7 +42,19 @@ const listCampaigns = async () => {
   });
 };
 
-const getCampaignById = async (id) => {
+const getCampaignById = async (id, viewerId) => {
+  const missionWhere = viewerId
+    ? { OR: [{ isPublic: true }, { campaign: { ownerId: viewerId } }] }
+    : { isPublic: true };
+
+  const locationWhere = viewerId
+    ? { OR: [{ isPublic: true }, { campaign: { ownerId: viewerId } }] }
+    : { isPublic: true };
+
+  const npcWhere = viewerId
+    ? { OR: [{ isPublic: true }, { campaign: { ownerId: viewerId } }] }
+    : { isPublic: true };
+
   return prisma.campaign.findUnique({
     where: { id },
     include: {
@@ -50,6 +62,7 @@ const getCampaignById = async (id) => {
       contributors: true,
       characters: true,
       missions: {
+        where: missionWhere,
         include: {
           missionLocations: { include: { location: true } },
           missionNpcs: { include: { npc: true } },
@@ -58,12 +71,14 @@ const getCampaignById = async (id) => {
       notes: true,
       maps: true,
       locations: {
+        where: locationWhere,
         include: {
           npcs: true,
           missionLocations: { include: { mission: true } },
         },
       },
       npcs: {
+        where: npcWhere,
         include: {
           locations: true,
           missionNpcs: { include: { mission: true } },
@@ -156,6 +171,22 @@ const listCharactersByCampaignId = async (id) => {
   });
 };
 
+const disconnectCharacterFromCampaign = async (campaignId, characterId) => {
+  const character = await prisma.character.findFirst({
+    where: { id: characterId, campaignId },
+    select: { id: true },
+  });
+
+  if (!character) {
+    return null;
+  }
+
+  return prisma.character.update({
+    where: { id: characterId },
+    data: { campaignId: null },
+  });
+};
+
 const getCampaignWithContributorsById = async (id) => {
   return prisma.campaign.findUnique({
     where: { id },
@@ -169,6 +200,7 @@ const createLocation = async (data) => {
       name: data.name,
       description: data.description,
       campaignId: data.campaignId,
+      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : true,
       ...(Array.isArray(data.linkedNpcIds)
         ? {
             npcs: {
@@ -193,9 +225,16 @@ const createLocation = async (data) => {
   });
 };
 
-const listCampaignLocationsByCampaignId = async (campaignId) => {
+const listCampaignLocationsByCampaignId = async (campaignId, viewerId) => {
+  const where = viewerId
+    ? {
+        campaignId,
+        OR: [{ isPublic: true }, { campaign: { ownerId: viewerId } }],
+      }
+    : { campaignId, isPublic: true };
+
   return prisma.location.findMany({
-    where: { campaignId },
+    where,
     include: {
       missionLocations: { include: { mission: true } },
       npcs: true,
@@ -207,6 +246,7 @@ const getLocationById = async (id) => {
   return prisma.location.findUnique({
     where: { id },
     include: {
+      campaign: { select: { ownerId: true } },
       missionLocations: { include: { mission: true } },
       npcs: true,
     },
@@ -240,6 +280,10 @@ const updateLocationById = async (id, data) => {
         mission: { connect: { id: missionId } },
       })),
     };
+  }
+
+  if (typeof data.isPublic === "boolean") {
+    updateData.isPublic = data.isPublic;
   }
 
   return prisma.location.update({
@@ -284,13 +328,23 @@ const deleteMapById = async (id) => {
 };
 
 const createMission = async (data) => {
-  return prisma.mission.create({ data });
+  return prisma.mission.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      status: data.status,
+      campaignId: data.campaignId,
+      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : true,
+      ...(data.locationId ? { locationId: data.locationId } : {}),
+    },
+  });
 };
 
 const getMissionById = async (id) => {
   return prisma.mission.findUnique({
     where: { id },
     include: {
+      campaign: { select: { ownerId: true } },
       missionLocations: { include: { location: true } },
       missionNpcs: { include: { npc: true } },
     },
@@ -322,6 +376,10 @@ const updateMissionById = async (id, data) => {
         npc: { connect: { id: npcId } },
       })),
     };
+  }
+
+  if (typeof data.isPublic === "boolean") {
+    updateData.isPublic = data.isPublic;
   }
 
   return prisma.mission.update({
@@ -368,6 +426,7 @@ const createNPC = async (data) => {
       name: data.name,
       description: data.description,
       campaignId: data.campaignId,
+      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : true,
       ...(Array.isArray(data.linkedLocationIds)
         ? {
             locations: {
@@ -408,8 +467,9 @@ const getNPCById = async (id) => {
   return prisma.nPC.findUnique({
     where: { id },
     include: {
-      campaign: true,
+      campaign: { select: { ownerId: true } },
       locations: true,
+      missionNpcs: { include: { mission: true } },
     },
   });
 };
@@ -444,6 +504,10 @@ const updateNPCById = async (id, data) => {
     };
   }
 
+  if (typeof data.isPublic === "boolean") {
+    updateData.isPublic = data.isPublic;
+  }
+
   return prisma.nPC.update({
     where: { id },
     data: updateData,
@@ -466,9 +530,16 @@ const deleteNPCById = async (id) => {
   return prisma.nPC.delete({ where: { id } });
 };
 
-const listCampaignNPCsByCampaignId = async (campaignId) => {
+const listCampaignNPCsByCampaignId = async (campaignId, viewerId) => {
+  const where = viewerId
+    ? {
+        campaignId,
+        OR: [{ isPublic: true }, { campaign: { ownerId: viewerId } }],
+      }
+    : { campaignId, isPublic: true };
+
   return prisma.nPC.findMany({
-    where: { campaignId },
+    where,
     include: {
       locations: true,
     },
@@ -518,6 +589,7 @@ module.exports = {
   removeContributorFromCampaign,
   listContributorsByCampaignId,
   listCharactersByCampaignId,
+  disconnectCharacterFromCampaign,
   getCampaignWithContributorsById,
   createLocation,
   listCampaignLocationsByCampaignId,

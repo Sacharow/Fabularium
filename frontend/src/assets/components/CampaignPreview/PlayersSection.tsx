@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import { Copy, RefreshCw } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 import type { PlayersContent } from "./types";
@@ -7,15 +8,19 @@ interface Props {
   content?: PlayersContent;
   campaignKey?: string;
   onGenerateJoinCode?: () => void;
+  campaignOwnerId?: string;
 }
 
 export function PlayersSection({
   content,
   campaignKey,
   onGenerateJoinCode,
+  campaignOwnerId,
 }: Props) {
   const data = content ?? { dm: null, players: [] };
   const [copied, setCopied] = useState(false);
+  const { user } = useAuth();
+  const isOwner = user?.id && campaignOwnerId && user.id === campaignOwnerId;
 
   const handleCopyCampaignKey = () => {
     const key = campaignKey || "";
@@ -56,16 +61,18 @@ export function PlayersSection({
             >
               {copied ? "Copied" : "Copy"}
             </PreviewActionButton>
-            <PreviewActionButton
-              onClick={() => onGenerateJoinCode?.()}
-              variant="ghost"
-              className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
-              icon={<RefreshCw className="h-4 w-4" />}
-              title="Generate new campaign key"
-              disabled={!onGenerateJoinCode}
-            >
-              Generate
-            </PreviewActionButton>
+            {isOwner && (
+              <PreviewActionButton
+                onClick={() => onGenerateJoinCode?.()}
+                variant="ghost"
+                className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
+                icon={<RefreshCw className="h-4 w-4" />}
+                title="Generate new campaign key"
+                disabled={!onGenerateJoinCode}
+              >
+                Generate
+              </PreviewActionButton>
+            )}
           </div>
         </div>
 

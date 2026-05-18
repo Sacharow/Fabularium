@@ -30,6 +30,7 @@ export function GeneralSection({
   isEditMode = false,
   onEditModeChange,
   onContentChange,
+  isOwner = false,
 }: GeneralSectionProps) {
   const generalStats = content as StatDetail[];
   const [isEditing, setIsEditing] = useState(isEditMode);
@@ -98,42 +99,47 @@ export function GeneralSection({
           General Information
         </h2>
         <div className="flex items-center gap-2">
-          {isEditing ? (
-            <>
+          {isOwner ? (
+            isEditing ? (
+              <>
+                <PreviewActionButton
+                  onClick={handleSave}
+                  variant="primary"
+                  icon={<Check className="h-4 w-4" />}
+                  title="Save changes"
+                >
+                  Save
+                </PreviewActionButton>
+                <PreviewActionButton
+                  onClick={handleCancel}
+                  variant="secondary"
+                  icon={<X className="h-4 w-4" />}
+                  title="Cancel editing"
+                >
+                  Cancel
+                </PreviewActionButton>
+              </>
+            ) : (
               <PreviewActionButton
-                onClick={handleSave}
-                variant="primary"
-                icon={<Check className="h-4 w-4" />}
-                title="Save changes"
+                onClick={handleEdit}
+                variant="ghost"
+                title="Edit this section"
               >
-                Save
+                Edit
               </PreviewActionButton>
-              <PreviewActionButton
-                onClick={handleCancel}
-                variant="secondary"
-                icon={<X className="h-4 w-4" />}
-                title="Cancel editing"
-              >
-                Cancel
-              </PreviewActionButton>
-            </>
-          ) : (
+            )
+          ) : null}
+
+          {isOwner ? (
             <PreviewActionButton
-              onClick={handleEdit}
-              variant="ghost"
-              title="Edit this section"
+              onClick={() => setShowDeleteModal(true)}
+              variant="danger"
+              icon={<Trash className="h-4 w-4" />}
+              title="Delete character"
             >
-              Edit
+              Delete
             </PreviewActionButton>
-          )}
-          <PreviewActionButton
-            onClick={() => setShowDeleteModal(true)}
-            variant="danger"
-            icon={<Trash className="h-4 w-4" />}
-            title="Delete character"
-          >
-            Delete
-          </PreviewActionButton>
+          ) : null}
         </div>
       </div>
 

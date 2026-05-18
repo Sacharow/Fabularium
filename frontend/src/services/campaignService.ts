@@ -113,6 +113,23 @@ export const campaignService = {
     }
     return true;
   },
+  async toggleLocationVisibility(
+    campaignId: string,
+    locationId: string,
+    isPublic: boolean,
+  ) {
+    const res = await fetch(
+      `${API_URL}/api/campaigns/${campaignId}/locations/${locationId}/visibility`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ isPublic }),
+      },
+    );
+    if (!res.ok) throw new Error("Failed to toggle location visibility");
+    return res.json();
+  },
   async createNPC(
     id: string,
     data: CampaignNpcPayload & {
@@ -170,6 +187,23 @@ export const campaignService = {
     }
     return true;
   },
+  async toggleNPCVisibility(
+    campaignId: string,
+    npcId: string,
+    isPublic: boolean,
+  ) {
+    const res = await fetch(
+      `${API_URL}/api/campaigns/${campaignId}/npcs/${npcId}/visibility`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ isPublic }),
+      },
+    );
+    if (!res.ok) throw new Error("Failed to toggle NPC visibility");
+    return res.json();
+  },
   async createMission(id: string, data: CampaignSectionItemWithLinks) {
     const res = await fetch(`${API_URL}/api/campaigns/${id}/missions`, {
       method: "POST",
@@ -220,6 +254,23 @@ export const campaignService = {
     }
     return true;
   },
+  async toggleMissionVisibility(
+    campaignId: string,
+    missionId: string,
+    isPublic: boolean,
+  ) {
+    const res = await fetch(
+      `${API_URL}/api/campaigns/${campaignId}/missions/${missionId}/visibility`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ isPublic }),
+      },
+    );
+    if (!res.ok) throw new Error("Failed to toggle quest visibility");
+    return res.json();
+  },
   async createNote(id: string, data: CampaignSectionItemPayload) {
     const res = await fetch(`${API_URL}/api/campaigns/${id}/notes`, {
       method: "POST",
@@ -267,6 +318,19 @@ export const campaignService = {
     });
     if (!res.ok && res.status !== 204) {
       throw new Error("Failed to delete campaign");
+    }
+    return true;
+  },
+  async disconnectCharacter(campaignId: string, characterId: string) {
+    const res = await fetch(
+      `${API_URL}/api/campaigns/${campaignId}/characters/${characterId}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      },
+    );
+    if (!res.ok && res.status !== 204) {
+      throw new Error("Failed to disconnect character");
     }
     return true;
   },
