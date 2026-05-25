@@ -90,7 +90,7 @@ const buildSectionContent = (campaign: CampaignRecord) => {
       id: location.id,
       title: location.name,
       content: location.description,
-      isPublic: location.isPublic ?? true,
+      isPublic: location.isPublic ?? false,
       section1Title: "Related NPCs",
       section1Items: toRelatedItems(location.npcs ?? []),
       section2Title: "Related Quests",
@@ -108,7 +108,7 @@ const buildSectionContent = (campaign: CampaignRecord) => {
     id: npc.id,
     title: npc.name,
     content: npc.description,
-    isPublic: npc.isPublic ?? true,
+    isPublic: npc.isPublic ?? false,
     section1Title: "Related Locations",
     section1Items: toRelatedItems(npc.locations ?? []),
     section2Title: "Related Quests",
@@ -130,7 +130,7 @@ const buildSectionContent = (campaign: CampaignRecord) => {
     id: mission.id,
     title: mission.title,
     content: mission.description,
-    isPublic: mission.isPublic ?? true,
+    isPublic: mission.isPublic ?? false,
     section1Title: "Related NPCs",
     section1Items: toRelatedItems(
       (mission.missionNpcs ?? []).map((entry) => ({
@@ -209,7 +209,7 @@ const getEditableItemsForSection = (
         id: location.id,
         title: location.name,
         content: location.description,
-        isPublic: location.isPublic ?? true,
+        isPublic: location.isPublic ?? false,
         // linked ids
         linkedNpcIds: (location.npcs ?? []).map((n) => n.id),
         linkedMissionIds: (location.missionLocations ?? [])
@@ -224,7 +224,7 @@ const getEditableItemsForSection = (
         id: npc.id,
         title: npc.name,
         content: npc.description,
-        isPublic: npc.isPublic ?? true,
+        isPublic: npc.isPublic ?? false,
         linkedLocationIds: (npc.locations ?? []).map((l) => l.id),
         linkedMissionIds: (npc.missionNpcs ?? [])
           .map((entry) => entry.mission?.id ?? "")
@@ -237,7 +237,7 @@ const getEditableItemsForSection = (
         id: mission.id,
         title: mission.title,
         content: mission.description,
-        isPublic: mission.isPublic ?? true,
+        isPublic: mission.isPublic ?? false,
         linkedNpcIds: (mission.missionNpcs ?? [])
           .map((m) => m.npc?.id ?? "")
           .filter(Boolean),

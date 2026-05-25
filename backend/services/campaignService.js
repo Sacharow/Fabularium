@@ -200,7 +200,7 @@ const createLocation = async (data) => {
       name: data.name,
       description: data.description,
       campaignId: data.campaignId,
-      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : true,
+      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : false,
       ...(Array.isArray(data.linkedNpcIds)
         ? {
             npcs: {
@@ -334,7 +334,7 @@ const createMission = async (data) => {
       description: data.description,
       status: data.status,
       campaignId: data.campaignId,
-      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : true,
+      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : false,
       ...(data.locationId ? { locationId: data.locationId } : {}),
     },
   });
@@ -426,7 +426,7 @@ const createNPC = async (data) => {
       name: data.name,
       description: data.description,
       campaignId: data.campaignId,
-      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : true,
+      isPublic: typeof data.isPublic === "boolean" ? data.isPublic : false,
       ...(Array.isArray(data.linkedLocationIds)
         ? {
             locations: {

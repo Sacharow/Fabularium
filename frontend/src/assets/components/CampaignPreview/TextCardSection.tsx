@@ -107,6 +107,7 @@ export function TextCardSection({
         id: `new-${Date.now()}`,
         title: "New Item",
         content: "Description",
+        isPublic: false,
       },
     ]);
   };
@@ -122,7 +123,7 @@ export function TextCardSection({
 
     setTogglingItemId(item.id);
     try {
-      await onToggleVisibility(item.id, !(item.isPublic ?? true));
+      await onToggleVisibility(item.id, !(item.isPublic ?? false));
     } finally {
       setTogglingItemId(null);
     }
@@ -236,18 +237,18 @@ export function TextCardSection({
                           <div
                             className="!bg-dark border-2 border-gold-neutral text-neutral-text w-24 px-2 py-1 text-xs font-semibold uppercase tracking-widest flex items-center justify-center"
                             aria-label={
-                              (it.isPublic ?? true)
+                              (it.isPublic ?? false)
                                 ? "Public visibility"
                                 : "Private visibility"
                             }
                             title={
-                              (it.isPublic ?? true)
+                              (it.isPublic ?? false)
                                 ? "Public visibility"
                                 : "Private visibility"
                             }
                           >
                             <span className="w-full text-center">
-                              {(it.isPublic ?? true) ? "PUBLIC" : "PRIVATE"}
+                              {(it.isPublic ?? false) ? "PUBLIC" : "PRIVATE"}
                             </span>
                           </div>
                         )}
@@ -263,11 +264,11 @@ export function TextCardSection({
                         }}
                         variant="ghost"
                         className="relative z-10 !bg-dark hover:!bg-gold-neutral w-24 justify-center px-2 py-1 text-xs"
-                        title="Toggle PUBLIC visibility"
+                        title="Toggle visibility"
                         disabled={togglingItemId === it.id}
                       >
                         <span className="w-full text-center text-xs">
-                          {(it.isPublic ?? true) ? "PUBLIC" : "PRIVATE"}
+                          {(it.isPublic ?? false) ? "PUBLIC" : "PRIVATE"}
                         </span>
                       </PreviewActionButton>
                     )}
