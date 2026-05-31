@@ -119,7 +119,6 @@ const mockCharacter = {
           { name: "History", modifier: "+4", distinction: "Proficiency" },
           { name: "Investigation", modifier: "+1", distinction: "Nothing" },
           { name: "Nature", modifier: "+1", distinction: "Nothing" },
-          { name: "Religion", modifier: "+1", distinction: "Nothing" },
         ],
       },
       {
@@ -536,8 +535,9 @@ const buildInventory = (
 const buildCharacterSections = (
   character: CharacterViewData,
 ): CharacterSection[] => {
-  const proficiencyBonus =
-    character.profBonus ?? 2 + Math.floor((character.level - 1) / 4);
+  const proficiencyBonus = character.profBonus ?? 0;
+  const displayProficiencyBonus =
+    character.profBonus != null ? formatModifier(character.profBonus) : "-";
   const splitName = splitCharacterName(character.name);
 
   const getAbilityScore = (abilityKey: AbilityKey) => {
@@ -555,49 +555,50 @@ const buildCharacterSections = (
   };
 
   const generalSection: StatDetail[] = [
-    { name: "Name", value: splitName.firstName || "-" },
-    { name: "Last Name", value: splitName.lastName || "-" },
-    { name: "Nickname", value: splitName.nickname || "-" },
+    { name: "Name", value: splitName.firstName || "" },
+    { name: "Last Name", value: splitName.lastName || "" },
+    { name: "Nickname", value: splitName.nickname || "" },
     { name: "Level", value: character.level },
     { name: "Experience", value: character.xp ?? 0 },
-    { name: "Class", value: character.characterClass || "-" },
-    { name: "Subclass", value: character.characterSubclass || "-" },
-    { name: "Race", value: character.characterRace || "-" },
-    { name: "Subrace", value: character.characterSubrace || "-" },
-    { name: "Hit Points", value: character.hitPointsCurrent ?? "-" },
-    { name: "Armor Class", value: character.armorClass ?? "-" },
+    { name: "Class", value: character.characterClass || "" },
+    { name: "Subclass", value: character.characterSubclass || "" },
+    { name: "Race", value: character.characterRace || "" },
+    { name: "Subrace", value: character.characterSubrace || "" },
+    { name: "Hit Points", value: character.hitPointsCurrent ?? "" },
+    { name: "Armor Class", value: character.armorClass ?? "" },
     {
       name: "Speed",
-      value: character.speed != null ? `${character.speed} ft.` : "-",
+      value: character.speed != null ? `${character.speed} ft.` : "",
     },
     {
       name: "Inspiration",
       value: character.inspiration ? "Yes" : "No",
     },
-    { name: "Proficiency Bonus", value: formatModifier(proficiencyBonus) },
+    { name: "Proficiency Bonus", value: displayProficiencyBonus },
   ];
 
   const personalSection: PersonalSectionContent = {
     details: [
-      { label: "Personality", value: character.personalityTraits || "-" },
-      { label: "Ideals", value: character.ideals || "-" },
-      { label: "Bonds", value: character.bonds || "-" },
-      { label: "Flaws", value: character.flaws || "-" },
-      { label: "Alignment", value: character.alignment || "-" },
-      { label: "Languages", value: "-" },
-      { label: "Height", value: "-" },
-      { label: "Weight", value: "-" },
-      { label: "Eye Color", value: "-" },
-      { label: "Hair Color", value: "-" },
-      { label: "Skin Color", value: "-" },
-      { label: "Age", value: "-" },
+      { label: "Personality", value: character.personalityTraits || "" },
+      { label: "Ideals", value: character.ideals || "" },
+      { label: "Bonds", value: character.bonds || "" },
+      { label: "Flaws", value: character.flaws || "" },
+      { label: "Alignment", value: character.alignment || "" },
+      { label: "Languages", value: "" },
+      { label: "Height", value: "" },
+      { label: "Weight", value: "" },
+      { label: "Eye Color", value: "" },
+      { label: "Hair Color", value: "" },
+      { label: "Skin Color", value: "" },
+      { label: "Age", value: "" },
     ],
     backstory: character.background || "",
     notes: [],
   };
 
   const statsSection: StatSectionContent = {
-    proficiencyBonus: formatModifier(proficiencyBonus),
+    proficiencyBonus:
+      character.profBonus != null ? formatModifier(character.profBonus) : "",
     abilities: abilityOrder.map((ability) => {
       const score = getAbilityScore(ability.key);
       const modifier = calculateModifier(score);
@@ -697,6 +698,7 @@ const buildCharacterSections = (
 type CharacterUpdatePayload = {
   name?: string;
   level?: number;
+  profBonus?: number;
   xp?: number;
   inspiration?: boolean;
   background?: string | null;
@@ -945,6 +947,14 @@ const buildCharacterUpdatePayload = (
         payload.subrace = subrace;
       }
 
+      const profBonus = parseMaybeNumber(
+        getDetailValue(generalContent, "Proficiency Bonus"),
+      );
+
+      if (typeof profBonus === "number") {
+        payload.profBonus = profBonus;
+      }
+
       if (
         typeof hp === "number" ||
         typeof armorClass === "number" ||
@@ -1017,11 +1027,19 @@ const buildCharacterUpdatePayload = (
         saves[saveKey] = ability.savingThrowDistinction === "Proficiency";
       });
 
-      return {
+      const profBonus = parseMaybeNumber(statsContent.proficiencyBonus);
+
+      const payload: CharacterUpdatePayload = {
         stats,
         saves,
         skills,
       };
+
+      if (typeof profBonus === "number") {
+        payload.profBonus = profBonus;
+      }
+
+      return payload;
     }
     case "features": {
       const featureItems = content as AccordionItem[];
@@ -1340,6 +1358,10 @@ function CharacterPreview() {
           <GeneralSection
             {...baseProps}
             content={currentContent as StatDetail[]}
+            onDelete={async () => {
+              await characterService.deleteCharacter(characterId);
+              navigate("/characters", { replace: true });
+            }}
           />
         );
       case "personal":

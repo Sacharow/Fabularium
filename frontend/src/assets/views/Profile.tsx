@@ -88,8 +88,8 @@ function Profile() {
           </button>
         </header>
 
-        <div className="grid gap-6 lg:grid-cols-4">
-          <section className="col-span-3 border-2 border-gold-neutral bg-neutral p-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+          <section className="col-span-full border-2 border-gold-neutral bg-neutral p-6 lg:col-span-3">
             <div className="pb-4">
               <p className="text-xs uppercase tracking-widest text-gold-light">
                 Profile Info
@@ -182,8 +182,8 @@ function Profile() {
             </div>
           </section>
 
-          <aside className="flex flex-col gap-4">
-            <div className="border-2 border-gold-neutral bg-neutral p-5">
+          <aside className="flex w-full flex-col gap-4">
+            <div className="w-full border-2 border-gold-neutral bg-neutral p-5">
               <div className="pb-3">
                 <p className="text-xs uppercase tracking-widest text-gold-light">
                   Account
@@ -218,7 +218,7 @@ function Profile() {
               </div>
             </div>
 
-            <div className="border-2 border-gold-neutral bg-neutral p-5">
+            <div className="w-full border-2 border-gold-neutral bg-neutral p-5">
               <p className="text-xs uppercase tracking-widest text-gold-light">
                 Support
               </p>
@@ -233,7 +233,7 @@ function Profile() {
               </button>
             </div>
 
-            <div className="border-2 border-gold-neutral bg-neutral p-5">
+            <div className="w-full border-2 border-gold-neutral bg-neutral p-5">
               <p className="text-xs uppercase tracking-widest text-gold-light">
                 Session
               </p>

@@ -38,6 +38,7 @@ body {
   background-color: #1d160f;
   color: #fff;
   position: relative;
+  overflow-x: hidden;
 }
 
 body::before {
@@ -101,4 +102,23 @@ input[type="number"] {
 * {
   scrollbar-width: thin;
   scrollbar-color: #ea580c #1d160f;
+}
+
+@media (max-width: 1023px) {
+  .ml-64 {
+    margin-left: 0 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+
+  .h-screen {
+    height: auto !important;
+    min-height: 100vh !important;
+  }
 }

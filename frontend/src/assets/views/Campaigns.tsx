@@ -80,6 +80,12 @@ function Campaigns() {
         </form>
       </div>
 
+      {error ? (
+        <div className="border-2 border-error bg-dark px-4 py-3 text-sm text-error">
+          {error}
+        </div>
+      ) : null}
+
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
           <p className="text-lg tracking-widest font-bold whitespace-nowrap">

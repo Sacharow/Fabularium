@@ -8,7 +8,8 @@
 const mapCharacterToSection = (character) => {
   if (!character) return null;
 
-  const profBonus = 2 + Math.floor((character.level - 1) / 4);
+  const profBonus = character.profBonus ?? null;
+
   const spellsByLevel = Array.from(
     { length: 10 },
     (_, level) => `level${level}`,

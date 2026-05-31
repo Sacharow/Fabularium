@@ -91,11 +91,11 @@ export function PersonalSection({
   return (
     <div className="flex flex-col gap-6">
       {/* Header with Edit Button */}
-      <div className="flex items-center justify-between gap-4 px-2">
+      <div className="flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold text-neutral-text">
           Personal Details
         </h2>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
           {isOwner ? (
             isEditing ? (
               <>
@@ -259,7 +259,7 @@ export function PersonalSection({
                 return (
                   <div
                     key={detail.label}
-                    className="flex items-center justify-between gap-4 border border-gold-dark bg-dark px-4 py-3"
+                    className="flex flex-col gap-2 border border-gold-dark bg-dark px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <p className="text-xs uppercase tracking-widest text-gray-light">
                       {detail.label}
@@ -304,7 +304,7 @@ export function PersonalSection({
                 return (
                   <div
                     key={detail.label}
-                    className="flex items-center justify-between gap-4 border border-gold-dark bg-dark px-4 py-3"
+                    className="flex flex-col gap-2 border border-gold-dark bg-dark px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <p className="text-xs uppercase tracking-widest text-gray-light">
                       {detail.label}
@@ -384,9 +384,16 @@ export function PersonalSection({
         </div>
 
         <div className="flex flex-col">
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => toggleItem("personal-notes")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                toggleItem("personal-notes");
+              }
+            }}
             className={`w-full p-4 text-left cursor-pointer border-2 border-gold-neutral  ${
               expandedItems.has("personal-notes")
                 ? "bg-light hover:bg-gray-light"
@@ -412,7 +419,7 @@ export function PersonalSection({
                 {expandedItems.has("personal-notes") ? "Close" : "Open"}
               </span>
             </div>
-          </button>
+          </div>
 
           {expandedItems.has("personal-notes") && (
             <div
@@ -425,9 +432,16 @@ export function PersonalSection({
 
                 return (
                   <div key={noteId} className="flex flex-col">
-                    <button
-                      type="button"
+                    <div
                       onClick={() => toggleItem(noteId)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          toggleItem(noteId);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
                       className={`w-full p-3 text-left cursor-pointer border border-gold-dark  ${
                         isNoteOpen
                           ? "bg-light hover:bg-gray-light"
@@ -476,7 +490,7 @@ export function PersonalSection({
                           />
                         </div>
                       </div>
-                    </button>
+                    </div>
 
                     {isNoteOpen && (
                       <div className="bg-dark p-3 border border-gold-dark text-sm text-neutral-text leading-7">
@@ -501,7 +515,7 @@ export function PersonalSection({
               {isEditing && (
                 <PreviewActionButton
                   onClick={handleAddNote}
-                  className="mt-2"
+                  className="mt-2 !bg-dark hover:!bg-light"
                   variant="primary"
                   icon={<Plus className="h-4 w-4" />}
                   title="Add new note"

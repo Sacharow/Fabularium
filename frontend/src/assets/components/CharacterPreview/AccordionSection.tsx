@@ -531,7 +531,7 @@ export function AccordionSection({
                     {!isCurrency && (
                       <PreviewActionButton
                         onClick={() => handleAddSubitem(index)}
-                        className="mt-2"
+                        className="mt-2 !bg-dark hover:!bg-light"
                         variant="primary"
                         icon={<Plus className="h-4 w-4" />}
                         title="Add new subitem"

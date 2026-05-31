@@ -230,7 +230,7 @@ export function CharacterSection({
           characters.map((character) => (
             <div
               key={character.id}
-              className="border-2 border-gold-neutral bg-neutral p-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+              className="border-2 border-gold-neutral bg-neutral p-6 flex flex-col gap-4 md:p-40 md:flex-row md:items-center md:justify-between"
             >
               <div className="flex items-center gap-3">
                 <div className="border border-gold-dark bg-dark p-2 text-gold-neutral">

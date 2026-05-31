@@ -78,4 +78,5 @@ export interface CharacterSectionProps {
   onEditModeChange?: (isEditing: boolean) => void;
   onContentChange?: (newContent: CharacterSection["content"]) => void;
   isOwner?: boolean;
+  onDelete?: () => Promise<void> | void;
 }

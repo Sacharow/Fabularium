@@ -7,15 +7,23 @@ function Hub() {
   return (
     <div className="min-h-screen ml-64 bg-dark text-neutral-text">
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-12 py-10">
-        <section className="border-2 border-gold-neutral bg-neutral p-14">
+        <section className="border-2 border-gold-neutral bg-neutral p-6 sm:p-10 lg:p-14">
           <div className="flex flex-col items-center gap-8 text-center">
-            <div className="flex items-center gap-6 text-gold-neutral">
+            <div className="flex items-center justify-center text-gold-neutral sm:hidden">
+              <D20 className="h-10 w-10" />
+            </div>
+
+            <div className="hidden items-center gap-6 text-gold-neutral sm:flex">
               <D20 className="h-14 w-14" />
-              <h1 className="text-5xl font-bold tracking-widest text-gold-neutral sm:text-6xl">
+              <h1 className="text-3xl font-bold tracking-widest text-gold-neutral sm:text-6xl md:text-5xl lg:text-6xl">
                 FABULARIUM
               </h1>
               <D20 className="h-14 w-14" />
             </div>
+
+            <h1 className="text-3xl font-bold text-gold-neutral sm:hidden">
+              FABULARIUM
+            </h1>
 
             <p className="max-w-3xl text-lg leading-8">
               A campaign manager for tabletop role-playing games, designed to
@@ -26,13 +34,13 @@ function Hub() {
             <div className="flex flex-wrap items-center justify-center gap-4">
               <NavLink
                 to="/sign-in"
-                className="border-2 border-gold-neutral bg-dark px-12 py-3 text-sm font-semibold uppercase hover:bg-gold-neutral"
+                className="border-2 border-gold-neutral bg-dark px-8 py-2 text-xs font-semibold uppercase tracking-widest hover:bg-gold-neutral sm:px-12 sm:py-3 sm:text-sm"
               >
                 Sign In
               </NavLink>
               <NavLink
                 to="/sign-up"
-                className="border-2 border-gold-neutral bg-dark px-12 py-3 text-sm font-semibold uppercase hover:bg-gold-neutral"
+                className="border-2 border-gold-neutral bg-dark px-8 py-2 text-xs font-semibold uppercase tracking-widest hover:bg-gold-neutral sm:px-12 sm:py-3 sm:text-sm"
               >
                 Sign Up
               </NavLink>
@@ -58,7 +66,7 @@ function Hub() {
           />
         </section>
 
-        <section className="border-2 border-gold-neutral bg-neutral px-12 py-10">
+        <section className="border-2 border-gold-neutral bg-neutral p-6 sm:p-10 lg:p-14">
           <div className="mb-8 flex items-end justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold uppercase text-gold-neutral tracking-widest">
@@ -79,12 +87,11 @@ function Hub() {
           </div>
         </section>
 
-        <section className="border-2 border-gold-neutral bg-neutral px-12 py-10">
+        <section className="border-2 border-gold-neutral bg-neutral p-6 sm:p-10 lg:p-14">
           <div className="mb-6 flex items-center justify-between gap-4">
             <h2 className="text-2xl font-semibold uppercase text-gold-neutral tracking-widest">
               Built by
             </h2>
-            <p className="text-sm text-text-neutral">Project contributors</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -101,7 +108,6 @@ function Hub() {
                 />
                 <div>
                   <p className="font-medium">{author}</p>
-                  <p className="text-sm text-text-neutral">GitHub profile</p>
                 </div>
               </NavLink>
             ))}

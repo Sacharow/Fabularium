@@ -188,7 +188,7 @@ export function NotesSection({
                       onChange={(e) =>
                         handleNoteChange(index, "content", e.target.value)
                       }
-                      className="w-full text-sm text-neutral-text bg-dark border border-gold-dark p-2  min-h-20"
+                      className="w-full text-sm text-neutral-text bg-dark border border-gold-dark p-2 min-h-20"
                     />
                   ) : (
                     <p className="text-sm text-gray-light">{it.content}</p>

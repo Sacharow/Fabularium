@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 
@@ -25,6 +25,13 @@ export default function CreateEntityModal({
   const [errors, setErrors] = useState<
     Partial<Record<keyof CreateEntityFormData, string>>
   >({});
+
+  useEffect(() => {
+    if (!open) {
+      setTitle("");
+      setErrors({});
+    }
+  }, [open]);
 
   if (!open) return null;
 

@@ -93,7 +93,8 @@ function CharacterCard({
             className="ml-2"
             onClick={(e) => e.stopPropagation()}
           >
-            View {connectedCampaign}
+            <span className="sm:hidden">View Campaign</span>
+            <span className="hidden sm:inline">View {connectedCampaign}</span>
             <ArrowRight size={18} className="inline ml-1 text-gold-neutral" />
           </NavLink>
         ) : (

@@ -21,6 +21,7 @@ export function GeneralSection({
     currentSession?: number;
     image?: string;
     campaignKey?: string;
+    notesCount?: number;
   };
   const [isEditing, setIsEditing] = useState(isEditMode);
   const [editedInfo, setEditedInfo] = useState(info);
@@ -363,6 +364,7 @@ export function GeneralSection({
               <PreviewActionButton
                 onClick={() => setShowDeleteModal(false)}
                 variant="secondary"
+                className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
               >
                 Cancel
               </PreviewActionButton>
@@ -372,6 +374,7 @@ export function GeneralSection({
                   setShowDeleteModal(false);
                 }}
                 variant="danger"
+                className="!bg-dark !text-neutral-text hover:!bg-error"
               >
                 Delete
               </PreviewActionButton>
