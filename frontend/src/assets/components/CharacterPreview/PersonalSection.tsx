@@ -156,7 +156,7 @@ export function PersonalSection({
               const value =
                 currentContent.details.find(
                   (d: PersonalDetail) => d.label === item.key,
-                )?.value || "-";
+                )?.value ?? "";
               return (
                 <div
                   key={item.label}
@@ -210,7 +210,7 @@ export function PersonalSection({
               const value =
                 currentContent.details.find(
                   (d: PersonalDetail) => d.label === item.key,
-                )?.value || "-";
+                )?.value ?? "";
               return (
                 <div
                   key={item.label}
@@ -384,16 +384,9 @@ export function PersonalSection({
         </div>
 
         <div className="flex flex-col">
-          <div
-            role="button"
-            tabIndex={0}
+          <button
+            type="button"
             onClick={() => toggleItem("personal-notes")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleItem("personal-notes");
-              }
-            }}
             className={`w-full p-4 text-left cursor-pointer border-2 border-gold-neutral  ${
               expandedItems.has("personal-notes")
                 ? "bg-light hover:bg-gray-light"
@@ -407,6 +400,10 @@ export function PersonalSection({
                 <h3 className="text-lg font-semibold text-neutral-text">
                   Notes
                 </h3>
+                <p className="text-xs uppercase tracking-widest text-gold-light mt-1">
+                  {currentContent.notes.length} note
+                  {currentContent.notes.length === 1 ? "" : "s"}
+                </p>
               </div>
               <span className="flex items-center gap-1 text-xs uppercase tracking-widest text-neutral-text flex-shrink-0">
                 <ChevronDown
@@ -419,68 +416,60 @@ export function PersonalSection({
                 {expandedItems.has("personal-notes") ? "Close" : "Open"}
               </span>
             </div>
-          </div>
+          </button>
 
           {expandedItems.has("personal-notes") && (
             <div
               id="personal-notes-panel"
-              className="bg-neutral border-2 border-t-0 border-gold-dark p-4 flex flex-col gap-3"
+              className={`border-2 border-t-0 border-gold-dark p-4 flex flex-col gap-3 ${
+                isEditing ? "bg-dark" : "bg-neutral"
+              }`}
             >
+              {currentContent.notes.length === 0 && !isEditing && (
+                <div className="border border-gold-dark bg-dark p-3">
+                  <p className="text-sm text-gray-light">No notes recorded</p>
+                </div>
+              )}
+
               {currentContent.notes.map((note: PersonalNote, index: number) => {
                 const noteId = `personal-note-${index}`;
                 const isNoteOpen = expandedItems.has(noteId);
+                const noteTitle = note.title.trim() || `Note ${index + 1}`;
 
                 return (
                   <div key={noteId} className="flex flex-col">
                     <div
-                      onClick={() => toggleItem(noteId)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          toggleItem(noteId);
-                        }
-                      }}
-                      role="button"
-                      tabIndex={0}
-                      className={`w-full p-3 text-left cursor-pointer border border-gold-dark  ${
-                        isNoteOpen
-                          ? "bg-light hover:bg-gray-light"
-                          : "bg-dark hover:bg-light"
+                      className={`flex items-stretch border border-gold-dark ${
+                        isEditing
+                          ? "bg-neutral hover:bg-light"
+                          : isNoteOpen
+                            ? "bg-light hover:bg-gray-light"
+                            : "bg-dark hover:bg-light"
                       }`}
-                      aria-expanded={isNoteOpen}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          {isEditing ? (
-                            <input
-                              type="text"
-                              value={note.title}
-                              placeholder="Title"
-                              onChange={(e) =>
-                                handleNoteChange(index, "title", e.target.value)
-                              }
-                              className="font-medium text-neutral-text bg-dark border border-gold-dark px-2 py-1 w-full"
-                            />
-                          ) : (
-                            <p className="font-medium text-neutral-text">
-                              {note.title}
-                            </p>
-                          )}
-                        </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleItem(noteId)}
+                        className="flex flex-1 items-center justify-between gap-4 p-3 text-left cursor-pointer"
+                        aria-expanded={isNoteOpen}
+                      >
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={note.title}
+                            placeholder={`Note ${index + 1}`}
+                            onChange={(e) =>
+                              handleNoteChange(index, "title", e.target.value)
+                            }
+                            className="font-medium text-neutral-text bg-dark border border-gold-dark px-2 py-1"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <p className="font-medium text-neutral-text">
+                            {noteTitle}
+                          </p>
+                        )}
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          {isEditing && (
-                            <PreviewActionButton
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveNote(index);
-                              }}
-                              variant="danger"
-                              className="p-1"
-                              title="Delete note"
-                            >
-                              <X className="h-3 w-3" />
-                            </PreviewActionButton>
-                          )}
                           <ChevronDown
                             className={`h-3 w-3  ${
                               isNoteOpen
@@ -489,11 +478,30 @@ export function PersonalSection({
                             }`}
                           />
                         </div>
-                      </div>
+                      </button>
+
+                      {isEditing && (
+                        <div className="flex items-center pr-2">
+                          <PreviewActionButton
+                            onClick={() => {
+                              handleRemoveNote(index);
+                            }}
+                            variant="danger"
+                            className="p-1 !bg-dark hover:!bg-light"
+                            title="Delete note"
+                          >
+                            <X className="h-3 w-3" />
+                          </PreviewActionButton>
+                        </div>
+                      )}
                     </div>
 
                     {isNoteOpen && (
-                      <div className="bg-dark p-3 border border-gold-dark text-sm text-neutral-text leading-7">
+                      <div
+                        className={`p-3 border border-t-0 border-gold-dark text-sm text-neutral-text leading-7 ${
+                          isEditing ? "bg-neutral" : "bg-dark"
+                        }`}
+                      >
                         {isEditing ? (
                           <textarea
                             value={note.content}

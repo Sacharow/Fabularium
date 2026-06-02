@@ -6,7 +6,7 @@ import type { CharacterSectionProps, StatDetail } from "./types";
 
 const generalSectionSchema = z.object({
   Name: z.string().trim().min(1, "Name is required"),
-  "Last Name": z.string().trim().min(1, "Last Name is required"),
+  "Last Name": z.string().trim().optional(),
   Nickname: z.string().trim().optional(),
   "Hit Points": z.union([z.string(), z.number()]).optional(),
   "Armor Class": z.union([z.string(), z.number()]).optional(),

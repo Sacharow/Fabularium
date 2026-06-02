@@ -41,6 +41,13 @@ model Character {
   flaws              String?
   ideals             String?
   personalityTraits  String?
+  languages          String?
+  height             String?
+  weight             Float?
+  eyeColor           String?
+  hairColor          String?
+  skinColor          String?
+  age                Int?
   icon               String?
   image              String?
   race               String?
@@ -66,11 +73,17 @@ model Character {
 model CharacterStats {
   characterId String    @id
   str         Int       @default(10)
+  strModifier Int?
   dex         Int       @default(10)
+  dexModifier Int?
   con         Int       @default(10)
+  conModifier Int?
   int         Int       @default(10)
+  intModifier Int?
   wis         Int       @default(10)
+  wisModifier Int?
   cha         Int       @default(10)
+  chaModifier Int?
   character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 }
 

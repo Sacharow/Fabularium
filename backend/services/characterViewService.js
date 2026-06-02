@@ -21,6 +21,7 @@ const getCharacterSectionById = async (characterId, userId) => {
           feature: { select: { id: true, name: true, description: true } },
         },
       },
+      characterEventLogs: true,
       inventoryItems: {
         include: {
           item: {

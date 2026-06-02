@@ -8,15 +8,16 @@ importers:
 
   .:
     dependencies:
-      zod:
-        specifier: ^4.4.2
-        version: 4.4.2
+      nodemailer:
+        specifier: ^8.0.10
+        version: 8.0.10
 
 packages:
 
-  zod@4.4.2:
-    resolution: {integrity: sha512-IynmDyxsEsb9RKzO3J9+4SxXnl2FTFSzNBaKKaMV6tsSk0rw9gYw9gs+JFCq/qk2LCZ78KDwyj+Z289TijSkUw==}
+  nodemailer@8.0.10:
+    resolution: {integrity: sha512-BLFuSth7QtHOkBzyqTehWWyub0NTRDuK2Q2SQfnGLsrJnzyU+Yeh4WpV1eZGuARFj1xQJHIdnTuJZLP+b9R1GQ==}
+    engines: {node: '>=6.0.0'}
 
 snapshots:
 
-  zod@4.4.2: {}
+  nodemailer@8.0.10: {}

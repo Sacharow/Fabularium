@@ -65,6 +65,17 @@ const mapCharacterToSection = (character) => {
         }
       : {},
 
+    statModifiers: character.stats
+      ? {
+          str: character.stats.strModifier,
+          dex: character.stats.dexModifier,
+          con: character.stats.conModifier,
+          int: character.stats.intModifier,
+          wis: character.stats.wisModifier,
+          cha: character.stats.chaModifier,
+        }
+      : {},
+
     // Saving throw proficiencies
     abilityProf: character.saves
       ? Object.keys(character.saves)
@@ -108,6 +119,13 @@ const mapCharacterToSection = (character) => {
           .map((skill) => skill.name)
       : [],
 
+    skillBonuses: character.skills
+      ? character.skills.reduce((acc, skill) => {
+          acc[skill.name] = skill.bonus ?? null;
+          return acc;
+        }, {})
+      : {},
+
     // Equipment from inventory
     equipment: character.inventoryItems
       ? character.inventoryItems
@@ -142,6 +160,24 @@ const mapCharacterToSection = (character) => {
     ideals: character.ideals,
     bonds: character.bonds,
     flaws: character.flaws,
+    height: character.height || null,
+    languages: character.languages || null,
+    notes: character.characterEventLogs
+      ? character.characterEventLogs
+          .filter((log) => log.type === "note")
+          .map((log) => {
+            const payload = log.payload || {};
+            return {
+              title: payload.title || "",
+              content: payload.content || "",
+            };
+          })
+      : [],
+    weight: character.weight ?? null,
+    eyeColor: character.eyeColor || null,
+    hairColor: character.hairColor || null,
+    skinColor: character.skinColor || null,
+    age: character.age ?? null,
 
     // Combat
     initiativeBonus: character.combat?.initiative,

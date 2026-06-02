@@ -16,7 +16,11 @@ const flattenRoutes = (router, prefix = "") => {
       continue;
     }
 
-    if (layer.name === "router" && layer.handle && Array.isArray(layer.handle.stack)) {
+    if (
+      layer.name === "router" &&
+      layer.handle &&
+      Array.isArray(layer.handle.stack)
+    ) {
       routes.push(...flattenRoutes(layer.handle, prefix));
     }
   }
@@ -65,11 +69,13 @@ const expectedCampaignRoutes = [
   "POST /:id/contributors",
   "DELETE /:id/contributors",
   "GET /:id/characters",
+  "DELETE /:id/characters/:characterId",
   "POST /:id/locations",
   "GET /:id/locations",
   "GET /:id/locations/:locationId",
   "PUT /:id/locations/:locationId",
   "DELETE /:id/locations/:locationId",
+  "PUT /:id/locations/:locationId/visibility",
   "GET /:id/maps",
   "POST /:id/maps",
   "GET /:id/maps/:mapId",
@@ -78,6 +84,7 @@ const expectedCampaignRoutes = [
   "POST /:id/missions",
   "PUT /:id/missions/:missionId",
   "DELETE /:id/missions/:missionId",
+  "PUT /:id/missions/:missionId/visibility",
   "POST /:id/notes",
   "PUT /:id/notes/:noteId",
   "DELETE /:id/notes/:noteId",
@@ -86,6 +93,7 @@ const expectedCampaignRoutes = [
   "GET /:id/npcs/:npcId",
   "PUT /:id/npcs/:npcId",
   "DELETE /:id/npcs/:npcId",
+  "PUT /:id/npcs/:npcId/visibility",
   "GET /:id/npcs",
   "GET /mission-npcs",
   "GET /mission-npcs/:MissionId/:npcId",
@@ -152,7 +160,11 @@ const campaignOk = assertRouteContract(
   campaignRoutes,
   expectedCampaignRoutes,
 );
-const systemOk = assertRouteContract("systemRoutes", systemRoutes, expectedSystemRoutes);
+const systemOk = assertRouteContract(
+  "systemRoutes",
+  systemRoutes,
+  expectedSystemRoutes,
+);
 
 if (!campaignOk || !systemOk) {
   process.exit(1);

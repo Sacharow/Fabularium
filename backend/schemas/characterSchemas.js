@@ -4,11 +4,17 @@ const z = require("zod");
 
 const statsSchema = z.object({
   str: z.number().int().min(1).max(30),
+  strModifier: z.number().int().optional().nullable(),
   dex: z.number().int().min(1).max(30),
+  dexModifier: z.number().int().optional().nullable(),
   con: z.number().int().min(1).max(30),
+  conModifier: z.number().int().optional().nullable(),
   int: z.number().int().min(1).max(30),
+  intModifier: z.number().int().optional().nullable(),
   wis: z.number().int().min(1).max(30),
+  wisModifier: z.number().int().optional().nullable(),
   cha: z.number().int().min(1).max(30),
+  chaModifier: z.number().int().optional().nullable(),
 });
 
 const savesSchema = z.object({
@@ -101,9 +107,34 @@ const createCharacterSchema = z.object({
   campaignId: z.string().optional(),
   personalityTraits: z.string().optional(),
   ideals: z.string().optional(),
+  languages: z.string().optional(),
+  notes: z
+    .array(
+      z.object({
+        title: z.string().optional(),
+        content: z.string().optional(),
+      }),
+    )
+    .optional(),
   bonds: z.string().optional(),
   flaws: z.string().optional(),
+  height: z.string().optional(),
+  weight: z.number().nullable().optional(),
+  eyeColor: z.string().optional(),
+  hairColor: z.string().optional(),
+  skinColor: z.string().optional(),
+  age: z.number().int().nullable().optional(),
   stats: statsSchema.optional(),
+  statModifiers: z
+    .object({
+      str: z.number().int().optional().nullable(),
+      dex: z.number().int().optional().nullable(),
+      con: z.number().int().optional().nullable(),
+      int: z.number().int().optional().nullable(),
+      wis: z.number().int().optional().nullable(),
+      cha: z.number().int().optional().nullable(),
+    })
+    .optional(),
 });
 
 const updateCharacterSchema = z.object({
@@ -127,9 +158,34 @@ const updateCharacterSchema = z.object({
   campaignId: z.string().nullable().optional(),
   personalityTraits: z.string().nullable().optional(),
   ideals: z.string().nullable().optional(),
+  languages: z.string().nullable().optional(),
+  notes: z
+    .array(
+      z.object({
+        title: z.string().optional(),
+        content: z.string().optional(),
+      }),
+    )
+    .optional(),
   bonds: z.string().nullable().optional(),
   flaws: z.string().nullable().optional(),
+  height: z.string().nullable().optional(),
+  weight: z.number().nullable().optional(),
+  eyeColor: z.string().nullable().optional(),
+  hairColor: z.string().nullable().optional(),
+  skinColor: z.string().nullable().optional(),
+  age: z.number().int().nullable().optional(),
   stats: statsSchema.optional(),
+  statModifiers: z
+    .object({
+      str: z.number().int().optional().nullable(),
+      dex: z.number().int().optional().nullable(),
+      con: z.number().int().optional().nullable(),
+      int: z.number().int().optional().nullable(),
+      wis: z.number().int().optional().nullable(),
+      cha: z.number().int().optional().nullable(),
+    })
+    .optional(),
   saves: savesSchema.optional(),
   skills: z.array(skillSchema).optional(),
   combat: combatSchema.optional(),
