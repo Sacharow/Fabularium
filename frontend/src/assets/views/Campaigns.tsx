@@ -111,7 +111,7 @@ function Campaigns() {
                 description={c.description}
                 image={c.photo ?? undefined}
                 players={(c.contributors?.length ?? 0) + 1}
-                currentSession={c.currentSession ?? "-"}
+                currentSession={c.currentSession ?? ""}
               />
             ))
           )}
@@ -143,7 +143,7 @@ function Campaigns() {
                 description={c.description}
                 image={c.photo ?? undefined}
                 players={(c.contributors?.length ?? 0) + 1}
-                currentSession={c.currentSession ?? "-"}
+                currentSession={c.currentSession ?? ""}
               />
             ))
           )}

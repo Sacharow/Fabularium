@@ -43,7 +43,7 @@ export function GeneralSection({
   const getGeneralStat = (name: string) =>
     (isEditing
       ? editedContent.find((stat) => stat.name === name)?.value
-      : generalStats.find((stat) => stat.name === name)?.value) ?? "-";
+      : generalStats.find((stat) => stat.name === name)?.value) ?? "";
 
   const handleEdit = () => {
     setIsEditing(true);
