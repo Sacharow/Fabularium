@@ -28,3 +28,6 @@ dist-ssr
 
 # Source of data stays local for now
 src/assets/data
+
+# Personal files
+tmp/*
