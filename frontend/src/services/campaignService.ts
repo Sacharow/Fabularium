@@ -63,6 +63,19 @@ export const campaignService = {
     if (!res.ok) throw new Error("Failed to update campaign");
     return res.json();
   },
+  async joinCampaign(joinCode: string) {
+    const res = await fetch(`${API_URL}/api/campaigns/join`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ joinCode }),
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.message || "Failed to join campaign");
+    }
+    return res.json();
+  },
   async createLocation(id: string, data: CampaignSectionItemWithLinks) {
     const res = await fetch(`${API_URL}/api/campaigns/${id}/locations`, {
       method: "POST",
@@ -318,6 +331,21 @@ export const campaignService = {
     });
     if (!res.ok && res.status !== 204) {
       throw new Error("Failed to delete campaign");
+    }
+    return true;
+  },
+  async removeContributor(campaignId: string, userId: string) {
+    const res = await fetch(
+      `${API_URL}/api/campaigns/${campaignId}/contributors`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ userId }),
+      },
+    );
+    if (!res.ok && res.status !== 204) {
+      throw new Error("Failed to leave campaign");
     }
     return true;
   },

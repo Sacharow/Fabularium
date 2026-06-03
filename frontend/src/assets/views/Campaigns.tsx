@@ -17,6 +17,8 @@ interface Campaign {
 function Campaigns() {
   const { isAuthenticated, isLoading: authLoading, user } = useAuth();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [joinCode, setJoinCode] = useState("");
+  const [isJoining, setIsJoining] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,6 +50,34 @@ function Campaigns() {
 
   if (!isAuthenticated) return <Navigate to="/sign-in" replace />;
 
+  const refreshCampaigns = async () => {
+    const data = await campaignService.getCampaigns();
+    setCampaigns(data);
+  };
+
+  const handleJoinCampaign = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const trimmedJoinCode = joinCode.trim();
+    if (!trimmedJoinCode) {
+      setError("Enter a campaign key.");
+      return;
+    }
+
+    setIsJoining(true);
+    setError(null);
+
+    try {
+      await campaignService.joinCampaign(trimmedJoinCode);
+      setJoinCode("");
+      await refreshCampaigns();
+    } catch (err: any) {
+      setError(err.message || "Failed to join campaign");
+    } finally {
+      setIsJoining(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen ml-64 bg-dark px-6 py-10 text-gray-light flex items-center justify-center">
@@ -60,22 +90,28 @@ function Campaigns() {
   const playerCampaigns = campaigns.filter((c) => c.ownerId !== user?.id);
 
   return (
-    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex flex-col gap-12">
+    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-6 sm:p-12 flex flex-col gap-12">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold tracking-widest">MY CAMPAIGNS</h1>
-        <form className="flex items-stretch gap-2 w-full max-w-lg justify-end">
+        <form
+          className="flex items-stretch gap-2 w-full max-w-lg justify-end"
+          onSubmit={handleJoinCampaign}
+        >
           <div className="flex-1 max-w-sm border-2 border-gold-neutral bg-neutral px-3 h-10 flex items-center">
             <input
               type="text"
               placeholder="ENTER JOIN KEY"
+              value={joinCode}
+              onChange={(event) => setJoinCode(event.target.value)}
               className="w-full bg-transparent text-neutral-text placeholder:text-neutral-text/50 outline-none tracking-widest text-sm"
             />
           </div>
           <button
-            type="button"
-            className="border-2 border-gold-neutral bg-neutral px-4 h-10 text-sm tracking-widest font-bold hover:bg-gold-neutral cursor-pointer"
+            type="submit"
+            disabled={isJoining}
+            className="border-2 border-gold-neutral bg-neutral px-4 h-10 text-sm tracking-widest font-bold hover:bg-gold-neutral cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           >
-            JOIN CAMPAIGN
+            {isJoining ? "JOINING..." : "JOIN CAMPAIGN"}
           </button>
         </form>
       </div>
@@ -97,7 +133,7 @@ function Campaigns() {
             {dmCampaigns.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {dmCampaigns.length === 0 ? (
             <div className="text-gray-light">
               No campaigns found where you're the DM.
@@ -129,7 +165,7 @@ function Campaigns() {
             {playerCampaigns.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {playerCampaigns.length === 0 ? (
             <div className="text-gray-light">
               No campaigns found where you're a player.

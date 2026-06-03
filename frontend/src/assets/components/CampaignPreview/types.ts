@@ -30,7 +30,7 @@ export interface NoteItem {
 
 export interface PlayersContent {
   dm: { name: string; note?: string } | null;
-  players: { name: string; role?: string }[];
+  players: { id: string; name: string; role?: string }[];
 }
 
 export type CampaignSectionKey =

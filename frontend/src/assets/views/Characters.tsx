@@ -66,7 +66,7 @@ function Characters() {
   }
 
   return (
-    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex flex-col gap-12">
+    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-6 sm:p-12 flex flex-col gap-12">
       <h1 className="text-2xl font-bold tracking-widest">MY CHARACTERS</h1>
       {error && (
         <div className="bg-red-900 border border-error p-4 rounded text-error">
@@ -78,7 +78,7 @@ function Characters() {
           No characters yet. Create your first character to get started!
         </div>
       ) : (
-        <div className="grid grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {characters.map((character) => (
             <CharacterCard
               key={character.id}

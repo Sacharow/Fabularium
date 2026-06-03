@@ -61,7 +61,7 @@ function CharacterCard({
       <div className="flex flex-col gap-4">
         <hr className="text-gold-dark" />
         <p className="text-lg tracking-widest">STATS</p>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             ["HP", hp],
             ["AC", armorClass],

@@ -162,6 +162,7 @@ export const buildSectionContent = (campaign: CampaignRecord) => {
   const players: PlayersContent = {
     dm: campaign.owner ? { name: campaign.owner.name } : null,
     players: (campaign.contributors ?? []).map((contributor) => ({
+      id: contributor.id,
       name: contributor.name,
       role: "Contributor",
     })),

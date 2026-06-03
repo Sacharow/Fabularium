@@ -372,7 +372,7 @@ function CampaignPreviewView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex items-center justify-center">
+      <div className="min-h-screen ml-64 bg-dark text-neutral-text p-6 sm:p-12 flex items-center justify-center">
         Loading campaign...
       </div>
     );
@@ -380,7 +380,7 @@ function CampaignPreviewView() {
 
   if (!campaignId) {
     return (
-      <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex flex-col gap-4">
+      <div className="min-h-screen ml-64 bg-dark text-neutral-text p-6 sm:p-12 flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-widest">CAMPAIGN SHEET</h1>
         <p className="text-sm text-gray-light max-w-2xl">
           Open a campaign from the campaigns list to load live backend data.
@@ -391,7 +391,7 @@ function CampaignPreviewView() {
 
   if (error) {
     return (
-      <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex flex-col gap-4">
+      <div className="min-h-screen ml-64 bg-dark text-neutral-text p-6 sm:p-12 flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-widest">CAMPAIGN SHEET</h1>
         <p className="text-sm text-red-400">{error}</p>
       </div>
@@ -504,10 +504,12 @@ function CampaignPreviewView() {
                 players: [],
               }
             }
+            campaignId={campaign?.id}
             campaignKey={campaign?.joinCode}
             onGenerateJoinCode={() => {
               void handleGenerateJoinCode();
             }}
+            onRefreshCampaign={refreshCampaign}
             campaignOwnerId={campaign?.owner?.id}
           />
         );
@@ -529,7 +531,7 @@ function CampaignPreviewView() {
   };
 
   return (
-    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex flex-col gap-12">
+    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-6 sm:p-12 flex flex-col gap-12">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-widest">CAMPAIGN SHEET</h1>
         <p className="text-sm text-gray-light max-w-2xl">

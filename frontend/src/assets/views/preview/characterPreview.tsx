@@ -301,7 +301,7 @@ function CharacterPreview() {
   };
 
   return (
-    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-12 flex flex-col gap-12">
+    <div className="min-h-screen ml-64 bg-dark text-neutral-text p-6 sm:p-12 flex flex-col gap-12">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-widest">
           {characterData?.name ?? "CHARACTER SHEET"}
