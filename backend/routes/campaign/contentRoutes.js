@@ -15,6 +15,8 @@ const {
   createMission,
   updateMission,
   deleteMission,
+  toggleLocationVisibility,
+  toggleMissionVisibility,
   createNote,
   updateNote,
   deleteNote,
@@ -26,6 +28,11 @@ router.get("/:id/locations", auth, listCampaignLocations);
 router.get("/:id/locations/:locationId", auth, getLocation);
 router.put("/:id/locations/:locationId", auth, updateLocation);
 router.delete("/:id/locations/:locationId", auth, deleteLocation);
+router.put(
+  "/:id/locations/:locationId/visibility",
+  auth,
+  toggleLocationVisibility,
+);
 
 router.get("/:id/maps", auth, listCampaignMaps);
 router.post("/:id/maps", auth, createMap);
@@ -36,6 +43,11 @@ router.delete("/:id/maps/:mapId", auth, deleteMap);
 router.post("/:id/missions", auth, createMission);
 router.put("/:id/missions/:missionId", auth, updateMission);
 router.delete("/:id/missions/:missionId", auth, deleteMission);
+router.put(
+  "/:id/missions/:missionId/visibility",
+  auth,
+  toggleMissionVisibility,
+);
 
 router.post("/:id/notes", auth, createNote);
 router.put("/:id/notes/:noteId", auth, updateNote);

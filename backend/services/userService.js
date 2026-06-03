@@ -72,6 +72,7 @@ const getUserById = async (userId) => {
     select: {
       id: true,
       name: true,
+      bio: true,
       email: true,
       role: true,
       createdAt: true,
@@ -86,6 +87,27 @@ const getUserById = async (userId) => {
   return { user };
 };
 
+const updateUserProfile = async (userId, updates) => {
+  const user = await prisma.users.update({
+    where: { id: userId },
+    data: {
+      name: updates.name,
+      bio: updates.bio ?? "",
+    },
+    select: {
+      id: true,
+      name: true,
+      bio: true,
+      email: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return { user };
+};
+
 module.exports = {
   createClassicUser,
   authenticateUser,
@@ -93,4 +115,5 @@ module.exports = {
   verifyRefreshToken,
   listAllUsers,
   getUserById,
+  updateUserProfile,
 };

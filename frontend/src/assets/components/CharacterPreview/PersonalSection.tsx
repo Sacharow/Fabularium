@@ -19,6 +19,7 @@ export function PersonalSection({
   isEditMode = false,
   onEditModeChange,
   onContentChange,
+  isOwner = false,
 }: PersonalSectionProps) {
   const personalContent = content as PersonalSectionContent;
   const [isEditing, setIsEditing] = useState(isEditMode);
@@ -90,39 +91,41 @@ export function PersonalSection({
   return (
     <div className="flex flex-col gap-6">
       {/* Header with Edit Button */}
-      <div className="flex items-center justify-between gap-4 px-2">
+      <div className="flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold text-neutral-text">
           Personal Details
         </h2>
-        <div className="flex items-center gap-2">
-          {isEditing ? (
-            <>
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          {isOwner ? (
+            isEditing ? (
+              <>
+                <PreviewActionButton
+                  onClick={handleSave}
+                  variant="primary"
+                  icon={<Check className="h-4 w-4" />}
+                  title="Save changes"
+                >
+                  Save
+                </PreviewActionButton>
+                <PreviewActionButton
+                  onClick={handleCancel}
+                  variant="secondary"
+                  icon={<X className="h-4 w-4" />}
+                  title="Cancel editing"
+                >
+                  Cancel
+                </PreviewActionButton>
+              </>
+            ) : (
               <PreviewActionButton
-                onClick={handleSave}
-                variant="primary"
-                icon={<Check className="h-4 w-4" />}
-                title="Save changes"
+                onClick={handleEdit}
+                variant="ghost"
+                title="Edit this section"
               >
-                Save
+                Edit
               </PreviewActionButton>
-              <PreviewActionButton
-                onClick={handleCancel}
-                variant="secondary"
-                icon={<X className="h-4 w-4" />}
-                title="Cancel editing"
-              >
-                Cancel
-              </PreviewActionButton>
-            </>
-          ) : (
-            <PreviewActionButton
-              onClick={handleEdit}
-              variant="ghost"
-              title="Edit this section"
-            >
-              Edit
-            </PreviewActionButton>
-          )}
+            )
+          ) : null}
         </div>
       </div>
 
@@ -153,7 +156,7 @@ export function PersonalSection({
               const value =
                 currentContent.details.find(
                   (d: PersonalDetail) => d.label === item.key,
-                )?.value || "-";
+                )?.value ?? "";
               return (
                 <div
                   key={item.label}
@@ -207,7 +210,7 @@ export function PersonalSection({
               const value =
                 currentContent.details.find(
                   (d: PersonalDetail) => d.label === item.key,
-                )?.value || "-";
+                )?.value ?? "";
               return (
                 <div
                   key={item.label}
@@ -256,7 +259,7 @@ export function PersonalSection({
                 return (
                   <div
                     key={detail.label}
-                    className="flex items-center justify-between gap-4 border border-gold-dark bg-dark px-4 py-3"
+                    className="flex flex-col gap-2 border border-gold-dark bg-dark px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <p className="text-xs uppercase tracking-widest text-gray-light">
                       {detail.label}
@@ -301,7 +304,7 @@ export function PersonalSection({
                 return (
                   <div
                     key={detail.label}
-                    className="flex items-center justify-between gap-4 border border-gold-dark bg-dark px-4 py-3"
+                    className="flex flex-col gap-2 border border-gold-dark bg-dark px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <p className="text-xs uppercase tracking-widest text-gray-light">
                       {detail.label}
@@ -397,6 +400,10 @@ export function PersonalSection({
                 <h3 className="text-lg font-semibold text-neutral-text">
                   Notes
                 </h3>
+                <p className="text-xs uppercase tracking-widest text-gold-light mt-1">
+                  {currentContent.notes.length} note
+                  {currentContent.notes.length === 1 ? "" : "s"}
+                </p>
               </div>
               <span className="flex items-center gap-1 text-xs uppercase tracking-widest text-neutral-text flex-shrink-0">
                 <ChevronDown
@@ -414,56 +421,55 @@ export function PersonalSection({
           {expandedItems.has("personal-notes") && (
             <div
               id="personal-notes-panel"
-              className="bg-neutral border-2 border-t-0 border-gold-dark p-4 flex flex-col gap-3"
+              className={`border-2 border-t-0 border-gold-dark p-4 flex flex-col gap-3 ${
+                isEditing ? "bg-dark" : "bg-neutral"
+              }`}
             >
+              {currentContent.notes.length === 0 && !isEditing && (
+                <div className="border border-gold-dark bg-dark p-3">
+                  <p className="text-sm text-gray-light">No notes recorded</p>
+                </div>
+              )}
+
               {currentContent.notes.map((note: PersonalNote, index: number) => {
                 const noteId = `personal-note-${index}`;
                 const isNoteOpen = expandedItems.has(noteId);
+                const noteTitle = note.title.trim() || `Note ${index + 1}`;
 
                 return (
                   <div key={noteId} className="flex flex-col">
-                    <button
-                      type="button"
-                      onClick={() => toggleItem(noteId)}
-                      className={`w-full p-3 text-left cursor-pointer border border-gold-dark  ${
-                        isNoteOpen
-                          ? "bg-light hover:bg-gray-light"
-                          : "bg-dark hover:bg-light"
+                    <div
+                      className={`flex items-stretch border border-gold-dark ${
+                        isEditing
+                          ? "bg-neutral hover:bg-light"
+                          : isNoteOpen
+                            ? "bg-light hover:bg-gray-light"
+                            : "bg-dark hover:bg-light"
                       }`}
-                      aria-expanded={isNoteOpen}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          {isEditing ? (
-                            <input
-                              type="text"
-                              value={note.title}
-                              placeholder="Title"
-                              onChange={(e) =>
-                                handleNoteChange(index, "title", e.target.value)
-                              }
-                              className="font-medium text-neutral-text bg-dark border border-gold-dark px-2 py-1 w-full"
-                            />
-                          ) : (
-                            <p className="font-medium text-neutral-text">
-                              {note.title}
-                            </p>
-                          )}
-                        </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleItem(noteId)}
+                        className="flex flex-1 items-center justify-between gap-4 p-3 text-left cursor-pointer"
+                        aria-expanded={isNoteOpen}
+                      >
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={note.title}
+                            placeholder={`Note ${index + 1}`}
+                            onChange={(e) =>
+                              handleNoteChange(index, "title", e.target.value)
+                            }
+                            className="font-medium text-neutral-text bg-dark border border-gold-dark px-2 py-1"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <p className="font-medium text-neutral-text">
+                            {noteTitle}
+                          </p>
+                        )}
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          {isEditing && (
-                            <PreviewActionButton
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveNote(index);
-                              }}
-                              variant="danger"
-                              className="p-1"
-                              title="Delete note"
-                            >
-                              <X className="h-3 w-3" />
-                            </PreviewActionButton>
-                          )}
                           <ChevronDown
                             className={`h-3 w-3  ${
                               isNoteOpen
@@ -472,11 +478,30 @@ export function PersonalSection({
                             }`}
                           />
                         </div>
-                      </div>
-                    </button>
+                      </button>
+
+                      {isEditing && (
+                        <div className="flex items-center pr-2">
+                          <PreviewActionButton
+                            onClick={() => {
+                              handleRemoveNote(index);
+                            }}
+                            variant="danger"
+                            className="p-1 !bg-dark hover:!bg-light"
+                            title="Delete note"
+                          >
+                            <X className="h-3 w-3" />
+                          </PreviewActionButton>
+                        </div>
+                      )}
+                    </div>
 
                     {isNoteOpen && (
-                      <div className="bg-dark p-3 border border-gold-dark text-sm text-neutral-text leading-7">
+                      <div
+                        className={`p-3 border border-t-0 border-gold-dark text-sm text-neutral-text leading-7 ${
+                          isEditing ? "bg-neutral" : "bg-dark"
+                        }`}
+                      >
                         {isEditing ? (
                           <textarea
                             value={note.content}
@@ -498,7 +523,7 @@ export function PersonalSection({
               {isEditing && (
                 <PreviewActionButton
                   onClick={handleAddNote}
-                  className="mt-2"
+                  className="mt-2 !bg-dark hover:!bg-light"
                   variant="primary"
                   icon={<Plus className="h-4 w-4" />}
                   title="Add new note"

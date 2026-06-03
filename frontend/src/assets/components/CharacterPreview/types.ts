@@ -32,6 +32,9 @@ export interface AccordionItem {
   title: string;
   content: string | StatDetail[];
   subitems?: AccordionItem[];
+  // Equipment-specific fields
+  type?: string;
+  weight?: number;
 }
 
 export interface PersonalDetail {
@@ -74,4 +77,6 @@ export interface CharacterSectionProps {
   isEditMode?: boolean;
   onEditModeChange?: (isEditing: boolean) => void;
   onContentChange?: (newContent: CharacterSection["content"]) => void;
+  isOwner?: boolean;
+  onDelete?: () => Promise<void> | void;
 }

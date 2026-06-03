@@ -9,10 +9,17 @@ export interface TextCard {
   id: string;
   title: string;
   content: string;
+  isPublic?: boolean;
   section1Title?: string;
   section1Items?: RelatedItem[];
   section2Title?: string;
   section2Items?: RelatedItem[];
+  linkedLocationIds?: string[];
+  linkedNpcIds?: string[];
+  linkedMissionIds?: string[];
+  allLocations?: RelatedItem[];
+  allNpcs?: RelatedItem[];
+  allMissions?: RelatedItem[];
 }
 
 export interface NoteItem {
@@ -23,11 +30,12 @@ export interface NoteItem {
 
 export interface PlayersContent {
   dm: { name: string; note?: string } | null;
-  players: { name: string; role?: string }[];
+  players: { id: string; name: string; role?: string }[];
 }
 
 export type CampaignSectionKey =
   | "general"
+  | "characters"
   | "locations"
   | "npcs"
   | "quests"
@@ -50,4 +58,5 @@ export interface CampaignSectionInteractiveProps extends CampaignSectionProps {
   isEditMode?: boolean;
   onEditModeChange?: (isEditing: boolean) => void;
   onContentChange?: (newContent: CampaignSection["content"]) => void;
+  onDeleteCampaign?: () => void;
 }

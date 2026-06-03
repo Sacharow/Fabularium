@@ -2,7 +2,11 @@
 require("dotenv").config();
 const { Role } = require("../generated/prisma/client");
 const z = require("zod");
-const { registerSchema, loginSchema } = require("../schemas/userSchemas");
+const {
+  registerSchema,
+  loginSchema,
+  updateProfileSchema,
+} = require("../schemas/userSchemas");
 const {
   createClassicUser,
   authenticateUser,
@@ -10,6 +14,7 @@ const {
   verifyRefreshToken,
   listAllUsers,
   getUserById,
+  updateUserProfile,
 } = require("../services/userService");
 
 const createUserClassic = async (req, res) => {
@@ -17,12 +22,10 @@ const createUserClassic = async (req, res) => {
     const data = registerSchema.safeParse(req.body);
 
     if (!data.success) {
-      return res
-        .status(400)
-        .json({
-          message: "Validation failed",
-          errors: z.treeifyError(data.error),
-        });
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: z.treeifyError(data.error),
+      });
     }
     const user = await createClassicUser(data.data);
     return res.status(201).json(user);
@@ -38,17 +41,17 @@ const login = async (req, res) => {
     const data = loginSchema.safeParse(req.body);
 
     if (!data.success) {
-      return res
-        .status(400)
-        .json({
-          message: "Validation failed",
-          errors: z.treeifyError(data.error),
-        });
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: z.treeifyError(data.error),
+      });
     }
 
     const authResult = await authenticateUser(data.data);
     if (authResult.error) {
-      return res.status(authResult.error.status).json({ message: authResult.error.message });
+      return res
+        .status(authResult.error.status)
+        .json({ message: authResult.error.message });
     }
 
     const { accessToken, refreshToken } = authResult;
@@ -160,6 +163,30 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+const updateCurrentUser = async (req, res) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Not logged in" });
+    }
+
+    const data = updateProfileSchema.safeParse(req.body);
+    if (!data.success) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: z.treeifyError(data.error),
+      });
+    }
+
+    const { user } = await updateUserProfile(req.user.id, data.data);
+
+    return res.status(200).json(user);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Błąd przy aktualizacji użytkownika", error: err });
+  }
+};
+
 module.exports = {
   getAllUsers,
   createUserClassic,
@@ -167,4 +194,5 @@ module.exports = {
   logout,
   refresh,
   getCurrentUser,
+  updateCurrentUser,
 };

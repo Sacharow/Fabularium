@@ -47,4 +47,20 @@ export const authService = {
 
     return response.json();
   },
+
+  async updateProfile(data: { name: string; bio: string }) {
+    const response = await fetch(`${API_URL}/api/users/me`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const payload = await response.json().catch(() => null);
+      throw new Error(payload?.message || "Profile update failed");
+    }
+
+    return response.json();
+  },
 };

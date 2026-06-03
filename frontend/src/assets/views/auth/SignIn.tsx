@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { z } from "zod";
 import { Mail, Eye, EyeOff } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 const signInSchema = z.object({
   email: z.email().min(1, "Email is required").max(255, "Email is too long"),
@@ -12,6 +13,8 @@ const signInSchema = z.object({
 });
 
 const SignIn = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading, login, error, clearError } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -36,8 +39,9 @@ const SignIn = () => {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    clearError();
 
     const result = signInSchema.safeParse(formData);
 
@@ -52,8 +56,26 @@ const SignIn = () => {
       return;
     }
 
-    setFieldErrors({});
+    try {
+      await login({ email: formData.email, password: formData.password });
+      setFieldErrors({});
+      navigate("/profile", { replace: true });
+    } catch {
+      // Error is surfaced from auth context.
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="h-screen ml-64 bg-dark flex items-center justify-center px-6 text-gray-light">
+        Loading your session...
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/profile" replace />;
+  }
 
   return (
     <div className="h-screen ml-64 bg-dark flex items-center justify-center px-6">
@@ -131,6 +153,9 @@ const SignIn = () => {
             >
               SIGN IN
             </button>
+            {error ? (
+              <p className="text-sm text-error text-center">{error}</p>
+            ) : null}
 
             <hr className="text-gold-neutral" />
           </form>

@@ -174,7 +174,7 @@ function Contact() {
               <div className="flex gap-3">
                 <button
                   type="submit"
-                  className="px-4 py-2 border border-gold-neutral hover:bg-gold-neutral cursor-pointer"
+                  className="px-4 py-2 border border-gold-neutral hover:bg-gold-neutral bg-dark cursor-pointer"
                 >
                   Send
                 </button>
@@ -190,7 +190,7 @@ function Contact() {
                     setErrors({});
                     setSubmitted(false);
                   }}
-                  className="px-4 py-2 border border-gold-neutral text-text-neutral hover:bg-gold-neutral cursor-pointer"
+                  className="px-4 py-2 border border-gold-neutral text-text-neutral hover:bg-gold-neutral bg-dark cursor-pointer"
                 >
                   Clear
                 </button>

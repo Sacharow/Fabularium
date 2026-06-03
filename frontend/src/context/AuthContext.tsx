@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
 
 interface User {
   id: string;
   name: string;
+  bio: string;
   email: string;
   role: string;
   createdAt?: string;
@@ -17,6 +18,7 @@ interface AuthContextType {
   login: (credentials: any) => Promise<void>;
   register: (data: any) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (updates: Partial<User>) => Promise<void>;
   clearError: () => void;
 }
 
@@ -33,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const checkAuth = async () => {
       setIsLoading(true);
       try {
-        const { authService } = await import('../services/authService');
+        const { authService } = await import("../services/authService");
         const me = await authService.me();
         setUser(me);
         setIsAuthenticated(true);
@@ -51,9 +53,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     setError(null);
     try {
-      const { authService } = await import('../services/authService');
-      const res = await authService.login(credentials);
-      setUser(res.user);
+      const { authService } = await import("../services/authService");
+      await authService.login(credentials);
+      const me = await authService.me();
+      setUser(me);
       setIsAuthenticated(true);
     } catch (err: any) {
       setError(err.message);
@@ -67,8 +70,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     setError(null);
     try {
-      const { authService } = await import('../services/authService');
-      await authService.register(data);
+      const { authService } = await import("../services/authService");
+      const res = await authService.register(data);
+      if (res?.user) {
+        setUser(res.user);
+      }
+      setIsAuthenticated(true);
     } catch (err: any) {
       setError(err.message);
       throw err;
@@ -78,16 +85,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    const { authService } = await import('../services/authService');
+    const { authService } = await import("../services/authService");
     await authService.logout();
     setIsAuthenticated(false);
     setUser(null);
   };
 
+  const updateUser = async (updates: Partial<User>) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      if (!user) {
+        throw new Error("Unauthenticated");
+      }
+
+      const { authService } = await import("../services/authService");
+      const nextUser = await authService.updateProfile({
+        name: updates.name ?? user.name,
+        bio: updates.bio ?? user.bio ?? "",
+      });
+
+      setUser(nextUser);
+      setIsAuthenticated(true);
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const clearError = () => setError(null);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, error, login, register, logout, clearError }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        isLoading,
+        error,
+        login,
+        register,
+        logout,
+        updateUser,
+        clearError,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -95,6 +138,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 }

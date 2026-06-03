@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import { z } from "zod";
-import { Check, X, Copy, Trash } from "lucide-react";
+import { Check, X, Copy, Trash, Upload, X as XIcon } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 import type { CampaignSectionInteractiveProps } from "./types";
 
@@ -9,15 +10,18 @@ export function GeneralSection({
   isEditMode = false,
   onEditModeChange,
   onContentChange,
-}: CampaignSectionInteractiveProps) {
+  onDeleteCampaign,
+  campaignOwnerId,
+}: CampaignSectionInteractiveProps & { campaignOwnerId?: string }) {
   const info = content as {
     title?: string;
     description?: string;
-    theme?: string;
+    managedByAuthor?: string;
     players?: number;
-    sessions?: string;
+    currentSession?: number;
     image?: string;
     campaignKey?: string;
+    notesCount?: number;
   };
   const [isEditing, setIsEditing] = useState(isEditMode);
   const [editedInfo, setEditedInfo] = useState(info);
@@ -41,9 +45,8 @@ export function GeneralSection({
     const generalSchema = z.object({
       title: z.string().min(1, "Title is required"),
       description: z.string().optional(),
-      theme: z.string().optional(),
       players: z.number().optional(),
-      sessions: z.union([z.string(), z.number()]).optional(),
+      currentSession: z.number().int().optional(),
       image: z.string().optional(),
       campaignKey: z.string().optional(),
     });
@@ -88,7 +91,25 @@ export function GeneralSection({
     });
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        handleFieldChange("image", result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    handleFieldChange("image", undefined);
+  };
+
   const currentInfo = isEditing ? editedInfo : info;
+  const { user } = useAuth();
+  const isOwner = user?.id && campaignOwnerId && user.id === campaignOwnerId;
 
   return (
     <div className="flex flex-col gap-6">
@@ -116,7 +137,7 @@ export function GeneralSection({
                 Cancel
               </PreviewActionButton>
             </>
-          ) : (
+          ) : isOwner ? (
             <PreviewActionButton
               onClick={handleEdit}
               variant="ghost"
@@ -124,15 +145,17 @@ export function GeneralSection({
             >
               Edit
             </PreviewActionButton>
+          ) : null}
+          {isOwner && (
+            <PreviewActionButton
+              onClick={() => setShowDeleteModal(true)}
+              variant="danger"
+              icon={<Trash className="h-4 w-4" />}
+              title="Delete campaign"
+            >
+              Delete
+            </PreviewActionButton>
           )}
-          <PreviewActionButton
-            onClick={() => setShowDeleteModal(true)}
-            variant="danger"
-            icon={<Trash className="h-4 w-4" />}
-            title="Delete campaign"
-          >
-            Delete
-          </PreviewActionButton>
         </div>
       </div>
 
@@ -171,19 +194,6 @@ export function GeneralSection({
                   />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs uppercase tracking-widest text-gray-light">
-                    Theme
-                  </label>
-                  <input
-                    type="text"
-                    value={currentInfo.theme || ""}
-                    placeholder="Campaign theme"
-                    onChange={(e) => handleFieldChange("theme", e.target.value)}
-                    className="text-lg font-semibold text-neutral-text bg-dark border border-gold-dark p-2 "
-                  />
-                </div>
-
                 <div className="grid gap-3 sm:grid-cols-3">
                   <div className="flex flex-col gap-2">
                     <label className="text-xs uppercase tracking-widest text-gray-light">
@@ -206,15 +216,57 @@ export function GeneralSection({
                       Session
                     </label>
                     <input
-                      type="text"
-                      value={currentInfo.sessions || ""}
+                      type="number"
+                      value={currentInfo.currentSession ?? ""}
                       placeholder="Current session"
                       onChange={(e) =>
-                        handleFieldChange("sessions", e.target.value)
+                        handleFieldChange(
+                          "currentSession",
+                          e.target.value === ""
+                            ? undefined
+                            : parseInt(e.target.value, 10),
+                        )
                       }
                       className="text-lg font-semibold text-neutral-text bg-dark border border-gold-dark p-2 "
                     />
                   </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs uppercase tracking-widest text-gray-light">
+                    Campaign Image
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gold-dark bg-dark hover:bg-light cursor-pointer">
+                      <Upload className="h-4 w-4 text-gray-light" />
+                      <span className="text-sm text-gray-light">
+                        {currentInfo.image ? "Change Image" : "Upload Image"}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    {currentInfo.image && (
+                      <PreviewActionButton
+                        onClick={handleRemoveImage}
+                        variant="danger"
+                        icon={<XIcon className="h-4 w-4" />}
+                        title="Remove image"
+                      />
+                    )}
+                  </div>
+                  {currentInfo.image && (
+                    <div className="w-full h-144 overflow-hidden border border-gold-dark">
+                      <img
+                        src={currentInfo.image}
+                        alt="Campaign preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </>
@@ -230,11 +282,8 @@ export function GeneralSection({
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs uppercase tracking-widest text-gray-light">
-                    Theme
-                  </p>
                   <p className="text-lg font-semibold text-neutral-text">
-                    {currentInfo.theme}
+                    {`MANAGED BY ${currentInfo.managedByAuthor ?? "Unknown"}`}
                   </p>
                 </div>
               </div>
@@ -255,14 +304,16 @@ export function GeneralSection({
                     Current Session
                   </p>
                   <p className="text-lg font-semibold text-neutral-text">
-                    {currentInfo.sessions ?? "—"}
+                    {currentInfo.currentSession ?? "—"}
                   </p>
                 </div>
                 <div className="border border-gold-dark bg-dark p-3">
                   <p className="text-xs uppercase tracking-widest text-gray-light">
                     Notes
                   </p>
-                  <p className="text-lg font-semibold text-neutral-text">—</p>
+                  <p className="text-lg font-semibold text-neutral-text">
+                    {currentInfo.notesCount ?? 0}
+                  </p>
                 </div>
               </div>
 
@@ -313,17 +364,17 @@ export function GeneralSection({
               <PreviewActionButton
                 onClick={() => setShowDeleteModal(false)}
                 variant="secondary"
+                className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
               >
                 Cancel
               </PreviewActionButton>
               <PreviewActionButton
                 onClick={() => {
-                  // Placeholder delete action
-                  // Integrate with deletion logic where appropriate
-                  console.log("Campaign delete confirmed (placeholder)");
+                  onDeleteCampaign?.();
                   setShowDeleteModal(false);
                 }}
                 variant="danger"
+                className="!bg-dark !text-neutral-text hover:!bg-error"
               >
                 Delete
               </PreviewActionButton>

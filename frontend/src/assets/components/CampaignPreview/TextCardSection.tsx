@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Check, X, Plus, Trash2 } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";
+import { ChevronDown, Check, X, Plus } from "lucide-react";
 import { PreviewActionButton } from "../CharacterPreview/PreviewActionButton";
 import type { TextCard } from "./types";
 
@@ -9,6 +10,7 @@ interface Props {
   isEditMode?: boolean;
   onEditModeChange?: (isEditing: boolean) => void;
   onContentChange?: (newItems: TextCard[]) => void;
+  onToggleVisibility?: (itemId: string, isPublic: boolean) => Promise<void>;
 }
 
 export function TextCardSection({
@@ -17,10 +19,15 @@ export function TextCardSection({
   isEditMode = false,
   onEditModeChange,
   onContentChange,
-}: Props) {
+  onToggleVisibility,
+  campaignOwnerId,
+}: Props & { campaignOwnerId?: string }) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [isEditing, setIsEditing] = useState(isEditMode);
   const [editedItems, setEditedItems] = useState<TextCard[]>(items);
+  const [togglingItemId, setTogglingItemId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const isOwner = user?.id && campaignOwnerId && user.id === campaignOwnerId;
 
   const toggleItem = (itemId: string) => {
     setExpandedItems((prev) => {
@@ -68,7 +75,31 @@ export function TextCardSection({
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
     );
   };
-
+  const handleLinkedItemsChange = (
+    index: number,
+    itemType: "locations" | "npcs" | "missions",
+    itemId: string,
+    checked: boolean,
+  ) => {
+    setEditedItems((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        const fieldName =
+          itemType === "locations"
+            ? "linkedLocationIds"
+            : itemType === "missions"
+              ? "linkedMissionIds"
+              : "linkedNpcIds";
+        const current = item[fieldName] ?? [];
+        return {
+          ...item,
+          [fieldName]: checked
+            ? [...current, itemId]
+            : current.filter((id) => id !== itemId),
+        };
+      }),
+    );
+  };
   const handleAddItem = () => {
     setEditedItems((prev) => [
       ...prev,
@@ -76,6 +107,7 @@ export function TextCardSection({
         id: `new-${Date.now()}`,
         title: "New Item",
         content: "Description",
+        isPublic: false,
       },
     ]);
   };
@@ -84,7 +116,43 @@ export function TextCardSection({
     setEditedItems((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleToggleVisibility = async (item: TextCard) => {
+    if (!onToggleVisibility) {
+      return;
+    }
+
+    setTogglingItemId(item.id);
+    try {
+      await onToggleVisibility(item.id, !(item.isPublic ?? false));
+    } finally {
+      setTogglingItemId(null);
+    }
+  };
+
   const currentItems = isEditing ? editedItems : items;
+
+  const renderLinkCheckbox = (
+    checked: boolean,
+    onChange: (checked: boolean) => void,
+    label: string,
+    key: string,
+  ) => (
+    <label
+      key={key}
+      className="group flex items-center gap-2 cursor-pointer text-sm text-neutral-text"
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="peer sr-only"
+      />
+      <span className="h-4 w-4 border-2 border-gold-dark bg-dark inline-flex items-center justify-center transition-colors peer-checked:bg-gold-neutral peer-checked:border-gold-neutral peer-focus-visible:outline-2 peer-focus-visible:outline-gold-light group-hover:border-gold-neutral">
+        <Check className="h-3 w-3 text-dark opacity-0 transition-opacity peer-checked:opacity-100" />
+      </span>
+      <span>{label}</span>
+    </label>
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -110,7 +178,7 @@ export function TextCardSection({
                 Cancel
               </PreviewActionButton>
             </>
-          ) : (
+          ) : isOwner ? (
             <PreviewActionButton
               onClick={handleEdit}
               variant="ghost"
@@ -118,7 +186,7 @@ export function TextCardSection({
             >
               Edit
             </PreviewActionButton>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -139,7 +207,7 @@ export function TextCardSection({
                     toggleItem(itemId);
                   }
                 }}
-                className={`w-full p-4 text-left cursor-pointer border-2 border-gold-neutral  ${
+                className={`w-full p-3 text-left cursor-pointer border-2 border-gold-neutral  ${
                   isOpen
                     ? "bg-light hover:bg-gray-light"
                     : "bg-neutral hover:bg-light"
@@ -147,7 +215,7 @@ export function TextCardSection({
                 aria-expanded={isOpen}
                 aria-controls={`${itemId}-panel`}
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center justify-between gap-3">
                   <div className="flex-1">
                     {isEditing ? (
                       <input
@@ -158,15 +226,52 @@ export function TextCardSection({
                           handleItemChange(index, "title", e.target.value)
                         }
                         onClick={(e) => e.stopPropagation()}
-                        className="text-lg font-semibold text-neutral-text bg-dark border border-gold-dark px-2 py-1  w-full"
+                        className="font-medium text-neutral-text bg-dark border border-gold-dark px-2 py-1"
                       />
                     ) : (
-                      <h3 className="text-lg font-semibold text-neutral-text">
-                        {it.title}
-                      </h3>
+                      <div className="flex items-center justify-between gap-3">
+                        <h3 className="text-lg font-semibold text-neutral-text">
+                          {it.title}
+                        </h3>
+                        {isOwner && (
+                          <div
+                            className="!bg-dark border-2 border-gold-neutral text-neutral-text w-24 px-2 py-1 text-xs font-semibold uppercase tracking-widest flex items-center justify-center"
+                            aria-label={
+                              (it.isPublic ?? false)
+                                ? "Public visibility"
+                                : "Private visibility"
+                            }
+                            title={
+                              (it.isPublic ?? false)
+                                ? "Public visibility"
+                                : "Private visibility"
+                            }
+                          >
+                            <span className="w-full text-center">
+                              {(it.isPublic ?? false) ? "PUBLIC" : "PRIVATE"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    {isEditing && isOwner && onToggleVisibility && (
+                      <PreviewActionButton
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await handleToggleVisibility(it);
+                        }}
+                        variant="ghost"
+                        className="relative z-10 !bg-dark hover:!bg-gold-neutral w-24 justify-center px-2 py-1 text-xs"
+                        title="Toggle visibility"
+                        disabled={togglingItemId === it.id}
+                      >
+                        <span className="w-full text-center text-xs">
+                          {(it.isPublic ?? false) ? "PUBLIC" : "PRIVATE"}
+                        </span>
+                      </PreviewActionButton>
+                    )}
                     {isEditing && (
                       <PreviewActionButton
                         onClick={(e) => {
@@ -174,14 +279,14 @@ export function TextCardSection({
                           handleRemoveItem(index);
                         }}
                         variant="danger"
-                        className="p-1"
+                        className="relative z-10 !bg-dark hover:!bg-error p-1 flex items-center justify-center self-stretch"
                         title="Delete item"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <X className="h-3 w-3" />
                       </PreviewActionButton>
                     )}
                     <ChevronDown
-                      className={`h-4 w-4  flex-shrink-0 ${
+                      className={`h-4 w-4 flex-shrink-0 ${
                         isOpen ? "rotate-180 text-gold-neutral" : ""
                       }`}
                     />
@@ -192,17 +297,98 @@ export function TextCardSection({
               {isOpen && (
                 <div
                   id={`${itemId}-panel`}
-                  className="bg-neutral border-2 border-t-0 border-gold-dark p-4 flex flex-col gap-4"
+                  className="bg-neutral border-2 border-t-0 border-gold-dark p-3 flex flex-col gap-3"
                 >
                   {isEditing ? (
-                    <textarea
-                      value={it.content}
-                      placeholder="Item description"
-                      onChange={(e) =>
-                        handleItemChange(index, "content", e.target.value)
-                      }
-                      className="w-full text-sm text-neutral-text bg-dark border border-gold-dark p-2  min-h-20"
-                    />
+                    <>
+                      <textarea
+                        value={it.content}
+                        placeholder="Item description"
+                        onChange={(e) =>
+                          handleItemChange(index, "content", e.target.value)
+                        }
+                        className="w-full text-sm text-neutral-text bg-dark border border-gold-dark p-2 min-h-16"
+                      />
+
+                      {/* Linked Locations (edit mode) */}
+                      {it.allLocations && it.allLocations.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          <p className="text-xs uppercase tracking-widest text-gray-light">
+                            Link Locations
+                          </p>
+                          <div className="flex flex-col gap-1 bg-dark p-2 border border-gold-dark rounded">
+                            {it.allLocations.map((location) =>
+                              renderLinkCheckbox(
+                                (it.linkedLocationIds ?? []).includes(
+                                  location.id,
+                                ),
+                                (isChecked) =>
+                                  handleLinkedItemsChange(
+                                    index,
+                                    "locations",
+                                    location.id,
+                                    isChecked,
+                                  ),
+                                location.title,
+                                location.id,
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Linked NPCs (edit mode) */}
+                      {it.allNpcs && it.allNpcs.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          <p className="text-xs uppercase tracking-widest text-gray-light">
+                            Link NPCs
+                          </p>
+                          <div className="flex flex-col gap-1 bg-dark p-2 border border-gold-dark rounded">
+                            {it.allNpcs.map((npc) =>
+                              renderLinkCheckbox(
+                                (it.linkedNpcIds ?? []).includes(npc.id),
+                                (isChecked) =>
+                                  handleLinkedItemsChange(
+                                    index,
+                                    "npcs",
+                                    npc.id,
+                                    isChecked,
+                                  ),
+                                npc.title,
+                                npc.id,
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Linked Quests (edit mode) */}
+                      {it.allMissions && it.allMissions.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          <p className="text-xs uppercase tracking-widest text-gray-light">
+                            Link Quests
+                          </p>
+                          <div className="flex flex-col gap-1 bg-dark p-2 border border-gold-dark rounded">
+                            {it.allMissions.map((mission) =>
+                              renderLinkCheckbox(
+                                (it.linkedMissionIds ?? []).includes(
+                                  mission.id,
+                                ),
+                                (isChecked) =>
+                                  handleLinkedItemsChange(
+                                    index,
+                                    "missions",
+                                    mission.id,
+                                    isChecked,
+                                  ),
+                                mission.title,
+                                mission.id,
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <p className="text-sm text-gold-light">{it.content}</p>
                   )}
@@ -260,7 +446,7 @@ export function TextCardSection({
         {currentItems.length === 0 && (
           <p className="text-sm text-gray-neutral">None</p>
         )}
-        {isEditing && (
+        {isEditing && isOwner && (
           <PreviewActionButton
             onClick={handleAddItem}
             variant="primary"

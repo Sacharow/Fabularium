@@ -36,7 +36,12 @@ const createCampaign = async (req, res) => {
 
 const getCampaigns = async (req, res) => {
   try {
-    const campaigns = await campaignService.listCampaigns();
+    const user = req.user;
+    if (!user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const campaigns = await campaignService.listCampaigns(user.id);
     return res.status(200).json(campaigns);
   } catch (err) {
     return res
@@ -49,7 +54,8 @@ const getCampaignById = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const campaign = await campaignService.getCampaignById(id);
+    const viewerId = req.user?.id;
+    const campaign = await campaignService.getCampaignById(id, viewerId);
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
     return res.status(200).json(campaign);
@@ -189,9 +195,7 @@ const addContributor = async (req, res) => {
         .status(400)
         .json({ message: "Validation failed", errors: parsed.error });
     }
-    const ownerCheck = await campaignService.getCampaignOwnerById(
-      campaignId,
-    );
+    const ownerCheck = await campaignService.getCampaignOwnerById(campaignId);
     if (!ownerCheck) {
       return res.status(404).json({ message: "Campaign not found" });
     }
@@ -221,13 +225,16 @@ const removeContributor = async (req, res) => {
         .status(400)
         .json({ message: "Validation failed", errors: parsed.error });
     }
-    const ownerCheck = await campaignService.getCampaignOwnerById(
-      campaignId,
-    );
+    const ownerCheck = await campaignService.getCampaignOwnerById(campaignId);
     if (!ownerCheck) {
       return res.status(404).json({ message: "Campaign not found" });
     }
-    if (ownerCheck.ownerId !== user.id) {
+
+    if (ownerCheck.ownerId === user.id) {
+      if (parsed.data.userId === user.id) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+    } else if (parsed.data.userId !== user.id) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
@@ -278,6 +285,38 @@ const listCampaignCharacters = async (req, res) => {
   }
 };
 
+const disconnectCampaignCharacter = async (req, res) => {
+  try {
+    const user = req.user;
+    const campaignId = req.params.id;
+    const characterId = req.params.characterId;
+
+    const ownerCheck = await campaignService.getCampaignOwnerById(campaignId);
+    if (!ownerCheck) {
+      return res.status(404).json({ message: "Campaign not found" });
+    }
+
+    if (ownerCheck.ownerId !== user.id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const disconnected = await campaignService.disconnectCharacterFromCampaign(
+      campaignId,
+      characterId,
+    );
+
+    if (!disconnected) {
+      return res.status(404).json({ message: "Character not found" });
+    }
+
+    return res.status(204).send();
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Failed to disconnect character", error: String(err) });
+  }
+};
+
 module.exports = {
   createCampaign,
   getCampaigns,
@@ -290,4 +329,5 @@ module.exports = {
   removeContributor,
   listContributors,
   listCampaignCharacters,
+  disconnectCampaignCharacter,
 };

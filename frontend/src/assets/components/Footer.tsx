@@ -2,8 +2,8 @@ import { NavLink } from "react-router-dom";
 
 function Footer() {
   return (
-    <div className=" text-neutral-text px-8 py-10">
-      <div className="flex flex-row justify-center gap-12 mb-6">
+    <div className="px-8 py-10 text-neutral-text">
+      <div className="mb-6 flex flex-col items-center justify-center gap-4 text-center sm:flex-row sm:gap-12">
         <NavLink
           to="/contact"
           className="text-sm text-gold-neutral hover:text-gold-light uppercase tracking-wide"

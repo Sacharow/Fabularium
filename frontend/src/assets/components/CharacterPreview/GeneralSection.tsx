@@ -6,7 +6,7 @@ import type { CharacterSectionProps, StatDetail } from "./types";
 
 const generalSectionSchema = z.object({
   Name: z.string().trim().min(1, "Name is required"),
-  "Last Name": z.string().trim().min(1, "Last Name is required"),
+  "Last Name": z.string().trim().optional(),
   Nickname: z.string().trim().optional(),
   "Hit Points": z.union([z.string(), z.number()]).optional(),
   "Armor Class": z.union([z.string(), z.number()]).optional(),
@@ -30,6 +30,8 @@ export function GeneralSection({
   isEditMode = false,
   onEditModeChange,
   onContentChange,
+  isOwner = false,
+  onDelete,
 }: GeneralSectionProps) {
   const generalStats = content as StatDetail[];
   const [isEditing, setIsEditing] = useState(isEditMode);
@@ -41,7 +43,7 @@ export function GeneralSection({
   const getGeneralStat = (name: string) =>
     (isEditing
       ? editedContent.find((stat) => stat.name === name)?.value
-      : generalStats.find((stat) => stat.name === name)?.value) ?? "-";
+      : generalStats.find((stat) => stat.name === name)?.value) ?? "";
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -93,47 +95,52 @@ export function GeneralSection({
   return (
     <div className="flex flex-col gap-6">
       {/* Header with Edit Button */}
-      <div className="flex items-center justify-between gap-4 px-2">
+      <div className="flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold text-neutral-text">
           General Information
         </h2>
-        <div className="flex items-center gap-2">
-          {isEditing ? (
-            <>
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          {isOwner ? (
+            isEditing ? (
+              <>
+                <PreviewActionButton
+                  onClick={handleSave}
+                  variant="primary"
+                  icon={<Check className="h-4 w-4" />}
+                  title="Save changes"
+                >
+                  Save
+                </PreviewActionButton>
+                <PreviewActionButton
+                  onClick={handleCancel}
+                  variant="secondary"
+                  icon={<X className="h-4 w-4" />}
+                  title="Cancel editing"
+                >
+                  Cancel
+                </PreviewActionButton>
+              </>
+            ) : (
               <PreviewActionButton
-                onClick={handleSave}
-                variant="primary"
-                icon={<Check className="h-4 w-4" />}
-                title="Save changes"
+                onClick={handleEdit}
+                variant="ghost"
+                title="Edit this section"
               >
-                Save
+                Edit
               </PreviewActionButton>
-              <PreviewActionButton
-                onClick={handleCancel}
-                variant="secondary"
-                icon={<X className="h-4 w-4" />}
-                title="Cancel editing"
-              >
-                Cancel
-              </PreviewActionButton>
-            </>
-          ) : (
+            )
+          ) : null}
+
+          {isOwner ? (
             <PreviewActionButton
-              onClick={handleEdit}
-              variant="ghost"
-              title="Edit this section"
+              onClick={() => setShowDeleteModal(true)}
+              variant="danger"
+              icon={<Trash className="h-4 w-4" />}
+              title="Delete character"
             >
-              Edit
+              Delete
             </PreviewActionButton>
-          )}
-          <PreviewActionButton
-            onClick={() => setShowDeleteModal(true)}
-            variant="danger"
-            icon={<Trash className="h-4 w-4" />}
-            title="Delete character"
-          >
-            Delete
-          </PreviewActionButton>
+          ) : null}
         </div>
       </div>
 
@@ -151,7 +158,7 @@ export function GeneralSection({
                     value={getGeneralStat("Name")}
                     placeholder="Name"
                     onChange={(e) => handleValueChange("Name", e.target.value)}
-                    className="text-4xl font-bold text-neutral-text bg-dark border border-gold-dark p-2 "
+                    className="w-full max-w-full min-w-0 text-4xl font-bold text-neutral-text bg-dark border border-gold-dark p-2"
                   />
                   {errors.Name && (
                     <p className="text-xs text-error mt-1">{errors.Name}</p>
@@ -163,7 +170,7 @@ export function GeneralSection({
                     onChange={(e) =>
                       handleValueChange("Last Name", e.target.value)
                     }
-                    className="text-2xl font-bold text-neutral-text bg-dark border border-gold-dark p-2 "
+                    className="w-full max-w-full min-w-0 text-2xl font-bold text-neutral-text bg-dark border border-gold-dark p-2"
                   />
                   {errors["Last Name"] && (
                     <p className="text-xs text-error mt-1">
@@ -187,7 +194,7 @@ export function GeneralSection({
                     onChange={(e) =>
                       handleValueChange("Nickname", e.target.value)
                     }
-                    className="text-sm text-neutral-text bg-dark border border-gold-dark p-2 "
+                    className="w-full max-w-full min-w-0 text-sm text-neutral-text bg-dark border border-gold-dark p-2"
                   />
                   {errors.Nickname && (
                     <p className="text-xs text-error mt-1">{errors.Nickname}</p>
@@ -224,7 +231,7 @@ export function GeneralSection({
                       onChange={(e) =>
                         handleValueChange(item.label, e.target.value)
                       }
-                      className="text-2xl font-bold text-neutral-text bg-neutral border border-gold-dark p-2 "
+                      className="w-full max-w-full min-w-0 text-2xl font-bold text-neutral-text bg-neutral border border-gold-dark p-2"
                     />
                     {errors[item.label] && (
                       <p className="text-xs text-error">{errors[item.label]}</p>
@@ -276,7 +283,7 @@ export function GeneralSection({
                       onChange={(e) =>
                         handleValueChange(item.label, e.target.value)
                       }
-                      className="text-lg font-semibold text-neutral-text bg-neutral border border-gold-dark p-2 "
+                      className="w-full max-w-full min-w-0 text-lg font-semibold text-neutral-text bg-neutral border border-gold-dark p-2"
                     />
                     {errors[item.label] && (
                       <p className="text-xs text-error">{errors[item.label]}</p>
@@ -356,7 +363,7 @@ export function GeneralSection({
                         onChange={(e) =>
                           handleValueChange(item.label, e.target.value)
                         }
-                        className="text-base font-semibold text-neutral-text bg-neutral border border-gold-dark px-2 py-1  text-right"
+                        className="w-full max-w-full min-w-0 text-base font-semibold text-neutral-text bg-neutral border border-gold-dark px-2 py-1 text-right"
                       />
                       {errors[item.label] && (
                         <p className="text-xs text-error">
@@ -390,17 +397,17 @@ export function GeneralSection({
               <PreviewActionButton
                 onClick={() => setShowDeleteModal(false)}
                 variant="secondary"
+                className="!bg-dark !text-neutral-text hover:!bg-gold-neutral"
               >
                 Cancel
               </PreviewActionButton>
               <PreviewActionButton
                 onClick={() => {
-                  // Placeholder delete action
-                  // Integrate with deletion logic where appropriate
-                  console.log("Character delete confirmed (placeholder)");
+                  onDelete?.();
                   setShowDeleteModal(false);
                 }}
                 variant="danger"
+                className="!bg-dark !text-neutral-text hover:!bg-error"
               >
                 Delete
               </PreviewActionButton>
