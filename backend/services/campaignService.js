@@ -35,8 +35,15 @@ const createCampaignForOwner = async (campaignData, ownerId) => {
   });
 };
 
-const listCampaigns = async () => {
+const listCampaigns = async (userId) => {
+  if (!userId) {
+    return [];
+  }
+
   return prisma.campaign.findMany({
+    where: {
+      OR: [{ ownerId: userId }, { contributors: { some: { id: userId } } }],
+    },
     include: { owner: true, contributors: true },
     orderBy: { name: "asc" },
   });
@@ -150,6 +157,30 @@ const addContributorToCampaign = async (campaignId, userId) => {
 };
 
 const removeContributorFromCampaign = async (campaignId, userId) => {
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    select: {
+      ownerId: true,
+      contributors: { select: { id: true } },
+    },
+  });
+
+  if (!campaign) {
+    return null;
+  }
+
+  if (campaign.ownerId === userId) {
+    return null;
+  }
+
+  const isContributor = campaign.contributors.some(
+    (contributor) => contributor.id === userId,
+  );
+
+  if (!isContributor) {
+    return null;
+  }
+
   return prisma.campaign.update({
     where: { id: campaignId },
     data: { contributors: { disconnect: { id: userId } } },

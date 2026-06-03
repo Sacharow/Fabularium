@@ -36,7 +36,12 @@ const createCampaign = async (req, res) => {
 
 const getCampaigns = async (req, res) => {
   try {
-    const campaigns = await campaignService.listCampaigns();
+    const user = req.user;
+    if (!user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const campaigns = await campaignService.listCampaigns(user.id);
     return res.status(200).json(campaigns);
   } catch (err) {
     return res
@@ -224,7 +229,12 @@ const removeContributor = async (req, res) => {
     if (!ownerCheck) {
       return res.status(404).json({ message: "Campaign not found" });
     }
-    if (ownerCheck.ownerId !== user.id) {
+
+    if (ownerCheck.ownerId === user.id) {
+      if (parsed.data.userId === user.id) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+    } else if (parsed.data.userId !== user.id) {
       return res.status(403).json({ message: "Forbidden" });
     }
 

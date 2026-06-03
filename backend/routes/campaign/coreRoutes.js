@@ -17,7 +17,7 @@ const {
 } = require("../../controllers/campaignControllers");
 const { auth } = require("../../middleware/safety");
 
-router.get("/", getCampaigns);
+router.get("/", auth, getCampaigns);
 router.get("/:id", auth, getCampaignById);
 router.post("/", auth, createCampaign);
 router.put("/:id", auth, updateCampaign);

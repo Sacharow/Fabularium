@@ -164,7 +164,9 @@ const upsertSpellByName = async (tx, spellName, spellData) => {
 
 const createCharacterForUser = async (userId, data) => {
   const createData = {
-    ownerId: userId,
+    owner: {
+      connect: { id: userId },
+    },
     name: data.name ?? "New Character",
     image: data.image ?? null,
     icon: data.icon ?? null,
@@ -173,12 +175,11 @@ const createCharacterForUser = async (userId, data) => {
     level: data.level ?? 1,
     profBonus: data.profBonus ?? null,
     xp: data.xp ?? 0,
-    inspiration: data.inspiration ?? null,
+    inspiration: data.inspiration ?? false,
     race: data.race ?? data.raceId ?? null,
     class: data.class ?? data.classId ?? null,
     subclass: data.subclass ?? data.subclassId ?? null,
     subrace: data.subrace ?? data.subraceId ?? null,
-    campaignId: data.campaignId ?? null,
     personalityTraits: data.personalityTraits ?? null,
     ideals: data.ideals ?? null,
     languages: data.languages ?? null,
@@ -191,6 +192,12 @@ const createCharacterForUser = async (userId, data) => {
     skinColor: data.skinColor ?? null,
     age: data.age === undefined ? null : data.age,
   };
+
+  if (data.campaignId) {
+    createData.campaign = {
+      connect: { id: data.campaignId },
+    };
+  }
 
   const character = await prisma.character.create({
     data: createData,
