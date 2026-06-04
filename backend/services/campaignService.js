@@ -359,6 +359,15 @@ const deleteMapById = async (id) => {
 };
 
 const createMission = async (data) => {
+  const linkedLocationIds = Array.isArray(data.linkedLocationIds)
+    ? data.linkedLocationIds
+    : data.locationId
+      ? [data.locationId]
+      : [];
+  const linkedNpcIds = Array.isArray(data.linkedNpcIds)
+    ? data.linkedNpcIds
+    : [];
+
   return prisma.mission.create({
     data: {
       title: data.title,
@@ -366,7 +375,28 @@ const createMission = async (data) => {
       status: data.status,
       campaignId: data.campaignId,
       isPublic: typeof data.isPublic === "boolean" ? data.isPublic : false,
-      ...(data.locationId ? { locationId: data.locationId } : {}),
+      ...(linkedLocationIds.length > 0
+        ? {
+            missionLocations: {
+              create: linkedLocationIds.map((locationId) => ({
+                location: { connect: { id: locationId } },
+              })),
+            },
+          }
+        : {}),
+      ...(linkedNpcIds.length > 0
+        ? {
+            missionNpcs: {
+              create: linkedNpcIds.map((npcId) => ({
+                npc: { connect: { id: npcId } },
+              })),
+            },
+          }
+        : {}),
+    },
+    include: {
+      missionLocations: { include: { location: true } },
+      missionNpcs: { include: { npc: true } },
     },
   });
 };

@@ -27,6 +27,11 @@ const characterUpdateInclude = {
       item: true,
     },
   },
+  // Include saves and skills so update responses contain them
+  saves: true,
+  skills: true,
+  // Include combat stats
+  combat: true,
 };
 
 const ensureOwnership = async (characterId, userId) => {
@@ -441,6 +446,49 @@ const updateOwnedCharacter = async (characterId, userId, data) => {
         }
       }
 
+      // Saving throws (CharacterSaves) upsert
+      if (data.saves) {
+        await tx.characterSaves.upsert({
+          where: { characterId },
+          update: {
+            strProficient: data.saves.strProficient ?? false,
+            dexProficient: data.saves.dexProficient ?? false,
+            conProficient: data.saves.conProficient ?? false,
+            intProficient: data.saves.intProficient ?? false,
+            wisProficient: data.saves.wisProficient ?? false,
+            chaProficient: data.saves.chaProficient ?? false,
+          },
+          create: {
+            characterId,
+            strProficient: data.saves.strProficient ?? false,
+            dexProficient: data.saves.dexProficient ?? false,
+            conProficient: data.saves.conProficient ?? false,
+            intProficient: data.saves.intProficient ?? false,
+            wisProficient: data.saves.wisProficient ?? false,
+            chaProficient: data.saves.chaProficient ?? false,
+          },
+        });
+      }
+
+      // Skills: replace existing skills if payload provided
+      if (Array.isArray(data.skills)) {
+        await tx.characterSkill.deleteMany({ where: { characterId } });
+
+        if (data.skills.length > 0) {
+          const skillRows = data.skills.map((s) => ({
+            characterId,
+            name: String(s.name || "").trim(),
+            proficient: !!s.proficient,
+            expertise: !!s.expertise,
+            bonus:
+              s.bonus === undefined || s.bonus === null
+                ? null
+                : Number(s.bonus),
+          }));
+
+          await tx.characterSkill.createMany({ data: skillRows });
+        }
+      }
       if (data.money) {
         await tx.characterCurrency.upsert({
           where: { characterId },
@@ -448,6 +496,77 @@ const updateOwnedCharacter = async (characterId, userId, data) => {
           create: {
             characterId,
             ...normalizeMoney(data.money),
+          },
+        });
+      }
+
+      // Combat stats upsert
+      if (data.combat) {
+        await tx.characterCombatStats.upsert({
+          where: { characterId },
+          update: {
+            hp:
+              data.combat.hp === undefined ? undefined : Number(data.combat.hp),
+            hpMax:
+              data.combat.hpMax === undefined
+                ? undefined
+                : Number(data.combat.hpMax),
+            ac: data.combat.ac === undefined ? undefined : data.combat.ac,
+            initiative:
+              data.combat.initiative === undefined
+                ? undefined
+                : data.combat.initiative,
+            speed:
+              data.combat.speed === undefined
+                ? undefined
+                : Number(data.combat.speed),
+            hitDiceType:
+              data.combat.hitDiceType === undefined
+                ? undefined
+                : data.combat.hitDiceType,
+            hitDiceCurrent:
+              data.combat.hitDiceCurrent === undefined
+                ? undefined
+                : data.combat.hitDiceCurrent,
+            hitDiceTotal:
+              data.combat.hitDiceTotal === undefined
+                ? undefined
+                : data.combat.hitDiceTotal,
+            passivePerception:
+              data.combat.passivePerception === undefined
+                ? undefined
+                : data.combat.passivePerception,
+          },
+          create: {
+            characterId,
+            hp: data.combat.hp === undefined ? 0 : Number(data.combat.hp),
+            hpMax:
+              data.combat.hpMax === undefined ? 0 : Number(data.combat.hpMax),
+            ac: data.combat.ac === undefined ? null : data.combat.ac,
+            initiative:
+              data.combat.initiative === undefined
+                ? null
+                : data.combat.initiative,
+            speed:
+              data.combat.speed === undefined
+                ? null
+                : Number(data.combat.speed),
+            hitDiceType:
+              data.combat.hitDiceType === undefined
+                ? null
+                : data.combat.hitDiceType,
+            hitDiceCurrent:
+              data.combat.hitDiceCurrent === undefined
+                ? null
+                : data.combat.hitDiceCurrent,
+            hitDiceTotal:
+              data.combat.hitDiceTotal === undefined
+                ? null
+                : data.combat.hitDiceTotal,
+            passivePerception:
+              data.combat.passivePerception === undefined
+                ? null
+                : data.combat.passivePerception,
           },
         });
       }
