@@ -273,7 +273,12 @@ const createMission = async (req, res) => {
       title: data.title,
       description: data.description ?? "",
       status: data.status ?? "pending",
-      ...(data.locationId ? { locationId: data.locationId } : {}),
+      linkedLocationIds: Array.isArray(data.linkedLocationIds)
+        ? data.linkedLocationIds
+        : undefined,
+      linkedNpcIds: Array.isArray(data.linkedNpcIds)
+        ? data.linkedNpcIds
+        : undefined,
       campaignId: campaignId,
     });
     return res.status(201).json(created);
@@ -401,12 +406,10 @@ const toggleMissionVisibility = async (req, res) => {
     });
     return res.status(200).json(updated);
   } catch (err) {
-    return res
-      .status(500)
-      .json({
-        message: "Failed to toggle mission visibility",
-        error: String(err),
-      });
+    return res.status(500).json({
+      message: "Failed to toggle mission visibility",
+      error: String(err),
+    });
   }
 };
 

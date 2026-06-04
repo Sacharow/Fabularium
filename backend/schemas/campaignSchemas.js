@@ -61,7 +61,8 @@ const missionSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
   status: z.enum(["pending", "in_progress", "completed"]).optional(),
-  locationId: z.string().optional(),
+  linkedLocationIds: z.array(z.string()).optional(),
+  linkedNpcIds: z.array(z.string()).optional(),
 });
 
 const updateMissionSchema = z.object({

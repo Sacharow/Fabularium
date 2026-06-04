@@ -365,6 +365,19 @@ export const buildCharacterSections = (
         },
       );
 
+      // compute base modifier from explicit modifier or ability score
+      const baseModifier =
+        typeof storedModifier === "number"
+          ? storedModifier
+          : Math.floor((Number(score) - 10) / 2);
+
+      // apply proficiency bonus if character is proficient in saving throw
+      const profBonus =
+        typeof character.profBonus === "number" ? character.profBonus : 0;
+      const savingThrowValue = isSavingThrowProficient
+        ? baseModifier + profBonus
+        : baseModifier;
+
       return {
         ability: ability.label,
         score: String(score),
@@ -372,7 +385,7 @@ export const buildCharacterSections = (
           typeof storedModifier === "number"
             ? formatModifier(storedModifier)
             : "",
-        savingThrow: "",
+        savingThrow: formatModifier(savingThrowValue),
         savingThrowDistinction: isSavingThrowProficient
           ? "Proficiency"
           : "Nothing",
