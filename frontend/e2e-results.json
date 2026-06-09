@@ -1,0 +1,2104 @@
+
+> fabularium@0.0.0 e2e
+> playwright test --project=chromium --reporter=json
+
+{
+  "config": {
+    "configFile": "C:\\Local Files\\Github\\Fabularium\\frontend\\playwright.config.ts",
+    "rootDir": "C:/Local Files/Github/Fabularium/frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 4
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Local Files/Github/Fabularium/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Local Files/Github/Fabularium/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Local Files/Github/Fabularium/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Local Files/Github/Fabularium/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Local Files/Github/Fabularium/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Local Files/Github/Fabularium/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Local Files/Github/Fabularium/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "C:/Local Files/Github/Fabularium/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Local Files/Github/Fabularium/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "C:/Local Files/Github/Fabularium/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.60.0",
+    "workers": 4,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:5173",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "auth-and-navigation.spec.ts",
+      "file": "auth-and-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication Flow",
+          "file": "auth-and-navigation.spec.ts",
+          "line": 7,
+          "column": 6,
+          "specs": [
+            {
+              "title": "user should navigate to sign in page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4556,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:41.762Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-a5dd23896189dda9af1b",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 12,
+              "column": 3
+            },
+            {
+              "title": "should display sign in form with email and password fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4988,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:41.840Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-44f1e916c47d08bd6d6c",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 23,
+              "column": 3
+            },
+            {
+              "title": "should navigate to sign up from sign in page",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 7163,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a:has-text(\"Sign up\")')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('a:has-text(\"Sign up\")')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a:has-text(\"Sign up\")')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('a:has-text(\"Sign up\")')\u001b[22m\n\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts:39:30",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                          "column": 30,
+                          "line": 39
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 37 |\u001b[39m\n \u001b[90m 38 |\u001b[39m     \u001b[36mconst\u001b[39m signupLink \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'a:has-text(\"Sign up\")'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 39 |\u001b[39m     \u001b[36mawait\u001b[39m expect(signupLink)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 40 |\u001b[39m\n \u001b[90m 41 |\u001b[39m     \u001b[36mawait\u001b[39m signupLink\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 42 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[32m'/sign-up'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                            "column": 30,
+                            "line": 39
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('a:has-text(\"Sign up\")')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('a:has-text(\"Sign up\")')\u001b[22m\n\n\n  37 |\n  38 |     const signupLink = page.locator('a:has-text(\"Sign up\")');\n> 39 |     await expect(signupLink).toBeVisible();\n     |                              ^\n  40 |\n  41 |     await signupLink.click();\n  42 |     await expect(page).toHaveURL('/sign-up');\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts:39:30"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:41.885Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\auth-and-navigation-Authen-08b43-o-sign-up-from-sign-in-page-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\auth-and-navigation-Authen-08b43-o-sign-up-from-sign-in-page-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                        "column": 30,
+                        "line": 39
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-1b05a1a4d03ce322a86c",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "title": "should have password reset link",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 2567,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:41.807Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-fe324aa4b540c54b1753",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 45,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Campaign Creation Flow",
+          "file": "auth-and-navigation.spec.ts",
+          "line": 57,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should navigate to campaigns page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 746,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:44.819Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-0827a2f0c9421499bebd",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 63,
+              "column": 3
+            },
+            {
+              "title": "should display campaigns list or empty state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3769,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:45.622Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-7dfa808a32ee7c3c812e",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 67,
+              "column": 3
+            },
+            {
+              "title": "should open campaign creation modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3497,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:46.759Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-8472167b4d64d562deb0",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 77,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Character Creation Flow",
+          "file": "auth-and-navigation.spec.ts",
+          "line": 96,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should navigate to characters page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 879,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:47.365Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-1a8f90efee66ff65f5b7",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 101,
+              "column": 3
+            },
+            {
+              "title": "should display characters list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4605,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:48.304Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-fc24fe87908997c80f9d",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 105,
+              "column": 3
+            },
+            {
+              "title": "should have button to create new character",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 836,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:49.444Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-5de7ceaa725579b10015",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 112,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Navigation",
+          "file": "auth-and-navigation.spec.ts",
+          "line": 124,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display sidebar on desktop",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 943,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:52.604Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-1a47dfa7af1da5234451",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 125,
+              "column": 3
+            },
+            {
+              "title": "should navigate between main pages",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1181,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:50.316Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-5416aef84efd437747cf",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 135,
+              "column": 3
+            },
+            {
+              "title": "should handle navigation errors gracefully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1089,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:50.339Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-32af12e9012babaec167",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 147,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Responsive Design",
+          "file": "auth-and-navigation.spec.ts",
+          "line": 159,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should be functional on mobile viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 4486,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:51.481Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-16d42c34a3664197be26",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 160,
+              "column": 3
+            },
+            {
+              "title": "should be functional on tablet viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4306,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:51.553Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-48ab0f1ad1a7f3fa860f",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 169,
+              "column": 3
+            },
+            {
+              "title": "should be functional on desktop viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4082,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:52.957Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-d043f14fb44adc7f1539",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 177,
+              "column": 3
+            },
+            {
+              "title": "should be accessible on different orientations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 602,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:53.826Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-0c6926aa6503ecbd0f8d",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 185,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Performance",
+          "file": "auth-and-navigation.spec.ts",
+          "line": 203,
+          "column": 6,
+          "specs": [
+            {
+              "title": "homepage should load quickly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 3842,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:54.469Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-7f43cc254e3d7ba1332a",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 204,
+              "column": 3
+            },
+            {
+              "title": "should not have JavaScript errors",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3821,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m2\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts:231:35",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                          "column": 35,
+                          "line": 231
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 229 |\u001b[39m     \u001b[90m// Some warnings are acceptable\u001b[39m\n \u001b[90m 230 |\u001b[39m     \u001b[36mconst\u001b[39m criticalErrors \u001b[33m=\u001b[39m errors\u001b[33m.\u001b[39mfilter(e \u001b[33m=>\u001b[39m \u001b[33m!\u001b[39me\u001b[33m.\u001b[39mincludes(\u001b[32m'Warning'\u001b[39m))\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 231 |\u001b[39m     expect(criticalErrors\u001b[33m.\u001b[39mlength)\u001b[33m.\u001b[39mtoBe(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 234 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                            "column": 35,
+                            "line": 231
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n\n  229 |     // Some warnings are acceptable\n  230 |     const criticalErrors = errors.filter(e => !e.includes('Warning'));\n> 231 |     expect(criticalErrors.length).toBe(0);\n      |                                   ^\n  232 |   });\n  233 | });\n  234 |\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts:231:35"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:55.899Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\auth-and-navigation-Perfor-5d5f9--not-have-JavaScript-errors-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\auth-and-navigation-Perfor-5d5f9--not-have-JavaScript-errors-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                        "column": 35,
+                        "line": 231
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-f0d24e46814be4f86152",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 216,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Accessibility",
+          "file": "auth-and-navigation.spec.ts",
+          "line": 238,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should have proper heading hierarchy",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 663,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:56.009Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-989dda232f401f837279",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 239,
+              "column": 3
+            },
+            {
+              "title": "should have alt text for images",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 784,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:56.707Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-5b26887f50ef18679125",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 248,
+              "column": 3
+            },
+            {
+              "title": "should have proper link text",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 961,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:57.084Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-49893e1e342d72987b42",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 260,
+              "column": 3
+            },
+            {
+              "title": "should have proper form labels",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 784,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts:278:27",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                          "column": 27,
+                          "line": 278
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 276 |\u001b[39m\n \u001b[90m 277 |\u001b[39m     \u001b[90m// Sign in form should have labels\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 278 |\u001b[39m     expect(labels\u001b[33m.\u001b[39mlength)\u001b[33m.\u001b[39mtoBeGreaterThan(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 279 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 280 |\u001b[39m\n \u001b[90m 281 |\u001b[39m   test(\u001b[32m'should be keyboard navigable'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                            "column": 27,
+                            "line": 278
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  276 |\n  277 |     // Sign in form should have labels\n> 278 |     expect(labels.length).toBeGreaterThan(0);\n      |                           ^\n  279 |   });\n  280 |\n  281 |   test('should be keyboard navigable', async ({ page }) => {\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts:278:27"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:57.537Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\auth-and-navigation-Access-a7824-uld-have-proper-form-labels-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\auth-and-navigation-Access-a7824-uld-have-proper-form-labels-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                        "column": 27,
+                        "line": 278
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-88952301a161e42c484b",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 272,
+              "column": 3
+            },
+            {
+              "title": "should be keyboard navigable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 993,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:58.090Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-f3bbc310808babd78776",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 281,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Error Handling",
+          "file": "auth-and-navigation.spec.ts",
+          "line": 298,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should handle network errors gracefully",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 2,
+                      "status": "timedOut",
+                      "duration": 30177,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts",
+                            "column": 20,
+                            "line": 309
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button').first()\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"button\" aria-disabled=\"true\" class=\"p-2 my-2 w-full border-2 border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    56 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n  307 |     \n  308 |     if (await button.isVisible()) {\n> 309 |       await button.click();\n      |                    ^\n  310 |       // Page should not crash\n  311 |       expect(page.url()).toBeTruthy();\n  312 |     }\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\auth-and-navigation.spec.ts:309:20"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:58.352Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\auth-and-navigation-Error--7fae7-e-network-errors-gracefully-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\auth-and-navigation-Error--7fae7-e-network-errors-gracefully-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-ae5b8f51660813f5aaac",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 299,
+              "column": 3
+            },
+            {
+              "title": "should display user-friendly error messages",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 823,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:00.484Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1478c41bc6ccf52373a5-c8594a81bc2473fcf90e",
+              "file": "auth-and-navigation.spec.ts",
+              "line": 318,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "campaigns-and-characters.spec.ts",
+      "file": "campaigns-and-characters.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Campaign Management",
+          "file": "campaigns-and-characters.spec.ts",
+          "line": 7,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display campaign list or create prompt",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 3919,
+                      "error": {
+                        "message": "Error: locator.isVisible: Error: strict mode violation: locator('button:has-text(\"Create\"), button:has-text(\"New\")') resolved to 2 elements:\n    1) <button disabled type=\"button\" aria-disabled=\"true\" class=\"p-2 my-2 w-full border-2 border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed\">…</button> aka getByRole('button', { name: 'CREATE NEW' })\n    2) <button disabled type=\"button\" aria-disabled=\"true\" class=\"p-2 my-2 w-full border-2 border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed\">…</button> aka locator('button').nth(2)\n\nCall log:\n\u001b[2m    - checking visibility of locator('button:has-text(\"Create\"), button:has-text(\"New\")')\u001b[22m\n",
+                        "stack": "Error: locator.isVisible: Error: strict mode violation: locator('button:has-text(\"Create\"), button:has-text(\"New\")') resolved to 2 elements:\n    1) <button disabled type=\"button\" aria-disabled=\"true\" class=\"p-2 my-2 w-full border-2 border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed\">…</button> aka getByRole('button', { name: 'CREATE NEW' })\n    2) <button disabled type=\"button\" aria-disabled=\"true\" class=\"p-2 my-2 w-full border-2 border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed\">…</button> aka locator('button').nth(2)\n\nCall log:\n\u001b[2m    - checking visibility of locator('button:has-text(\"Create\"), button:has-text(\"New\")')\u001b[22m\n\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:21:48",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                          "column": 48,
+                          "line": 21
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m     \u001b[36mconst\u001b[39m hasCampaigns \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m campaigns\u001b[33m.\u001b[39mcount() \u001b[33m>\u001b[39m \u001b[35m0\u001b[39m\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m     \u001b[36mconst\u001b[39m hasCreateButton \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m createButton\u001b[33m.\u001b[39misVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m\n \u001b[90m 23 |\u001b[39m     expect(hasCampaigns \u001b[33m||\u001b[39m hasCreateButton)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m 24 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                            "column": 48,
+                            "line": 21
+                          },
+                          "message": "Error: locator.isVisible: Error: strict mode violation: locator('button:has-text(\"Create\"), button:has-text(\"New\")') resolved to 2 elements:\n    1) <button disabled type=\"button\" aria-disabled=\"true\" class=\"p-2 my-2 w-full border-2 border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed\">…</button> aka getByRole('button', { name: 'CREATE NEW' })\n    2) <button disabled type=\"button\" aria-disabled=\"true\" class=\"p-2 my-2 w-full border-2 border-gray-neutral bg-dark text-gray-neutral opacity-60 cursor-not-allowed\">…</button> aka locator('button').nth(2)\n\nCall log:\n\u001b[2m    - checking visibility of locator('button:has-text(\"Create\"), button:has-text(\"New\")')\u001b[22m\n\n\n  19 |\n  20 |     const hasCampaigns = await campaigns.count() > 0;\n> 21 |     const hasCreateButton = await createButton.isVisible();\n     |                                                ^\n  22 |\n  23 |     expect(hasCampaigns || hasCreateButton).toBeTruthy();\n  24 |   });\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:21:48"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:15:59.168Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-9d431-paign-list-or-create-prompt-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-9d431-paign-list-or-create-prompt-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                        "column": 48,
+                        "line": 21
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-fc9ffdf554ae00ab0948",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "should open campaign details on click",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 4157,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/campaign\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/sign-in\"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/campaign\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/sign-in\"\u001b[39m\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:36:26",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                          "column": 26,
+                          "line": 36
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 34 |\u001b[39m\n \u001b[90m 35 |\u001b[39m       \u001b[90m// Should be on campaign detail page\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 36 |\u001b[39m       expect(page\u001b[33m.\u001b[39murl())\u001b[33m.\u001b[39mtoContain(\u001b[32m'/campaign'\u001b[39m) \u001b[33m||\u001b[39m expect(page\u001b[33m.\u001b[39murl())\u001b[33m.\u001b[39mtoContain(\u001b[32m'/preview'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 37 |\u001b[39m     }\n \u001b[90m 38 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 39 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                            "column": 26,
+                            "line": 36
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/campaign\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/sign-in\"\u001b[39m\n\n  34 |\n  35 |       // Should be on campaign detail page\n> 36 |       expect(page.url()).toContain('/campaign') || expect(page.url()).toContain('/preview');\n     |                          ^\n  37 |     }\n  38 |   });\n  39 |\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:36:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:01.618Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-62a70-n-campaign-details-on-click-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-62a70-n-campaign-details-on-click-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                        "column": 26,
+                        "line": 36
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-0c2ae11d56f305a1ab10",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "should display campaign sections",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3829,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:01.603Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-fca5e5f5fb9d2170ea5f",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 40,
+              "column": 3
+            },
+            {
+              "title": "should be able to view campaign details",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 3870,
+                      "error": {
+                        "message": "Error: locator.isVisible: Error: strict mode violation: locator('h1, h2, .campaign-title') resolved to 5 elements:\n    1) <h1>FABULARIUM</h1> aka getByRole('link', { name: 'FABULARIUM' })\n    2) <h1>FABULARIUM</h1> aka getByText('FABULARIUM').nth(1)\n    3) <h1 class=\"text-4xl font-bold text-gold-neutral text-center tracking-wider\">Fabularium</h1> aka getByRole('heading', { name: 'Fabularium', exact: true })\n    4) <h2 class=\"text-xl text-center font-bold text-gray-light tracking-wide\">Tabletop Management App</h2> aka getByRole('heading', { name: 'Tabletop Management App' })\n    5) <h1 class=\"text-md text-gold-light\">Don't have an account?</h1> aka getByRole('heading', { name: 'Don\\'t have an account?' })\n\nCall log:\n\u001b[2m    - checking visibility of locator('h1, h2, .campaign-title')\u001b[22m\n",
+                        "stack": "Error: locator.isVisible: Error: strict mode violation: locator('h1, h2, .campaign-title') resolved to 5 elements:\n    1) <h1>FABULARIUM</h1> aka getByRole('link', { name: 'FABULARIUM' })\n    2) <h1>FABULARIUM</h1> aka getByText('FABULARIUM').nth(1)\n    3) <h1 class=\"text-4xl font-bold text-gold-neutral text-center tracking-wider\">Fabularium</h1> aka getByRole('heading', { name: 'Fabularium', exact: true })\n    4) <h2 class=\"text-xl text-center font-bold text-gray-light tracking-wide\">Tabletop Management App</h2> aka getByRole('heading', { name: 'Tabletop Management App' })\n    5) <h1 class=\"text-md text-gold-light\">Don't have an account?</h1> aka getByRole('heading', { name: 'Don\\'t have an account?' })\n\nCall log:\n\u001b[2m    - checking visibility of locator('h1, h2, .campaign-title')\u001b[22m\n\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:64:29",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                          "column": 29,
+                          "line": 64
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 62 |\u001b[39m     \u001b[36mconst\u001b[39m campaignTitle \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1, h2, .campaign-title'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 63 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m     \u001b[36mif\u001b[39m (\u001b[36mawait\u001b[39m campaignTitle\u001b[33m.\u001b[39misVisible()) {\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 65 |\u001b[39m       \u001b[36mconst\u001b[39m text \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m campaignTitle\u001b[33m.\u001b[39mtextContent()\u001b[33m;\u001b[39m\n \u001b[90m 66 |\u001b[39m       expect(text)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m 67 |\u001b[39m     }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                            "column": 29,
+                            "line": 64
+                          },
+                          "message": "Error: locator.isVisible: Error: strict mode violation: locator('h1, h2, .campaign-title') resolved to 5 elements:\n    1) <h1>FABULARIUM</h1> aka getByRole('link', { name: 'FABULARIUM' })\n    2) <h1>FABULARIUM</h1> aka getByText('FABULARIUM').nth(1)\n    3) <h1 class=\"text-4xl font-bold text-gold-neutral text-center tracking-wider\">Fabularium</h1> aka getByRole('heading', { name: 'Fabularium', exact: true })\n    4) <h2 class=\"text-xl text-center font-bold text-gray-light tracking-wide\">Tabletop Management App</h2> aka getByRole('heading', { name: 'Tabletop Management App' })\n    5) <h1 class=\"text-md text-gold-light\">Don't have an account?</h1> aka getByRole('heading', { name: 'Don\\'t have an account?' })\n\nCall log:\n\u001b[2m    - checking visibility of locator('h1, h2, .campaign-title')\u001b[22m\n\n\n  62 |     const campaignTitle = page.locator('h1, h2, .campaign-title');\n  63 |\n> 64 |     if (await campaignTitle.isVisible()) {\n     |                             ^\n  65 |       const text = await campaignTitle.textContent();\n  66 |       expect(text).toBeTruthy();\n  67 |     }\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:64:29"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:04.299Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-1cd9f-le-to-view-campaign-details-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-1cd9f-le-to-view-campaign-details-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                        "column": 29,
+                        "line": 64
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-7de352e2dfe3088359ef",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 57,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Character Management",
+          "file": "campaigns-and-characters.spec.ts",
+          "line": 75,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display character list",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 3794,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:90:44",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                          "column": 44,
+                          "line": 90
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 88 |\u001b[39m     \u001b[36mconst\u001b[39m hasEmptyState \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m emptyState\u001b[33m.\u001b[39misVisible()\u001b[33m;\u001b[39m\n \u001b[90m 89 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m     expect(hasCharacters \u001b[33m||\u001b[39m hasEmptyState)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 92 |\u001b[39m\n \u001b[90m 93 |\u001b[39m   test(\u001b[32m'should open character details on click'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                            "column": 44,
+                            "line": 90
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m\n\n  88 |     const hasEmptyState = await emptyState.isVisible();\n  89 |\n> 90 |     expect(hasCharacters || hasEmptyState).toBeTruthy();\n     |                                            ^\n  91 |   });\n  92 |\n  93 |   test('should open character details on click', async ({ page }) => {\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:90:44"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:05.476Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-058f7-ould-display-character-list-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-058f7-ould-display-character-list-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                        "column": 44,
+                        "line": 90
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-f81e51e059c86b9385e0",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 80,
+              "column": 3
+            },
+            {
+              "title": "should open character details on click",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3993,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/preview\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/characters\"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/preview\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/characters\"\u001b[39m\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:103:72",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                          "column": 72,
+                          "line": 103
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 101 |\u001b[39m\n \u001b[90m 102 |\u001b[39m       \u001b[90m// Should navigate to character page\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m       expect(page\u001b[33m.\u001b[39murl())\u001b[33m.\u001b[39mtoContain(\u001b[32m'/character'\u001b[39m) \u001b[33m||\u001b[39m expect(page\u001b[33m.\u001b[39murl())\u001b[33m.\u001b[39mtoContain(\u001b[32m'/preview'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m     }\n \u001b[90m 105 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 106 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                            "column": 72,
+                            "line": 103
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/preview\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/characters\"\u001b[39m\n\n  101 |\n  102 |       // Should navigate to character page\n> 103 |       expect(page.url()).toContain('/character') || expect(page.url()).toContain('/preview');\n      |                                                                        ^\n  104 |     }\n  105 |   });\n  106 |\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:103:72"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:07.299Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-3396a--character-details-on-click-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-C-3396a--character-details-on-click-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                        "column": 72,
+                        "line": 103
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-5136fb0aba79a61f2a10",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 93,
+              "column": 3
+            },
+            {
+              "title": "should display character details on preview page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3768,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:09.764Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-5c2b3c0fa58ca130e887",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 107,
+              "column": 3
+            },
+            {
+              "title": "should display character sections",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3717,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:11.077Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-fa9a8de270311ab9343f",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 125,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Campaign Sub-Resources",
+          "file": "campaigns-and-characters.spec.ts",
+          "line": 149,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display campaign sections with content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3837,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:13.000Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-0167be3c4d28d3e27ae3",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 150,
+              "column": 3
+            },
+            {
+              "title": "should allow switching between sections",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3815,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:13.790Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-c7f7571117530c62bffd",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 169,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Content Editing",
+          "file": "campaigns-and-characters.spec.ts",
+          "line": 195,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should allow editing character details",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3696,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:15.071Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-c900a1e376dd3f4d8418",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 196,
+              "column": 3
+            },
+            {
+              "title": "should allow saving changes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3690,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:17.053Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-c647bf8d20cafb37ab38",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 220,
+              "column": 3
+            },
+            {
+              "title": "should allow canceling edits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3787,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:17.650Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-bf0e11f5742bcdf031e6",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 244,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Data Persistence",
+          "file": "campaigns-and-characters.spec.ts",
+          "line": 276,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should persist data after page reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 6691,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:18.808Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-1b627b1869daa0c3cea5",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 277,
+              "column": 3
+            },
+            {
+              "title": "should maintain navigation state",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3814,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/character\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/campaigns\"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/character\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/campaigns\"\u001b[39m\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:305:24",
+                        "location": {
+                          "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                          "column": 24,
+                          "line": 305
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 303 |\u001b[39m\n \u001b[90m 304 |\u001b[39m     \u001b[90m// Should be back on characters page\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 305 |\u001b[39m     expect(page\u001b[33m.\u001b[39murl())\u001b[33m.\u001b[39mtoContain(\u001b[32m'/character'\u001b[39m) \u001b[33m||\u001b[39m expect(page\u001b[33m.\u001b[39murl())\u001b[33m.\u001b[39mtoContain(\u001b[32m'/character'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 306 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 307 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 308 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                            "column": 24,
+                            "line": 305
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/character\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:5173/campaigns\"\u001b[39m\n\n  303 |\n  304 |     // Should be back on characters page\n> 305 |     expect(page.url()).toContain('/character') || expect(page.url()).toContain('/character');\n      |                        ^\n  306 |   });\n  307 | });\n  308 |\n    at C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts:305:24"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:20.774Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-D-3444a-d-maintain-navigation-state-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Local Files\\Github\\Fabularium\\frontend\\test-results\\campaigns-and-characters-D-3444a-d-maintain-navigation-state-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Local Files\\Github\\Fabularium\\frontend\\e2e\\campaigns-and-characters.spec.ts",
+                        "column": 24,
+                        "line": 305
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-7d32740275244fd51826",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 294,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "User Feedback",
+          "file": "campaigns-and-characters.spec.ts",
+          "line": 313,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should show loading states during data fetch",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3665,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:21.470Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-499d39d92c23acf3f3dc",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 314,
+              "column": 3
+            },
+            {
+              "title": "should display success messages on save",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3884,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:25.968Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-2bf75bb4fc3b43560a35",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 324,
+              "column": 3
+            },
+            {
+              "title": "should display error messages on failure",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3767,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-09T21:16:25.169Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1491eed03e4a0ec3f3b0-b23fc0011dce71d4df56",
+              "file": "campaigns-and-characters.spec.ts",
+              "line": 351,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-06-09T21:15:39.709Z",
+    "duration": 50493.934,
+    "expected": 34,
+    "skipped": 0,
+    "unexpected": 10,
+    "flaky": 0
+  }
+}

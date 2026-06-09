@@ -1,0 +1,758 @@
+
+> fabularium@0.0.0 e2e
+> playwright test --project=chromium
+
+
+Running 44 tests using 4 workers
+
+[1A[2K[1/44] [chromium] › e2e\auth-and-navigation.spec.ts:12:3 › Authentication Flow › user should navigate to sign in page
+[1A[2K[2/44] [chromium] › e2e\auth-and-navigation.spec.ts:45:3 › Authentication Flow › should have password reset link
+[1A[2K[3/44] [chromium] › e2e\auth-and-navigation.spec.ts:23:3 › Authentication Flow › should display sign in form with email and password fields
+[1A[2K[4/44] [chromium] › e2e\auth-and-navigation.spec.ts:35:3 › Authentication Flow › should navigate to sign up from sign in page
+[1A[2K  1) [chromium] › e2e\auth-and-navigation.spec.ts:12:3 › Authentication Flow › user should navigate to sign in page 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Authen-bfc57-ld-navigate-to-sign-in-page-chromium\error-context.md
+
+
+[1A[2K  2) [chromium] › e2e\auth-and-navigation.spec.ts:45:3 › Authentication Flow › should have password reset link 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Authen-59de3-ld-have-password-reset-link-chromium\error-context.md
+
+
+[1A[2K  3) [chromium] › e2e\auth-and-navigation.spec.ts:23:3 › Authentication Flow › should display sign in form with email and password fields 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Authen-e1425-h-email-and-password-fields-chromium\error-context.md
+
+
+[1A[2K  4) [chromium] › e2e\auth-and-navigation.spec.ts:35:3 › Authentication Flow › should navigate to sign up from sign in page 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Authen-08b43-o-sign-up-from-sign-in-page-chromium\error-context.md
+
+
+[1A[2K[5/44] [chromium] › e2e\auth-and-navigation.spec.ts:63:3 › Campaign Creation Flow › should navigate to campaigns page
+[1A[2K[6/44] [chromium] › e2e\auth-and-navigation.spec.ts:67:3 › Campaign Creation Flow › should display campaigns list or empty state
+[1A[2K[7/44] [chromium] › e2e\auth-and-navigation.spec.ts:101:3 › Character Creation Flow › should navigate to characters page
+[1A[2K[8/44] [chromium] › e2e\auth-and-navigation.spec.ts:77:3 › Campaign Creation Flow › should open campaign creation modal
+[1A[2K  5) [chromium] › e2e\auth-and-navigation.spec.ts:63:3 › Campaign Creation Flow › should navigate to campaigns page 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Campai-706fd--navigate-to-campaigns-page-chromium\error-context.md
+
+
+[1A[2K  6) [chromium] › e2e\auth-and-navigation.spec.ts:67:3 › Campaign Creation Flow › should display campaigns list or empty state 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Campai-c8388-mpaigns-list-or-empty-state-chromium\error-context.md
+
+
+[1A[2K  7) [chromium] › e2e\auth-and-navigation.spec.ts:101:3 › Character Creation Flow › should navigate to characters page 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Charac-3bf4d-navigate-to-characters-page-chromium\error-context.md
+
+
+[1A[2K  8) [chromium] › e2e\auth-and-navigation.spec.ts:77:3 › Campaign Creation Flow › should open campaign creation modal 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Campai-20f9c-pen-campaign-creation-modal-chromium\error-context.md
+
+
+[1A[2K[9/44] [chromium] › e2e\auth-and-navigation.spec.ts:105:3 › Character Creation Flow › should display characters list
+[1A[2K[10/44] [chromium] › e2e\auth-and-navigation.spec.ts:112:3 › Character Creation Flow › should have button to create new character
+[1A[2K[11/44] [chromium] › e2e\auth-and-navigation.spec.ts:125:3 › Navigation › should display sidebar on desktop
+[1A[2K[12/44] [chromium] › e2e\auth-and-navigation.spec.ts:135:3 › Navigation › should navigate between main pages
+[1A[2K  9) [chromium] › e2e\auth-and-navigation.spec.ts:105:3 › Character Creation Flow › should display characters list 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Charac-a0971-uld-display-characters-list-chromium\error-context.md
+
+
+[1A[2K  10) [chromium] › e2e\auth-and-navigation.spec.ts:112:3 › Character Creation Flow › should have button to create new character 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Charac-c278c-ton-to-create-new-character-chromium\error-context.md
+
+
+[1A[2K  11) [chromium] › e2e\auth-and-navigation.spec.ts:125:3 › Navigation › should display sidebar on desktop 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Naviga-299bd--display-sidebar-on-desktop-chromium\error-context.md
+
+
+[1A[2K  12) [chromium] › e2e\auth-and-navigation.spec.ts:135:3 › Navigation › should navigate between main pages 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Naviga-2c2de-navigate-between-main-pages-chromium\error-context.md
+
+
+[1A[2K[13/44] [chromium] › e2e\auth-and-navigation.spec.ts:160:3 › Responsive Design › should be functional on mobile viewport
+[1A[2K[14/44] [chromium] › e2e\auth-and-navigation.spec.ts:147:3 › Navigation › should handle navigation errors gracefully
+[1A[2K[15/44] [chromium] › e2e\auth-and-navigation.spec.ts:177:3 › Responsive Design › should be functional on desktop viewport
+[1A[2K[16/44] [chromium] › e2e\auth-and-navigation.spec.ts:169:3 › Responsive Design › should be functional on tablet viewport
+[1A[2K  13) [chromium] › e2e\auth-and-navigation.spec.ts:160:3 › Responsive Design › should be functional on mobile viewport 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Respon-ff47d-nctional-on-mobile-viewport-chromium\error-context.md
+
+
+[1A[2K  14) [chromium] › e2e\auth-and-navigation.spec.ts:147:3 › Navigation › should handle navigation errors gracefully 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Naviga-be9f9-avigation-errors-gracefully-chromium\error-context.md
+
+
+[1A[2K  15) [chromium] › e2e\auth-and-navigation.spec.ts:177:3 › Responsive Design › should be functional on desktop viewport 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Respon-7fb54-ctional-on-desktop-viewport-chromium\error-context.md
+
+
+[1A[2K  16) [chromium] › e2e\auth-and-navigation.spec.ts:169:3 › Responsive Design › should be functional on tablet viewport 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Respon-049ac-nctional-on-tablet-viewport-chromium\error-context.md
+
+
+[1A[2K[17/44] [chromium] › e2e\auth-and-navigation.spec.ts:185:3 › Responsive Design › should be accessible on different orientations
+[1A[2K[18/44] [chromium] › e2e\auth-and-navigation.spec.ts:204:3 › Performance › homepage should load quickly
+[1A[2K[19/44] [chromium] › e2e\auth-and-navigation.spec.ts:216:3 › Performance › should not have JavaScript errors
+[1A[2K[20/44] [chromium] › e2e\auth-and-navigation.spec.ts:239:3 › Accessibility › should have proper heading hierarchy
+[1A[2K  17) [chromium] › e2e\auth-and-navigation.spec.ts:204:3 › Performance › homepage should load quickly 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Performance-homepage-should-load-quickly-chromium\error-context.md
+
+
+[1A[2K  18) [chromium] › e2e\auth-and-navigation.spec.ts:216:3 › Performance › should not have JavaScript errors 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Perfor-5d5f9--not-have-JavaScript-errors-chromium\error-context.md
+
+
+[1A[2K  19) [chromium] › e2e\auth-and-navigation.spec.ts:185:3 › Responsive Design › should be accessible on different orientations 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Respon-de342-e-on-different-orientations-chromium\error-context.md
+
+
+[1A[2K  20) [chromium] › e2e\auth-and-navigation.spec.ts:239:3 › Accessibility › should have proper heading hierarchy 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Access-5073b-ve-proper-heading-hierarchy-chromium\error-context.md
+
+
+[1A[2K[21/44] [chromium] › e2e\auth-and-navigation.spec.ts:248:3 › Accessibility › should have alt text for images
+[1A[2K[22/44] [chromium] › e2e\auth-and-navigation.spec.ts:260:3 › Accessibility › should have proper link text
+[1A[2K[23/44] [chromium] › e2e\auth-and-navigation.spec.ts:272:3 › Accessibility › should have proper form labels
+[1A[2K  21) [chromium] › e2e\auth-and-navigation.spec.ts:260:3 › Accessibility › should have proper link text 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Access-11179-hould-have-proper-link-text-chromium\error-context.md
+
+
+[1A[2K  22) [chromium] › e2e\auth-and-navigation.spec.ts:248:3 › Accessibility › should have alt text for images 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Access-1cbc8-ld-have-alt-text-for-images-chromium\error-context.md
+
+
+[1A[2K[24/44] [chromium] › e2e\auth-and-navigation.spec.ts:281:3 › Accessibility › should be keyboard navigable
+[1A[2K  23) [chromium] › e2e\auth-and-navigation.spec.ts:272:3 › Accessibility › should have proper form labels 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Access-a7824-uld-have-proper-form-labels-chromium\error-context.md
+
+
+[1A[2K  24) [chromium] › e2e\auth-and-navigation.spec.ts:281:3 › Accessibility › should be keyboard navigable 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Access-d03b3-hould-be-keyboard-navigable-chromium\error-context.md
+
+
+[1A[2K[25/44] [chromium] › e2e\auth-and-navigation.spec.ts:299:3 › Error Handling › should handle network errors gracefully
+[1A[2K[26/44] [chromium] › e2e\auth-and-navigation.spec.ts:318:3 › Error Handling › should display user-friendly error messages
+[1A[2K[27/44] [chromium] › e2e\campaigns-and-characters.spec.ts:13:3 › Campaign Management › should display campaign list or create prompt
+[1A[2K  25) [chromium] › e2e\auth-and-navigation.spec.ts:299:3 › Error Handling › should handle network errors gracefully 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Error--7fae7-e-network-errors-gracefully-chromium\error-context.md
+
+
+[1A[2K[28/44] [chromium] › e2e\campaigns-and-characters.spec.ts:26:3 › Campaign Management › should open campaign details on click
+[1A[2K  26) [chromium] › e2e\auth-and-navigation.spec.ts:318:3 › Error Handling › should display user-friendly error messages 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\auth-and-navigation-Error--fb03d-ser-friendly-error-messages-chromium\error-context.md
+
+
+[1A[2K  27) [chromium] › e2e\campaigns-and-characters.spec.ts:13:3 › Campaign Management › should display campaign list or create prompt 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-9d431-paign-list-or-create-prompt-chromium\error-context.md
+
+
+[1A[2K  28) [chromium] › e2e\campaigns-and-characters.spec.ts:26:3 › Campaign Management › should open campaign details on click 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-62a70-n-campaign-details-on-click-chromium\error-context.md
+
+
+[1A[2K[29/44] [chromium] › e2e\campaigns-and-characters.spec.ts:40:3 › Campaign Management › should display campaign sections
+[1A[2K[30/44] [chromium] › e2e\campaigns-and-characters.spec.ts:57:3 › Campaign Management › should be able to view campaign details
+[1A[2K[31/44] [chromium] › e2e\campaigns-and-characters.spec.ts:80:3 › Character Management › should display character list
+[1A[2K  29) [chromium] › e2e\campaigns-and-characters.spec.ts:40:3 › Campaign Management › should display campaign sections 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-6b144-d-display-campaign-sections-chromium\error-context.md
+
+
+[1A[2K[32/44] [chromium] › e2e\campaigns-and-characters.spec.ts:93:3 › Character Management › should open character details on click
+[1A[2K  30) [chromium] › e2e\campaigns-and-characters.spec.ts:57:3 › Campaign Management › should be able to view campaign details 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-1cd9f-le-to-view-campaign-details-chromium\error-context.md
+
+
+[1A[2K  31) [chromium] › e2e\campaigns-and-characters.spec.ts:80:3 › Character Management › should display character list 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-058f7-ould-display-character-list-chromium\error-context.md
+
+
+[1A[2K  32) [chromium] › e2e\campaigns-and-characters.spec.ts:93:3 › Character Management › should open character details on click 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-3396a--character-details-on-click-chromium\error-context.md
+
+
+[1A[2K[33/44] [chromium] › e2e\campaigns-and-characters.spec.ts:125:3 › Character Management › should display character sections
+[1A[2K[34/44] [chromium] › e2e\campaigns-and-characters.spec.ts:107:3 › Character Management › should display character details on preview page
+[1A[2K[35/44] [chromium] › e2e\campaigns-and-characters.spec.ts:150:3 › Campaign Sub-Resources › should display campaign sections with content
+[1A[2K[36/44] [chromium] › e2e\campaigns-and-characters.spec.ts:169:3 › Campaign Sub-Resources › should allow switching between sections
+[1A[2K  33) [chromium] › e2e\campaigns-and-characters.spec.ts:125:3 › Character Management › should display character sections 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-3ab3d--display-character-sections-chromium\error-context.md
+
+
+[1A[2K  34) [chromium] › e2e\campaigns-and-characters.spec.ts:107:3 › Character Management › should display character details on preview page 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-024cb-ter-details-on-preview-page-chromium\error-context.md
+
+
+[1A[2K  35) [chromium] › e2e\campaigns-and-characters.spec.ts:150:3 › Campaign Sub-Resources › should display campaign sections with content 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-5f991-paign-sections-with-content-chromium\error-context.md
+
+
+[1A[2K  36) [chromium] › e2e\campaigns-and-characters.spec.ts:169:3 › Campaign Sub-Resources › should allow switching between sections 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-ca298--switching-between-sections-chromium\error-context.md
+
+
+[1A[2K[37/44] [chromium] › e2e\campaigns-and-characters.spec.ts:220:3 › Content Editing › should allow saving changes
+[1A[2K[38/44] [chromium] › e2e\campaigns-and-characters.spec.ts:196:3 › Content Editing › should allow editing character details
+[1A[2K[39/44] [chromium] › e2e\campaigns-and-characters.spec.ts:277:3 › Data Persistence › should persist data after page reload
+[1A[2K[40/44] [chromium] › e2e\campaigns-and-characters.spec.ts:244:3 › Content Editing › should allow canceling edits
+[1A[2K  37) [chromium] › e2e\campaigns-and-characters.spec.ts:220:3 › Content Editing › should allow saving changes 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-23add-should-allow-saving-changes-chromium\error-context.md
+
+
+[1A[2K  38) [chromium] › e2e\campaigns-and-characters.spec.ts:196:3 › Content Editing › should allow editing character details 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-79ab1-w-editing-character-details-chromium\error-context.md
+
+
+[1A[2K  39) [chromium] › e2e\campaigns-and-characters.spec.ts:277:3 › Data Persistence › should persist data after page reload 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-D-ab41e-sist-data-after-page-reload-chromium\error-context.md
+
+
+[1A[2K  40) [chromium] › e2e\campaigns-and-characters.spec.ts:244:3 › Content Editing › should allow canceling edits 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-C-6bcd5-hould-allow-canceling-edits-chromium\error-context.md
+
+
+[1A[2K[41/44] [chromium] › e2e\campaigns-and-characters.spec.ts:294:3 › Data Persistence › should maintain navigation state
+[1A[2K[42/44] [chromium] › e2e\campaigns-and-characters.spec.ts:314:3 › User Feedback › should show loading states during data fetch
+[1A[2K[43/44] [chromium] › e2e\campaigns-and-characters.spec.ts:351:3 › User Feedback › should display error messages on failure
+[1A[2K[44/44] [chromium] › e2e\campaigns-and-characters.spec.ts:324:3 › User Feedback › should display success messages on save
+[1A[2K  41) [chromium] › e2e\campaigns-and-characters.spec.ts:294:3 › Data Persistence › should maintain navigation state 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-D-3444a-d-maintain-navigation-state-chromium\error-context.md
+
+
+[1A[2K  42) [chromium] › e2e\campaigns-and-characters.spec.ts:314:3 › User Feedback › should show loading states during data fetch 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-U-442cf-ng-states-during-data-fetch-chromium\error-context.md
+
+
+[1A[2K  43) [chromium] › e2e\campaigns-and-characters.spec.ts:351:3 › User Feedback › should display error messages on failure 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-U-24e4f-y-error-messages-on-failure-chromium\error-context.md
+
+
+[1A[2K  44) [chromium] › e2e\campaigns-and-characters.spec.ts:324:3 › User Feedback › should display success messages on save 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\bstro\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\campaigns-and-characters-U-52b71-ay-success-messages-on-save-chromium\error-context.md
+
+
+[1A[2K  44 failed
+    [chromium] › e2e\auth-and-navigation.spec.ts:12:3 › Authentication Flow › user should navigate to sign in page 
+    [chromium] › e2e\auth-and-navigation.spec.ts:23:3 › Authentication Flow › should display sign in form with email and password fields 
+    [chromium] › e2e\auth-and-navigation.spec.ts:35:3 › Authentication Flow › should navigate to sign up from sign in page 
+    [chromium] › e2e\auth-and-navigation.spec.ts:45:3 › Authentication Flow › should have password reset link 
+    [chromium] › e2e\auth-and-navigation.spec.ts:63:3 › Campaign Creation Flow › should navigate to campaigns page 
+    [chromium] › e2e\auth-and-navigation.spec.ts:67:3 › Campaign Creation Flow › should display campaigns list or empty state 
+    [chromium] › e2e\auth-and-navigation.spec.ts:77:3 › Campaign Creation Flow › should open campaign creation modal 
+    [chromium] › e2e\auth-and-navigation.spec.ts:101:3 › Character Creation Flow › should navigate to characters page 
+    [chromium] › e2e\auth-and-navigation.spec.ts:105:3 › Character Creation Flow › should display characters list 
+    [chromium] › e2e\auth-and-navigation.spec.ts:112:3 › Character Creation Flow › should have button to create new character 
+    [chromium] › e2e\auth-and-navigation.spec.ts:125:3 › Navigation › should display sidebar on desktop 
+    [chromium] › e2e\auth-and-navigation.spec.ts:135:3 › Navigation › should navigate between main pages 
+    [chromium] › e2e\auth-and-navigation.spec.ts:147:3 › Navigation › should handle navigation errors gracefully 
+    [chromium] › e2e\auth-and-navigation.spec.ts:160:3 › Responsive Design › should be functional on mobile viewport 
+    [chromium] › e2e\auth-and-navigation.spec.ts:169:3 › Responsive Design › should be functional on tablet viewport 
+    [chromium] › e2e\auth-and-navigation.spec.ts:177:3 › Responsive Design › should be functional on desktop viewport 
+    [chromium] › e2e\auth-and-navigation.spec.ts:185:3 › Responsive Design › should be accessible on different orientations 
+    [chromium] › e2e\auth-and-navigation.spec.ts:204:3 › Performance › homepage should load quickly 
+    [chromium] › e2e\auth-and-navigation.spec.ts:216:3 › Performance › should not have JavaScript errors 
+    [chromium] › e2e\auth-and-navigation.spec.ts:239:3 › Accessibility › should have proper heading hierarchy 
+    [chromium] › e2e\auth-and-navigation.spec.ts:248:3 › Accessibility › should have alt text for images 
+    [chromium] › e2e\auth-and-navigation.spec.ts:260:3 › Accessibility › should have proper link text 
+    [chromium] › e2e\auth-and-navigation.spec.ts:272:3 › Accessibility › should have proper form labels 
+    [chromium] › e2e\auth-and-navigation.spec.ts:281:3 › Accessibility › should be keyboard navigable 
+    [chromium] › e2e\auth-and-navigation.spec.ts:299:3 › Error Handling › should handle network errors gracefully 
+    [chromium] › e2e\auth-and-navigation.spec.ts:318:3 › Error Handling › should display user-friendly error messages 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:13:3 › Campaign Management › should display campaign list or create prompt 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:26:3 › Campaign Management › should open campaign details on click 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:40:3 › Campaign Management › should display campaign sections 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:57:3 › Campaign Management › should be able to view campaign details 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:80:3 › Character Management › should display character list 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:93:3 › Character Management › should open character details on click 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:107:3 › Character Management › should display character details on preview page 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:125:3 › Character Management › should display character sections 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:150:3 › Campaign Sub-Resources › should display campaign sections with content 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:169:3 › Campaign Sub-Resources › should allow switching between sections 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:196:3 › Content Editing › should allow editing character details 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:220:3 › Content Editing › should allow saving changes 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:244:3 › Content Editing › should allow canceling edits 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:277:3 › Data Persistence › should persist data after page reload 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:294:3 › Data Persistence › should maintain navigation state 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:314:3 › User Feedback › should show loading states during data fetch 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:324:3 › User Feedback › should display success messages on save 
+    [chromium] › e2e\campaigns-and-characters.spec.ts:351:3 › User Feedback › should display error messages on failure 
+
+[36m  Serving HTML report at http://localhost:55977. Press Ctrl+C to quit.[39m
